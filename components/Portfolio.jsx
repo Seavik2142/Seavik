@@ -484,7 +484,7 @@ export default function Portfolio() {
         </div>
 
         <div className="profile-wrap">
-          <img src="/images/profile.png?v=pro_seavik" alt="Mao Seavik" className="profile-image" draggable={false} />
+          <img src="/images/profile.png?v=suit_2026" alt="Mao Seavik" className="profile-image" draggable={false} />
         </div>
 
         <div className="scroll-indicator">
@@ -809,7 +809,7 @@ export default function Portfolio() {
           <div className="about-profile-card">
             <div className="about-profile-header">
               <div className="about-profile-image-wrapper">
-                <img src="/images/about/profile.png?v=pro_seavik" alt="Profile" className="about-profile-image" draggable={false} />
+                <img src="/images/about/profile.png?v=suit_2026" alt="Profile" className="about-profile-image" draggable={false} />
               </div>
               <div className="about-profile-info">
                 <div className="about-profile-name">
