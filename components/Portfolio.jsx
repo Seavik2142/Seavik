@@ -809,7 +809,7 @@ export default function Portfolio() {
           <div className="about-profile-card">
             <div className="about-profile-header">
               <div className="about-profile-image-wrapper">
-                <img src="/images/about/profile.png?v=suit_2026" alt="Profile" className="about-profile-image" draggable={false} />
+                <img src="/images/about/profile.png?v=classic_avatar" alt="Profile" className="about-profile-image" draggable={false} />
               </div>
               <div className="about-profile-info">
                 <div className="about-profile-name">
