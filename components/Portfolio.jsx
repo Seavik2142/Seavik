@@ -1035,13 +1035,13 @@ export default function Portfolio() {
             <div key={i} className={`experience-card${exp.imageLeft ? " experience-card-reverse" : ""}`}>
               <div className="experience-text">
                 <div className="experience-header">
-                  <div className="experience-title">
+                  <div className="experience-heading-wrap">
                     {exp.badge && (
                       <div className="experience-badge-pill">
-                        <Sparkles size={13} /> {exp.badge}
+                        <Sparkles size={12} /> {exp.badge}
                       </div>
                     )}
-                    {exp.title}
+                    <h4 className="experience-title">{exp.title}</h4>
                     {exp.subtitle && <div className="experience-subtitle">{exp.subtitle}</div>}
                   </div>
                   <div className="experience-date">{exp.date}</div>
@@ -1070,8 +1070,8 @@ export default function Portfolio() {
                             rel="noopener noreferrer"
                             className="experience-certificate"
                           >
-                            {cert.name}
-                            <ExternalLink size={12} style={{ marginLeft: 6 }} />
+                            <span>{cert.name}</span>
+                            <ExternalLink size={12} style={{ marginLeft: 6, flexShrink: 0 }} />
                           </a>
                         ) : (
                           <button
@@ -1087,8 +1087,8 @@ export default function Portfolio() {
                             className="experience-certificate"
                             style={{ background: "none", border: "none", cursor: "pointer", padding: 0 }}
                           >
-                            {cert.name}
-                            <ExternalLink size={12} style={{ marginLeft: 6 }} />
+                            <span>{cert.name}</span>
+                            <ExternalLink size={12} style={{ marginLeft: 6, flexShrink: 0 }} />
                           </button>
                         )}
                       </div>

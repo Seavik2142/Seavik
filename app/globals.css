@@ -1755,13 +1755,17 @@ body::before {
   flex-direction: column;
   gap: 70px;
   max-width: 1100px;
+  width: 100%;
 }
 
 .experience-card {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 40px;
   align-items: start;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 /* Tech-Tuesdays layout flip: image on the left, text on the right */
@@ -1773,6 +1777,14 @@ body::before {
   order: 1;
 }
 
+.experience-text {
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
 .experience-header {
   display: flex;
   align-items: flex-start;
@@ -1780,6 +1792,18 @@ body::before {
   gap: 16px;
   flex-wrap: wrap;
   margin-bottom: 12px;
+  width: 100%;
+  min-width: 0;
+}
+
+.experience-heading-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  min-width: 0;
+  flex: 1;
+  max-width: 100%;
 }
 
 .experience-title {
@@ -1788,15 +1812,22 @@ body::before {
   font-weight: 700;
   color: var(--text);
   letter-spacing: -0.01em;
+  line-height: 1.4;
+  margin: 0;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .experience-subtitle {
   font-family: 'Inter', sans-serif;
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--text);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--muted);
   letter-spacing: -0.01em;
   margin-top: 2px;
+  line-height: 1.4;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .experience-date {
@@ -1805,6 +1836,7 @@ body::before {
   color: var(--muted);
   letter-spacing: 0.05em;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .experience-org {
@@ -1812,6 +1844,8 @@ body::before {
   font-weight: 500;
   color: var(--text);
   margin-top: 12px;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .experience-desc {
@@ -1819,6 +1853,8 @@ body::before {
   line-height: 1.7;
   color: var(--muted);
   margin-top: 12px;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .experience-certificate {
@@ -1829,10 +1865,14 @@ body::before {
   font-size: 12px;
   font-weight: 600;
   color: var(--text);
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   text-decoration: none;
-  white-space: nowrap;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  max-width: 100%;
+  text-align: left;
   transition: opacity 0.3s ease;
 }
 
@@ -1854,8 +1894,9 @@ body::before {
   color: #10b981;
   background: rgba(16, 185, 129, 0.1);
   border: 1px solid rgba(16, 185, 129, 0.35);
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   width: fit-content;
+  max-width: 100%;
 }
 
 .experience-tags {
@@ -1883,6 +1924,8 @@ body::before {
   flex-direction: column;
   gap: 8px;
   margin-top: 18px;
+  width: 100%;
+  max-width: 100%;
 }
 
 .experience-link-item .experience-certificate {
@@ -1924,21 +1967,57 @@ body::before {
 
 @media (max-width: 768px) {
   .experience-card {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 24px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .experience-text {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
   }
 
   .experience-header {
     flex-direction: column;
-  gap: 2px;
+    align-items: flex-start;
+    gap: 6px;
+    width: 100%;
+  }
+
+  .experience-heading-wrap {
+    width: 100%;
+  }
+
+  .experience-title {
+    font-size: 17px;
+    line-height: 1.35;
+  }
+
+  .experience-subtitle {
+    font-size: 14px;
+    line-height: 1.4;
   }
 
   .experience-date {
     white-space: normal;
+    font-size: 11px;
+    margin-top: 2px;
+  }
+
+  .experience-desc {
+    font-size: 14px;
+    line-height: 1.65;
   }
 
   .experience-image-stack {
     height: 240px;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    border-radius: 12px;
   }
 
   .experience-card-reverse .experience-text {
@@ -1951,6 +2030,15 @@ body::before {
 
   .experience-list {
     gap: 48px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .experience-certificate {
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    max-width: 100%;
   }
 }
 
@@ -2634,10 +2722,22 @@ textarea.contact-modal-input {
 }
 
 @media (max-width: 768px) {
+  .back-to-top {
+    bottom: 20px;
+    right: 16px;
+    width: 38px;
+    height: 38px;
+  }
+
   .coffee-btn {
     top: auto;
-    bottom: 7px;
-    /* left stays 0, radius/border stay as-is — it's flush, so it still reads as attached */
+    bottom: 20px;
+    padding: 6px 12px 6px 10px;
+  }
+
+  .coffee-gif {
+    width: 22px;
+    height: 22px;
   }
 
   .coffee-text {
