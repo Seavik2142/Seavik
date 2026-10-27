@@ -91,8 +91,8 @@ export default function WorkHeader() {
             <div className="nav-logo">S</div>
             <div className="nav-brand">SEAVIK</div>
           </a>
-          <ThemeToggle className="md:hidden nav-theme-toggle" style={{ position: 'relative', zIndex: 210 }} />
-          <button className="md:hidden nav-menu-btn" onClick={() => setMenuOpen(!menuOpen)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 8, position: 'relative', zIndex: 210 }}>
+          <ThemeToggle className="lg:hidden nav-theme-toggle" style={{ position: 'relative', zIndex: 210 }} />
+          <button className="lg:hidden nav-menu-btn" onClick={() => setMenuOpen(!menuOpen)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 8, position: 'relative', zIndex: 210 }}>
             {menuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
@@ -105,13 +105,13 @@ export default function WorkHeader() {
             </div>
           </div>
         )}
-        <div className="nav-center hidden md:flex">
+        <div className="nav-center hidden lg:flex">
           <a href="#technical" className="nav-link">Technical</a>
           <a href="#digital" className="nav-link">Digital</a>
         </div>
         <div className="nav-right">
-          <ThemeToggle className="nav-theme-toggle hidden md:inline-flex" style={{ marginRight: 8 }} />
-          <a href="/#contact" className="nav-cta hidden md:block">Hire Me</a>
+          <ThemeToggle className="nav-theme-toggle hidden lg:inline-flex" style={{ marginRight: 8 }} />
+          <a href="/#contact" className="nav-cta hidden lg:block">Hire Me</a>
         </div>
       </nav>
 

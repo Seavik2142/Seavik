@@ -476,19 +476,6 @@ export default function Portfolio() {
           </div>
         </div>
 
-        {/* Mobile-only fill rows: 4 above + 4 below, same animation/style as the center row = 9 total */}
-        {["t1", "t2", "t3", "t4", "b1", "b2", "b3", "b4"].map((pos) => (
-          <div
-            key={pos}
-            className={`bg-name-marquee bg-name-marquee--mobile-extra bg-name-marquee--${pos}`}
-            aria-hidden="true"
-          >
-            <div className="bg-name-track">
-              <span className="bg-name-text">MAO SEAVIK</span>
-              <span className="bg-name-text">MAO SEAVIK</span>
-            </div>
-          </div>
-        ))}
 
         <div className="concentric-circles">
           <div className="circle circle-1" />

@@ -1354,33 +1354,15 @@ body::before {
 }
 
 @media (max-width: 768px) {
-  .about-bottom-row {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-  }
-
-  .card-stack {
-    margin-left: auto;
-  }
-
-  .currently-strip-items {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 14px;
-  }
-}
-
-@media (max-width: 768px) {
   .about-profile-header {
     flex-direction: column;
     align-items: center;
+    text-align: center;
     gap: 16px;
   }
 
   .about-profile-card {
-    gap: 20px;
+    gap: 24px;
     margin-top: 0px;
   }
 
@@ -1388,8 +1370,35 @@ body::before {
     align-items: center;
   }
 
+  .about-profile-stats {
+    justify-content: center;
+    gap: 24px;
+  }
+
   .about-description {
     margin-top: 16px;
+    text-align: left;
+  }
+
+  .about-bottom-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 28px;
+  }
+
+  .currently-strip {
+    width: 100%;
+  }
+
+  .currently-strip-items {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    width: 100%;
+  }
+
+  .card-stack {
+    margin: 8px auto 0;
   }
 }
 
@@ -1508,37 +1517,54 @@ body::before {
 @media (max-width: 768px) {
   .what-i-can-do-grid {
     grid-template-columns: 1fr;
-    gap: 40px;
+    gap: 36px;
   }
 
   .tech-stack {
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
     gap: 12px;
-    row-gap: 20px;
+    width: 100%;
+    max-width: 380px;
+    margin: 20px 0 0;
     padding-bottom: 0;
   }
 
   .tech-stack-column {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 15px;
+    display: contents;
   }
 
-  .tech-stack-column:nth-child(3) {
-    margin-left: 0;
-  }
-
+  .tech-stack-column:nth-child(3),
   .workspace-column {
     margin-left: 0;
   }
 
   .tech-stack-item {
-    padding: 10px 12px;
+    width: 100%;
+    aspect-ratio: 1;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
   }
 
   .tech-stack-item img {
-    width: 24px;
-    height: 24px;
+    width: 26px;
+    height: 26px;
+  }
+}
+
+@media (max-width: 380px) {
+  .tech-stack {
+    grid-template-columns: repeat(4, 1fr);
+    max-width: 290px;
+    gap: 8px;
+  }
+
+  .tech-stack-item img {
+    width: 22px;
+    height: 22px;
   }
 }
 
@@ -2641,39 +2667,39 @@ textarea.contact-modal-input {
   display: none;
 }
 
-/* Mobile */
-@media (max-width: 768px) {
+/* Mobile & Tablet Navigation (< 1024px) */
+@media (max-width: 1023px) {
   .hero-root {
     padding: 100px 20px 60px;
   }
 
   .nav-center {
-    display: none;
+    display: none !important;
   }
 
   .nav-right .nav-cta {
-    display: none;
+    display: none !important;
   }
 
   .nav-right .nav-theme-toggle {
-    display: none;
+    display: none !important;
   }
 
   .nav-bar {
     z-index: 200;
     height: auto;
-    left: 20px;
-    right: 20px;
+    left: 16px;
+    right: 16px;
     transform: none;
     width: auto;
-    padding: 18px 16px;
+    padding: 14px 16px;
     transition: padding 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     flex-direction: column;
     align-items: stretch;
   }
 
   .nav-bar--expanded {
-    padding: 18px 16px 16px;
+    padding: 14px 16px 16px;
   }
 
   .nav-mobile-header {
@@ -2709,8 +2735,6 @@ textarea.contact-modal-input {
     background: var(--light-gray);
   }
 
-  /* Smooth height-expand animation using the grid-rows trick,
-     since height:auto cannot be transitioned directly. */
   .nav-mobile-menu {
     display: grid;
     grid-template-rows: 0fr;
@@ -2753,29 +2777,18 @@ textarea.contact-modal-input {
   }
 
   .bg-name-text {
-    font-size: clamp(56px, 15vw, 140px);
+    font-size: clamp(48px, 14vw, 120px);
+    opacity: 0.12;
   }
 
-  /* Reveal the 8 extra fill rows and stack all 9 evenly across the hero height.
-     Each row reuses the exact same .bg-name-track animation as the center row
-     (same duration via the inherited --marquee-loop-duration, same direction,
-     same opacity) so the whole background reads as one cohesive motion. */
+  /* Keep hero background clean with a single subtle center marquee, hiding redundant rows */
   .bg-name-marquee--mobile-extra {
-    display: block;
+    display: none !important;
   }
 
-  .bg-name-marquee--t1 { top: 10%; }
-  .bg-name-marquee--t2 { top: 20%; }
-  .bg-name-marquee--t3 { top: 30%; }
-  .bg-name-marquee--t4 { top: 40%; }
-  .bg-name-marquee--b1 { top: 60%; }
-  .bg-name-marquee--b2 { top: 70%; }
-  .bg-name-marquee--b3 { top: 80%; }
-  .bg-name-marquee--b4 { top: 90%; }
-
-.section {
-  padding: 120px 20px 60px;
-}
+  .section {
+    padding: 80px 20px 40px;
+  }
 
   .scroll-indicator {
     right: 20px;
@@ -4320,11 +4333,19 @@ textarea.contact-modal-input {
    ========================================================================== */
 .certificates-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
   gap: 28px;
   max-width: 1140px;
   margin: 40px auto 0;
   width: 100%;
+}
+
+@media (max-width: 640px) {
+  .certificates-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    margin-top: 24px;
+  }
 }
 
 .certificate-card {
