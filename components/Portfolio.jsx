@@ -13,59 +13,64 @@ import { isPdf, isImage, getFormatLabel, safeMediaUrl } from "../lib/media";
 
 const WHAT_I_CAN_DO = [
   {
-    group: "AI Engineering & LLM Systems",
+    group: "AI Engineering & Deep Learning",
     description:
-      "Fine-tuning domain-specific language models with LoRA and PEFT adapters, optimizing weights via GGUF quantization for edge inference, and architecting production conversational AI copilots with structured outputs and multimodal vision.",
+      "Training, fine-tuning, and deploying deep learning and language models with PyTorch, TensorFlow, and Hugging Face, optimizing weights via LoRA/PEFT and GGUF quantization, and orchestrating agentic RAG pipelines with LangChain and FastAPI.",
     visual: "ai",
     size: "large",
     items: [
       "PyTorch",
+      "TensorFlow",
       "Hugging Face",
+      "LangChain",
+      "Scikit-learn",
+      "FastAPI",
       "LoRA / PEFT",
-      "Qwen 2.5 & 3B Fine-Tuning",
       "GGUF Quantization",
       "ZeroGPU Cloud Spaces",
-      "FastAPI",
-      "Claude API",
       "Multimodal Vision",
-      "Prompt Caching",
-      "AI Copilots & Workflows",
+      "AI Agents & RAG",
       "Python 3.12+",
     ],
   },
   {
-    group: "Full-Stack Web & Backend Engineering",
+    group: "Data Science & ML Analytics",
     description:
-      "Developing resilient web platforms, REST APIs, and commerce integrations with modern frameworks, relational databases, and payment gateways like Bakong KHQR and ABA PayWay.",
+      "Performing end-to-end data wrangling, feature engineering, exploratory data analysis, classical machine learning, scientific visualization, and interactive ML web apps using the full Python data science stack.",
     visual: "fullstack",
     items: [
-      "Next.js",
-      "React",
-      "TypeScript",
-      "Laravel",
-      "PHP",
-      "Vue 3",
-      "PostgreSQL",
-      "Redis",
-      "Docker",
-      "Bakong KHQR",
-      "Telegram Mini Apps",
-      "RESTful APIs",
+      "NumPy",
+      "Pandas",
+      "Matplotlib",
+      "Scikit-learn",
+      "Jupyter",
+      "Streamlit",
+      "TensorFlow",
+      "PyTorch",
+      "Data Cleaning & ETL",
+      "Feature Engineering",
+      "Statistical Modeling",
+      "Data Visualization",
     ],
   },
   {
-    group: "Digital Systems & Visual Architecture",
+    group: "Backend APIs & Production Systems",
     description:
-      "Bridging machine learning engineering with clean UI/UX designs, responsive component kits, automated workflow pipelines, and developer community platforms.",
+      "Developing high-performance async Python services, REST APIs, relational database architectures, containerized ML deployments, and full-stack web interfaces with payment gateways like Bakong KHQR.",
     visual: "design",
     items: [
-      "Figma UI/UX",
-      "Tailwind CSS",
-      "System Architecture",
+      "FastAPI",
+      "Flask",
+      "Streamlit",
+      "React",
+      "TypeScript",
+      "PostgreSQL",
+      "MySQL",
+      "Redis",
+      "Docker",
       "Git & GitHub",
-      "API Integrations",
-      "Data Modeling",
-      "Workflow Automation",
+      "RESTful APIs",
+      "Bakong KHQR",
     ],
   },
 ];
@@ -107,7 +112,7 @@ const CARD_SCATTER = [
 ];
 
 const CURRENTLY = [
-  { icon: Cpu, label: "Fine-Tuning", detail: "Qwen LLMs & LoRA Adapters" },
+  { icon: Cpu, label: "AI & Data Science", detail: "PyTorch, TensorFlow & LangChain" },
   { icon: Bot, label: "Building", detail: "OmniChat AI CRM (ChhlatAI)" },
   { icon: Rocket, label: "Deploying", detail: "Hugging Face ZeroGPU Spaces" },
 ];
@@ -115,20 +120,21 @@ const CURRENTLY = [
 const EXPERIENCE = [
   {
     title: "Specialized AI Engineering & LLM Model Fine-Tuning",
-    subtitle: "LoRA / PEFT Adapters, GGUF Quantization & ZeroGPU Cloud Spaces",
+    subtitle: "PyTorch, TensorFlow, LangChain, LoRA / PEFT & ZeroGPU Cloud Spaces",
     org: "Hugging Face Pro • Independent AI Systems & Open Source",
     date: "2024 - 2026",
     badge: "Specialized AI Engineering",
-    desc: "Advanced applied AI engineering specialization focusing on domain-specific LLM fine-tuning, parameter-efficient training (LoRA/PEFT), model quantization, and production AI copilot deployment. Successfully trained and released models on Hugging Face including agri-qwen3b-lora, agrisystem-qwen2.5-3b-adapter, and GGUF quantized models for edge diagnostics. Deployed interactive MCP cloud spaces on Hugging Face ZeroGPU (KeleoIP running at 5.7 TFLOPS and AgriSystem Assistant). Architected OmniChat CRM (ChhlatAI) combining Claude LLM structured outputs, prompt caching, vision-based slip verification, and Bakong KHQR checkout.",
+    desc: "Advanced applied AI engineering and data science specialization focusing on deep learning, domain-specific LLM fine-tuning (LoRA/PEFT), GGUF quantization, data analytics (NumPy, Pandas, Scikit-learn, Matplotlib, Jupyter), and production AI deployment with FastAPI, LangChain, and Streamlit. Successfully trained and released open-source agricultural language models and GGUF edge builds on Hugging Face, deployed interactive cloud spaces on Hugging Face ZeroGPU (5.7 TFLOPS), and architected OmniChat CRM (ChhlatAI).",
     tags: [
-      "Hugging Face Pro",
-      "LoRA / PEFT",
-      "Qwen 2.5 & 3B",
-      "GGUF Quantization",
-      "ZeroGPU (5.7 TFLOPS)",
-      "FastAPI & Claude API",
-      "Multimodal Vision",
-      "Bakong KHQR",
+      "PyTorch & TensorFlow",
+      "Hugging Face",
+      "LangChain",
+      "Scikit-learn",
+      "NumPy & Pandas",
+      "Matplotlib & Jupyter",
+      "Streamlit",
+      "FastAPI",
+      "LoRA / PEFT & GGUF",
     ],
     certificates: [
       { name: "Hugging Face Profile & Model Hub (hf.co/Maoseavik)", link: "https://huggingface.co/Maoseavik" },
@@ -668,7 +674,7 @@ export default function Portfolio() {
               <div className="section-label">My Capabilities</div>
               <TypewriterTitle text="What I Can Do" />
               <div className="what-i-can-do-desc">
-                I combine technical, problem-solving, and digital skills to build reliable systems, test systems, manage data, and support efficient digital workflows.
+                I combine deep learning, data science, and backend engineering to train machine learning models, analyze complex datasets, build interactive AI applications, and deploy scalable production APIs.
               </div>
               <div className="tech-stack">
                 <div className="tech-stack-column">
@@ -681,8 +687,44 @@ export default function Portfolio() {
                     <span className="tech-stack-label">PyTorch</span>
                   </div>
                   <div className="tech-stack-item">
+                    <img src="/images/logos/tensorflow.svg" alt="TensorFlow" draggable={false} />
+                    <span className="tech-stack-label">TensorFlow</span>
+                  </div>
+                  <div className="tech-stack-item">
                     <img src="/images/logos/huggingface.svg" alt="Hugging Face" draggable={false} />
                     <span className="tech-stack-label">Hugging Face</span>
+                  </div>
+                  <div className="tech-stack-item">
+                    <img src="/images/logos/langchain.svg" alt="LangChain" draggable={false} />
+                    <span className="tech-stack-label">LangChain</span>
+                  </div>
+                </div>
+                <div className="tech-stack-column">
+                  <div className="tech-stack-item">
+                    <img src="/images/logos/numpy.svg" alt="NumPy" draggable={false} />
+                    <span className="tech-stack-label">NumPy</span>
+                  </div>
+                  <div className="tech-stack-item">
+                    <img src="/images/logos/pandas.svg" alt="Pandas" draggable={false} />
+                    <span className="tech-stack-label">Pandas</span>
+                  </div>
+                  <div className="tech-stack-item">
+                    <img src="/images/logos/scikitlearn.svg" alt="Scikit-learn" draggable={false} />
+                    <span className="tech-stack-label">Scikit-learn</span>
+                  </div>
+                  <div className="tech-stack-item">
+                    <img src="/images/logos/matplotlib.svg" alt="Matplotlib" draggable={false} />
+                    <span className="tech-stack-label">Matplotlib</span>
+                  </div>
+                  <div className="tech-stack-item">
+                    <img src="/images/logos/jupyter.svg" alt="Jupyter" draggable={false} />
+                    <span className="tech-stack-label">Jupyter</span>
+                  </div>
+                </div>
+                <div className="tech-stack-column workspace-column">
+                  <div className="tech-stack-item">
+                    <img src="/images/logos/streamlit.svg" alt="Streamlit" draggable={false} />
+                    <span className="tech-stack-label">Streamlit</span>
                   </div>
                   <div className="tech-stack-item">
                     <img src="/images/logos/fastapi.svg" alt="FastAPI" draggable={false} />
@@ -692,71 +734,35 @@ export default function Portfolio() {
                     <img src="/images/logos/flask.png" alt="Flask" draggable={false} />
                     <span className="tech-stack-label">Flask</span>
                   </div>
+                  <div className="tech-stack-item">
+                    <img src="/images/logos/postgresql.svg" alt="PostgreSQL" draggable={false} />
+                    <span className="tech-stack-label">PostgreSQL</span>
+                  </div>
+                  <div className="tech-stack-item">
+                    <img src="/images/workspace/docker.svg" alt="Docker" draggable={false} />
+                    <span className="tech-stack-label">Docker</span>
+                  </div>
                 </div>
-                <div className="tech-stack-column">
+                <div className="tech-stack-column workspace-column">
                   <div className="tech-stack-item">
                     <img src="/images/logos/react.png" alt="React" draggable={false} />
                     <span className="tech-stack-label">React</span>
-                  </div>
-                  <div className="tech-stack-item">
-                    <img src="/images/logos/vue.svg" alt="Vue 3" draggable={false} />
-                    <span className="tech-stack-label">Vue 3</span>
                   </div>
                   <div className="tech-stack-item">
                     <img src="/images/logos/js.png" alt="JavaScript" draggable={false} />
                     <span className="tech-stack-label">JavaScript</span>
                   </div>
                   <div className="tech-stack-item">
-                    <img src="/images/logos/laravel.svg" alt="Laravel" draggable={false} />
-                    <span className="tech-stack-label">Laravel</span>
+                    <img src="/images/logos/mysql.svg" alt="MySQL" draggable={false} />
+                    <span className="tech-stack-label">MySQL</span>
                   </div>
-                  <div className="tech-stack-item">
-                    <img src="/images/logos/postgresql.svg" alt="PostgreSQL" draggable={false} />
-                    <span className="tech-stack-label">PostgreSQL</span>
-                  </div>
-                </div>
-                <div className="tech-stack-column workspace-column">
                   <div className="tech-stack-item">
                     <img src="/images/workspace/visual-studio-code.svg" alt="VS Code" draggable={false} />
                     <span className="tech-stack-label">VS Code</span>
                   </div>
                   <div className="tech-stack-item">
-                    <img src="/images/workspace/docker.svg" alt="Docker" draggable={false} />
-                    <span className="tech-stack-label">Docker</span>
-                  </div>
-                  <div className="tech-stack-item">
-                    <img src="/images/logos/mysql.svg" alt="MySQL" draggable={false} />
-                    <span className="tech-stack-label">MySQL</span>
-                  </div>
-                  <div className="tech-stack-item">
-                    <img src="/images/logos/php.png" alt="PHP" draggable={false} />
-                    <span className="tech-stack-label">PHP</span>
-                  </div>
-                  <div className="tech-stack-item">
-                    <img src="/images/logos/html.png" alt="HTML5" draggable={false} />
-                    <span className="tech-stack-label">HTML5</span>
-                  </div>
-                </div>
-                <div className="tech-stack-column workspace-column">
-                  <div className="tech-stack-item">
                     <img src="/images/workspace/figma.png" alt="Figma" draggable={false} />
                     <span className="tech-stack-label">Figma</span>
-                  </div>
-                  <div className="tech-stack-item">
-                    <img src="/images/workspace/notion.png" alt="Notion" draggable={false} />
-                    <span className="tech-stack-label">Notion</span>
-                  </div>
-                  <div className="tech-stack-item">
-                    <img src="/images/workspace/canva.png" alt="Canva" draggable={false} />
-                    <span className="tech-stack-label">Canva</span>
-                  </div>
-                  <div className="tech-stack-item">
-                    <img src="/images/workspace/capcut.png" alt="CapCut" draggable={false} />
-                    <span className="tech-stack-label">CapCut</span>
-                  </div>
-                  <div className="tech-stack-item">
-                    <img src="/images/workspace/telegram.svg" alt="Telegram" draggable={false} />
-                    <span className="tech-stack-label">Telegram</span>
                   </div>
                 </div>
               </div>
@@ -832,7 +838,7 @@ export default function Portfolio() {
                 </div>
                 <div className="about-description">
                   <p>
-                    I’m a Software Development student at Norton University and full-stack developer (SalaIT graduate) based in Phnom Penh, Cambodia. I specialize in building AI-powered expert systems, web applications, and digital platforms. As a developer and student team leader, I have designed rule-based crop disease diagnosis engines with PyTorch and Flask, created social community platforms for software engineers using Next.js and TypeScript, and developed high-performance Telegram Mini Apps and e-commerce solutions.
+                    I’m an AI Engineer and Software Development student at Norton University (SalaIT graduate) based in Phnom Penh, Cambodia. I specialize in building AI-powered expert systems, data science pipelines, and scalable backend services. As a developer and student team leader, I work across the full AI and data stack—including PyTorch, TensorFlow, Hugging Face, LangChain, Scikit-learn, NumPy, Pandas, Matplotlib, Jupyter, Streamlit, and FastAPI—to design intelligent diagnostic engines, conversational AI agents, and production web platforms.
                   </p>
                   <p>
                     Want to know more about my experience?{" "}
