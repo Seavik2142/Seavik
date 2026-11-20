@@ -4,10 +4,10 @@ import { ThemeProvider } from "../components/ThemeProvider";
 export const metadata = {
   metadataBase: new URL("https://seavik-portfolio.vercel.app"),
   title: "MAO SEAVIK | Portfolio",
-  description: "Portfolio of Mao Seavik (Seavik) - AI Engineer & Full Stack Developer specializing in AI systems, expert diagnostics, and web applications.",
+  description: "Portfolio of Mao Seavik (Seavik) - Machine Learning Engineer & Full Stack Developer specializing in ML systems, expert diagnostics, and web applications.",
   openGraph: {
     title: "MAO SEAVIK | Portfolio",
-    description: "Portfolio of Mao Seavik (Seavik) - AI Engineer & Full Stack Developer specializing in AI systems, expert diagnostics, and web applications.",
+    description: "Portfolio of Mao Seavik (Seavik) - Machine Learning Engineer & Full Stack Developer specializing in ML systems, expert diagnostics, and web applications.",
     url: "https://seavik-portfolio.vercel.app",
     siteName: "MAO SEAVIK PORTFOLIO",
     images: [
@@ -23,7 +23,7 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
     title: "MAO SEAVIK | Portfolio",
-    description: "Portfolio of Mao Seavik (Seavik) - AI Engineer & Full Stack Developer specializing in AI systems, expert diagnostics, and web applications.",
+    description: "Portfolio of Mao Seavik (Seavik) - Machine Learning Engineer & Full Stack Developer specializing in ML systems, expert diagnostics, and web applications.",
     images: ["/images/about/profile.png"],
   },
 };

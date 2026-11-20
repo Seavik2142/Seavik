@@ -13,7 +13,7 @@ import { isPdf, isImage, getFormatLabel, safeMediaUrl } from "../lib/media";
 
 const WHAT_I_CAN_DO = [
   {
-    group: "AI Engineering & Deep Learning",
+    group: "ML Engineering & Deep Learning",
     description:
       "Training, fine-tuning, and deploying deep learning and language models with PyTorch, TensorFlow, and Hugging Face, optimizing weights via LoRA/PEFT and GGUF quantization, and orchestrating agentic RAG pipelines with LangChain and FastAPI.",
     visual: "ai",
@@ -112,19 +112,19 @@ const CARD_SCATTER = [
 ];
 
 const CURRENTLY = [
-  { icon: Cpu, label: "AI & Data Science", detail: "PyTorch, TensorFlow & LangChain" },
+  { icon: Cpu, label: "ML & Data Science", detail: "PyTorch, TensorFlow & LangChain" },
   { icon: Bot, label: "Building", detail: "OmniChat AI CRM (ChhlatAI)" },
   { icon: Rocket, label: "Deploying", detail: "Hugging Face ZeroGPU Spaces" },
 ];
 
 const EXPERIENCE = [
   {
-    title: "Specialized AI Engineering & LLM Model Fine-Tuning",
+    title: "Specialized Machine Learning Engineering & LLM Model Fine-Tuning",
     subtitle: "PyTorch, TensorFlow, LangChain, LoRA / PEFT & ZeroGPU Cloud Spaces",
-    org: "Hugging Face Pro • Independent AI Systems & Open Source",
+    org: "Hugging Face Pro • Independent ML Systems & Open Source",
     date: "2024 - 2026",
-    badge: "Specialized AI Engineering",
-    desc: "Advanced applied AI engineering and data science specialization focusing on deep learning, domain-specific LLM fine-tuning (LoRA/PEFT), GGUF quantization, data analytics (NumPy, Pandas, Scikit-learn, Matplotlib, Jupyter), and production AI deployment with FastAPI, LangChain, and Streamlit. Successfully trained and released open-source agricultural language models and GGUF edge builds on Hugging Face, deployed interactive cloud spaces on Hugging Face ZeroGPU (5.7 TFLOPS), and architected OmniChat CRM (ChhlatAI).",
+    badge: "Specialized ML Engineering",
+    desc: "Advanced applied Machine Learning engineering and data science specialization focusing on deep learning, domain-specific LLM fine-tuning (LoRA/PEFT), GGUF quantization, data analytics (NumPy, Pandas, Scikit-learn, Matplotlib, Jupyter), and production ML deployment with FastAPI, LangChain, and Streamlit. Successfully trained and released open-source agricultural language models and GGUF edge builds on Hugging Face, deployed interactive cloud spaces on Hugging Face ZeroGPU (5.7 TFLOPS), and architected OmniChat CRM (ChhlatAI).",
     tags: [
       "PyTorch & TensorFlow",
       "Hugging Face",
@@ -674,7 +674,7 @@ export default function Portfolio() {
               <div className="section-label">My Capabilities</div>
               <TypewriterTitle text="What I Can Do" />
               <div className="what-i-can-do-desc">
-                I combine deep learning, data science, and backend engineering to train machine learning models, analyze complex datasets, build interactive AI applications, and deploy scalable production APIs.
+                I combine deep learning, data science, and backend engineering to train machine learning models, analyze complex datasets, build interactive ML applications, and deploy scalable production APIs.
               </div>
               <div className="tech-stack">
                 <div className="tech-stack-column">
@@ -838,7 +838,7 @@ export default function Portfolio() {
                 </div>
                 <div className="about-description">
                   <p>
-                    I’m an AI Engineer and Software Development student at Norton University (SalaIT graduate) based in Phnom Penh, Cambodia. I specialize in building AI-powered expert systems, data science pipelines, and scalable backend services. As a developer and student team leader, I work across the full AI and data stack—including PyTorch, TensorFlow, Hugging Face, LangChain, Scikit-learn, NumPy, Pandas, Matplotlib, Jupyter, Streamlit, and FastAPI—to design intelligent diagnostic engines, conversational AI agents, and production web platforms.
+                    I’m a Machine Learning Engineer and Software Development student at Norton University (SalaIT graduate) based in Phnom Penh, Cambodia. I specialize in building ML-powered expert systems, data science pipelines, and scalable backend services. As a developer and student team leader, I work across the full machine learning and data stack—including PyTorch, TensorFlow, Hugging Face, LangChain, Scikit-learn, NumPy, Pandas, Matplotlib, Jupyter, Streamlit, and FastAPI—to design intelligent diagnostic engines, conversational LLM agents, and production web platforms.
                   </p>
                   <p>
                     Want to know more about my experience?{" "}
@@ -1128,7 +1128,7 @@ export default function Portfolio() {
             </Reveal>
             <Reveal delay={300}>
               <p className="contact-secondary">
-                I'm open to opportunities where I can contribute to AI engineering, LLM fine-tuning, full-stack systems, and intelligent digital workflows.
+                I'm open to opportunities where I can contribute to Machine Learning engineering, LLM fine-tuning, full-stack systems, and intelligent digital workflows.
               </p>
             </Reveal>
             <Reveal delay={400}>
