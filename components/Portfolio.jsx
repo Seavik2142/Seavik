@@ -893,8 +893,18 @@ function SeavikBlueprintIsometric() {
     };
   }, [startPhysicsLoop]);
 
+  const lastSoundTimeRef = useRef(0);
+
+  const triggerMetalSound = () => {
+    const now = performance.now();
+    if (now - lastSoundTimeRef.current > 80) {
+      lastSoundTimeRef.current = now;
+      playMetalClick();
+    }
+  };
+
   const handlePointerDown = () => {
-    playMetalClick();
+    triggerMetalSound();
     setIsPressed(true);
     physicsRef.current.targetPress = 16;
     startPhysicsLoop();
@@ -907,12 +917,25 @@ function SeavikBlueprintIsometric() {
     startPhysicsLoop();
   };
 
+  const handleClick = () => {
+    triggerMetalSound();
+    // Ensure a quick tap or keyboard click still visibly compresses and springs back
+    physicsRef.current.targetPress = 16;
+    startPhysicsLoop();
+    setTimeout(() => {
+      setIsPressed(false);
+      physicsRef.current.targetPress = 0;
+      startPhysicsLoop();
+    }, 130);
+  };
+
   const topOffset = pressOffset;
   const baseDepth = 32;
 
   return (
     <svg
       ref={svgRef}
+      onClick={handleClick}
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerUp}
       onPointerLeave={handlePointerUp}

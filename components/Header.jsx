@@ -30,6 +30,7 @@ import { useTheme } from "./ThemeProvider";
 import { PROJECTS } from "../lib/projects";
 import { CERTIFICATES } from "../data/certificates";
 import {
+  playMetalClick,
   playSoftClick,
   playTickClick,
   playMiniMapOpen,
@@ -447,7 +448,7 @@ export default function Header({
           <Link
             href="/"
             aria-label="Home"
-            onClick={() => playSoftClick()}
+            onClick={() => playMetalClick()}
             className="flex items-center text-[var(--foreground)] transition-all duration-200 hover:opacity-80 active:scale-95"
           >
             <SeavikMark className="h-6 w-auto shrink-0" />
