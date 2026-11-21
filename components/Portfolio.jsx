@@ -1303,10 +1303,14 @@ function GitHubContributionsPanel() {
    ANIMATED TECHNICAL PEN SIGNATURE (Mao Seavik's Handwritten Signature)
    ============================================================================ */
 
-// Vectorized from Mao Seavik's actual handwritten ink signature (viewBox 0 0 201 74):
-// Continuous single-path stroke with the double-arch monogram + horizontal loop + diagonal underline flourish
-const SEAVIK_SIGNATURE_STROKE =
-  "M 74.5 14.5 C 73.5 7.2 84.0 3.2 91.5 6.8 C 99.8 10.8 102.5 24.5 98.8 41.2 C 98.4 43.0 98.0 43.5 98.6 41.5 C 102.5 24.0 109.2 6.8 115.6 2.6 C 117.2 1.6 118.5 3.4 119.4 9.5 C 121.0 20.5 119.8 32.8 118.2 38.4 C 117.8 39.8 117.2 38.6 117.6 36.2 C 119.2 28.5 121.2 22.8 114.5 20.0 C 103.5 15.4 81.5 18.8 73.8 29.2 C 69.8 34.6 73.8 37.8 83.5 36.8 C 102.5 34.8 139.5 27.2 162.5 26.8 C 166.8 26.7 166.5 28.6 161.2 29.2 C 156.5 29.7 151.5 30.2 148.5 30.6 M 24.5 66.2 C 21.8 67.5 22.5 66.8 27.5 65.2 C 64.5 53.2 128.5 31.8 172.8 16.5 C 174.5 15.9 173.8 16.8 172.2 17.5";
+// Vectorized from Mao Seavik's actual handwritten ink signature (viewBox 0 0 201 72):
+// Separated into its 2 physical strokes (1: Double-arch monogram + horizontal loop, 2: Diagonal underline slash)
+// so the Rotring pen visibly lifts in the air between strokes in exact sync with the pen-scratch audio!
+const SEAVIK_MONOGRAM_STROKE =
+  "M 74.5 14.5 C 73.5 7.2 84.0 3.2 91.5 6.8 C 99.8 10.8 102.5 24.5 98.8 41.2 C 98.4 43.0 98.0 43.5 98.6 41.5 C 102.5 24.0 109.2 6.8 115.6 2.6 C 117.2 1.6 118.5 3.4 119.4 9.5 C 121.0 20.5 119.8 32.8 118.2 38.4 C 117.8 39.8 117.2 38.6 117.6 36.2 C 119.2 28.5 121.2 22.8 114.5 20.0 C 103.5 15.4 81.5 18.8 73.8 29.2 C 69.8 34.6 73.8 37.8 83.5 36.8 C 102.5 34.8 139.5 27.2 162.5 26.8 C 166.8 26.7 166.5 28.6 161.2 29.2 C 156.5 29.7 151.5 30.2 148.5 30.6";
+
+const SEAVIK_UNDERLINE_STROKE =
+  "M 24.5 66.2 C 21.8 67.5 22.5 66.8 27.5 65.2 C 64.5 53.2 128.5 31.8 172.8 16.5 C 174.5 15.9 173.8 16.8 172.2 17.5";
 
 function TechnicalPen({ transform }) {
   return (
@@ -1322,59 +1326,123 @@ function TechnicalPen({ transform }) {
 
 function SeavikSignature({ className = "" }) {
   const btnRef = useRef(null);
-  const pathRef = useRef(null);
+  const monogramRef = useRef(null);
+  const underlineRef = useRef(null);
   const rafRef = useRef(null);
   const soundRef = useRef(null);
   const hasSignedRef = useRef(false);
 
   const [state, setState] = useState({
-    totalLen: 600,
-    drawnLen: 600,
-    penX: 172,
-    penY: 17,
+    len1: 420,
+    drawn1: 420,
+    len2: 180,
+    drawn2: 180,
+    showDot: true,
+    penX: 177.5,
+    penY: 14.5,
     penOpacity: 0,
   });
 
   const runSignatureAnimation = useCallback(() => {
-    const pathEl = pathRef.current;
-    if (!pathEl) return;
+    const p1 = monogramRef.current;
+    const p2 = underlineRef.current;
+    if (!p1 || !p2) return;
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
 
-    const totalLen = pathEl.getTotalLength() || 600;
-    const durationMs = 1950;
+    const len1 = p1.getTotalLength() || 420;
+    const len2 = p2.getTotalLength() || 180;
+    const totalDurationMs = 1950;
     const startTime = performance.now();
     const angleRad = (45 * Math.PI) / 180;
 
+    // Ease helper
+    const easeInOut = (u) => (u < 0.5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2);
+
     const tick = (now) => {
-      const elapsed = now - startTime;
-      const t = Math.min(1, elapsed / durationMs);
-      // Smooth ease-in-out curve
-      const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-      const currentLen = eased * totalLen;
+      const elapsed = (now - startTime) / 1000; // seconds (0 -> 1.95s)
 
+      let drawn1 = len1;
+      let drawn2 = len2;
+      let showDot = false;
       let pt = { x: 74.5, y: 14.5 };
-      try {
-        pt = pathEl.getPointAtLength(currentLen);
-      } catch {}
+      let lift = 1;
+      let penOpacity = 0;
 
-      // Pen lift at start (first 8%) and end (last 10%)
-      let lift = 0;
-      if (t < 0.08) {
-        lift = 1 - t / 0.08;
-      } else if (t > 0.9) {
-        lift = (t - 0.9) / 0.1;
+      if (elapsed < 0.10) {
+        // Phase 0 (0.00s - 0.10s): Pen lands on start of Monogram (74.5, 14.5)
+        const u = elapsed / 0.10;
+        drawn1 = 0;
+        drawn2 = 0;
+        pt = { x: 74.5, y: 14.5 };
+        lift = 1 - u;
+        penOpacity = u;
+      } else if (elapsed < 1.25) {
+        // Phase 1 (0.10s - 1.25s): Draw Monogram (Arch 1 + Arch 2 + Oval Loop)
+        const u = (elapsed - 0.10) / 1.15;
+        const progress1 = easeInOut(Math.min(1, Math.max(0, u)));
+        drawn1 = progress1 * len1;
+        drawn2 = 0;
+        try {
+          pt = p1.getPointAtLength(drawn1);
+        } catch {}
+        lift = 0;
+        penOpacity = 1;
+      } else if (elapsed < 1.40) {
+        // Phase 2 (1.25s - 1.40s): Pen lifts in air from (148.5, 30.6) to (24.5, 66.2)
+        const u = (elapsed - 1.25) / 0.15;
+        const smoothU = easeInOut(u);
+        drawn1 = len1;
+        drawn2 = 0;
+        pt = {
+          x: 148.5 + (24.5 - 148.5) * smoothU,
+          y: 30.6 + (66.2 - 30.6) * smoothU,
+        };
+        // Parabolic arc lift in the air
+        lift = Math.sin(u * Math.PI) * 0.75;
+        penOpacity = 0.92;
+      } else if (elapsed < 1.85) {
+        // Phase 3 (1.40s - 1.85s): Fast diagonal underline slash
+        const u = (elapsed - 1.40) / 0.45;
+        // Fast decisive slash ease-out
+        const progress2 = 1 - Math.pow(1 - Math.min(1, Math.max(0, u)), 1.85);
+        drawn1 = len1;
+        drawn2 = progress2 * len2;
+        try {
+          pt = p2.getPointAtLength(drawn2);
+        } catch {}
+        lift = 0;
+        penOpacity = 1;
+      } else if (elapsed < 1.95) {
+        // Phase 4 (1.85s - 1.95s): Terminal dot tap at (177.5, 14.5) and pen lift away
+        const u = (elapsed - 1.85) / 0.10;
+        drawn1 = len1;
+        drawn2 = len2;
+        showDot = u >= 0.2;
+        pt = { x: 177.5, y: 14.5 };
+        lift = u;
+        penOpacity = 1 - u;
+      } else {
+        drawn1 = len1;
+        drawn2 = len2;
+        showDot = true;
+        pt = { x: 177.5, y: 14.5 };
+        lift = 1;
+        penOpacity = 0;
       }
 
       const liftDist = lift * 12;
       setState({
-        totalLen,
-        drawnLen: currentLen,
+        len1,
+        drawn1,
+        len2,
+        drawn2,
+        showDot,
         penX: pt.x + liftDist * Math.sin(angleRad),
         penY: pt.y - liftDist * Math.cos(angleRad),
-        penOpacity: t >= 1 ? 0 : 1 - lift * 0.85,
+        penOpacity,
       });
 
-      if (t < 1) {
+      if (elapsed * 1000 < totalDurationMs) {
         rafRef.current = requestAnimationFrame(tick);
       }
     };
@@ -1398,6 +1466,7 @@ function SeavikSignature({ className = "" }) {
     return () => {
       obs.disconnect();
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      if (soundRef.current?.stop) soundRef.current.stop();
     };
   }, [runSignatureAnimation]);
 
@@ -1405,7 +1474,7 @@ function SeavikSignature({ className = "" }) {
     if (soundRef.current?.stop) {
       soundRef.current.stop();
     }
-    void playPenScratch({ playbackRate: 0.84 / 1.95 }).then((handle) => {
+    void playPenScratch().then((handle) => {
       soundRef.current = handle;
     });
     runSignatureAnimation();
@@ -1431,15 +1500,25 @@ function SeavikSignature({ className = "" }) {
         strokeWidth="1.75"
         aria-hidden="true"
       >
+        {/* Stroke 1: Double-arch monogram + horizontal loop */}
         <path
-          ref={pathRef}
-          d={SEAVIK_SIGNATURE_STROKE}
-          strokeDasharray={state.totalLen}
-          strokeDashoffset={Math.max(0, state.totalLen - state.drawnLen)}
+          ref={monogramRef}
+          d={SEAVIK_MONOGRAM_STROKE}
+          strokeDasharray={state.len1}
+          strokeDashoffset={Math.max(0, state.len1 - state.drawn1)}
+          style={{ opacity: state.drawn1 > 0.5 ? 1 : 0 }}
+        />
+        {/* Stroke 2: Fast diagonal underline slash */}
+        <path
+          ref={underlineRef}
+          d={SEAVIK_UNDERLINE_STROKE}
+          strokeDasharray={state.len2}
+          strokeDashoffset={Math.max(0, state.len2 - state.drawn2)}
+          style={{ opacity: state.drawn2 > 0.5 ? 1 : 0 }}
         />
         {/* Terminal signature dot */}
-        {state.drawnLen >= state.totalLen * 0.96 && (
-          <circle cx="177.5" cy="14.5" r="1.1" fill="currentColor" stroke="none" />
+        {state.showDot && (
+          <circle cx="177.5" cy="14.5" r="1.15" fill="currentColor" stroke="none" />
         )}
         {state.penOpacity > 0.01 && (
           <g
