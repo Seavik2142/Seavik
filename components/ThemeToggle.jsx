@@ -1,15 +1,16 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useTheme } from "./ThemeProvider";
 import { playSoftClick } from "../lib/sound";
 
 export default function ThemeToggle({ className = "", style }) {
   const { toggleTheme } = useTheme();
+  const btnRef = useRef(null);
 
-  const handleToggle = () => {
+  const handleToggle = (e) => {
     playSoftClick();
-    toggleTheme();
+    toggleTheme(e);
   };
 
   useEffect(() => {
@@ -23,7 +24,7 @@ export default function ThemeToggle({ className = "", style }) {
         !["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)
       ) {
         playSoftClick();
-        toggleTheme();
+        toggleTheme({ currentTarget: btnRef.current });
       }
     };
     window.addEventListener("keydown", onKeyDown);
@@ -32,6 +33,7 @@ export default function ThemeToggle({ className = "", style }) {
 
   return (
     <button
+      ref={btnRef}
       type="button"
       className={`inline-flex h-7 w-7 items-center justify-center rounded-md text-[var(--foreground)]/80 transition-colors hover:bg-[var(--muted-bg)] hover:text-[var(--foreground)] ${className}`}
       onClick={handleToggle}
