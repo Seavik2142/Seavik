@@ -1,21 +1,48 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useTheme } from "./ThemeProvider";
-import { Sun, Moon } from "lucide-react";
 
-export default function ThemeToggle({ className, style }) {
+export default function ThemeToggle({ className = "", style }) {
   const { toggleTheme } = useTheme();
+
+  useEffect(() => {
+    const onKeyDown = (e) => {
+      if (
+        e.key.toLowerCase() === "d" &&
+        !e.metaKey &&
+        !e.ctrlKey &&
+        !e.altKey &&
+        document.activeElement &&
+        !["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)
+      ) {
+        toggleTheme();
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [toggleTheme]);
 
   return (
     <button
-      className={className}
+      type="button"
+      className={`inline-flex h-7 w-7 items-center justify-center rounded-md text-[var(--foreground)]/80 transition-colors hover:bg-[var(--muted-bg)] hover:text-[var(--foreground)] ${className}`}
       onClick={toggleTheme}
-      aria-label="Toggle theme"
+      aria-label="Toggle mode (D)"
+      title="Toggle theme (D)"
       style={style}
     >
-      <Sun className="icon-sun" size={18} />
-      <Moon className="icon-moon" size={18} />
+      <svg
+        className="h-3.5 w-3.5"
+        viewBox="0 0 32 32"
+        fill="currentColor"
+        aria-hidden="true"
+      >
+        <path
+          d="M16 .5C7.4.5.5 7.4.5 16S7.4 31.5 16 31.5 31.5 24.6 31.5 16 24.6.5 16 .5zm0 28.1V3.4C23 3.4 28.6 9 28.6 16S23 28.6 16 28.6z"
+          className="origin-center transition-transform duration-500 ease-out dark:rotate-180"
+        />
+      </svg>
     </button>
   );
 }

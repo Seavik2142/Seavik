@@ -2,10 +2,7 @@
 
 import React, { useEffect, useRef, useState, useMemo } from "react";
 import {
-  Menu,
-  X,
   ArrowUp,
-  ArrowUpRight,
   Coffee,
   Search,
   Github,
@@ -24,7 +21,6 @@ import {
   CornerDownLeft,
   Copy,
   Check,
-  ExternalLink,
 } from "lucide-react";
 import Link from "next/link";
 import ThemeToggle from "./ThemeToggle";
@@ -36,7 +32,6 @@ const NAV_ITEMS = [
   { label: "About", href: "/#about", id: "about", icon: User },
   { label: "Stack", href: "/#what-i-can-do", id: "what-i-can-do", icon: Layers },
   { label: "Experience", href: "/#trainings", id: "trainings", icon: Briefcase },
-  { label: "Education", href: "/#education", id: "education", icon: GraduationCap },
   { label: "Projects", href: "/#work", id: "work", icon: Box },
   { label: "Recognition", href: "/#awards", id: "awards", icon: Award },
 ];
@@ -44,21 +39,15 @@ const NAV_ITEMS = [
 export function SeavikMark({ className = "h-6 w-auto" }) {
   return (
     <svg
-      className={className}
-      viewBox="0 0 44 24"
-      fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 512 256"
       aria-hidden="true"
+      className={className}
     >
-      {/* M */}
       <path
-        d="M2 21V3H6.5L11.5 12.5L16.5 3H21V21H17V10.2L12.3 18.8H10.7L6 10.2V21H2Z"
         fill="currentColor"
-      />
-      {/* S */}
-      <path
-        d="M25 16.5H29C29.2 17.7 30.5 18.4 32.5 18.4C34.4 18.4 35.6 17.7 35.6 16.5C35.6 15.4 34.6 14.9 32.2 14.4L30.2 14C26.8 13.3 25.3 11.7 25.3 8.9C25.3 5.5 28.1 3.2 32.4 3.2C36.6 3.2 39.3 5.4 39.5 8.6H35.5C35.3 7.3 34.1 6.5 32.3 6.5C30.6 6.5 29.4 7.3 29.4 8.5C29.4 9.5 30.3 10.1 32.6 10.5L34.6 10.9C38.2 11.6 39.8 13.1 39.8 16.1C39.8 19.6 37 21.8 32.3 21.8C27.8 21.8 25.2 19.7 25 16.5Z"
-        fill="currentColor"
+        d="M192 256H64v-64h128v64ZM448 64H320v128h128v64H256V0h192v64ZM64 192H0V64h64v128ZM512 192h-64V64h64v128ZM192 64H64V0h128v64Z"
       />
     </svg>
   );
@@ -69,7 +58,7 @@ export default function Header({
   alwaysShowBackToTop = false,
   onOpenResume,
 }) {
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [cmdOpen, setCmdOpen] = useState(false);
   const [cmdQuery, setCmdQuery] = useState("");
   const [copiedEmail, setCopiedEmail] = useState(false);
@@ -80,6 +69,7 @@ export default function Header({
   const [floaterKey, setFloaterKey] = useState(0);
   const [activeSection, setActiveSection] = useState("");
   const cmdInputRef = useRef(null);
+  const mobileMenuRef = useRef(null);
   const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
@@ -131,12 +121,28 @@ export default function Header({
         setCmdOpen(true);
       } else if (e.key === "Escape") {
         setCmdOpen(false);
-        setMenuOpen(false);
+        setMobileMenuOpen(false);
       }
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [cmdOpen]);
+
+  // Close mobile popover when clicking outside
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    const onPointerDown = (e) => {
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(e.target)) {
+        setMobileMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", onPointerDown);
+    document.addEventListener("touchstart", onPointerDown);
+    return () => {
+      document.removeEventListener("mousedown", onPointerDown);
+      document.removeEventListener("touchstart", onPointerDown);
+    };
+  }, [mobileMenuOpen]);
 
   useEffect(() => {
     if (cmdOpen) {
@@ -215,14 +221,14 @@ export default function Header({
       const el = document.getElementById(targetId);
       if (el) {
         e.preventDefault();
-        setMenuOpen(false);
+        setMobileMenuOpen(false);
         setCmdOpen(false);
         el.scrollIntoView({ behavior: "smooth" });
         window.history.pushState(null, "", `/#${targetId}`);
         setActiveSection(targetId);
       }
     } else {
-      setMenuOpen(false);
+      setMobileMenuOpen(false);
       setCmdOpen(false);
     }
   };
@@ -231,19 +237,27 @@ export default function Header({
     const q = cmdQuery.trim().toLowerCase();
     const match = (str) => !q || str.toLowerCase().includes(q);
 
-    const sections = NAV_ITEMS.filter((item) => match(item.label)).map((item) => ({
-      id: `sec-${item.id}`,
-      label: item.label,
-      meta: "Section",
-      icon: item.icon,
-      onSelect: (e) => {
-        if (window.location.pathname === "/") {
-          handleNavClick(e, item.id);
-        } else {
-          window.location.href = item.href;
-        }
-      },
-    }));
+    const allSections = [
+      ...NAV_ITEMS,
+      { label: "Education", href: "/#education", id: "education", icon: GraduationCap },
+      { label: "Contact", href: "/#contact", id: "contact", icon: Mail },
+    ];
+
+    const sections = allSections
+      .filter((item) => match(item.label))
+      .map((item) => ({
+        id: `sec-${item.id}`,
+        label: item.label,
+        meta: "Section",
+        icon: item.icon,
+        onSelect: (e) => {
+          if (window.location.pathname === "/") {
+            handleNavClick(e, item.id);
+          } else {
+            window.location.href = item.href;
+          }
+        },
+      }));
 
     const pages = [
       {
@@ -363,8 +377,8 @@ export default function Header({
     ].filter((a) => match(a.label) || match(a.meta));
 
     return [
-      { heading: "Portfolio Sections", items: sections },
-      { heading: "Quick Actions & Links", items: actions },
+      { heading: "Portfolio", items: sections },
+      { heading: "Quick Actions & Socials", items: actions },
       { heading: "Projects", items: projectItems },
       { heading: "Certificates", items: certItems },
       { heading: "Pages", items: pages },
@@ -373,23 +387,27 @@ export default function Header({
 
   return (
     <>
-      <header className="sticky top-0 z-50 h-14 max-w-[100vw] overflow-x-clip bg-[var(--background)]/90 backdrop-blur-md px-2 pt-1">
-        <div className="screen-line-top screen-line-bottom mx-auto flex h-full items-center gap-2 border-x border-[var(--line)] pr-2 pl-4 sm:gap-3 md:max-w-3xl">
+      {/* ====================================================================
+          CHANHDAI STICKY TOP HEADER (Minimalist 60px CAD Frame)
+         ==================================================================== */}
+      <header className="sticky top-0 z-50 h-[60px] max-w-[100vw] overflow-x-clip bg-[var(--background)] px-2 pt-1">
+        <div className="screen-line-top screen-line-bottom mx-auto flex h-full items-center gap-2 border-x border-[var(--line)] pr-2 pl-4 after:z-10 sm:gap-4 md:max-w-3xl">
+          {/* Left: Clean Pixel-Grid Geometric Mark */}
           <Link
             href="/"
-            aria-label="Mao Seavik Home"
-            className="flex items-center gap-2 text-[var(--foreground)] transition-opacity hover:opacity-80"
+            aria-label="Home"
+            className="flex items-center text-[var(--foreground)] transition-opacity hover:opacity-80"
           >
-            <SeavikMark className="h-5 w-auto shrink-0" />
-            <span className="hidden font-mono text-xs font-semibold tracking-wider sm:inline-block">
-              SEAVIK
-            </span>
+            <SeavikMark className="h-6 w-auto shrink-0" />
           </Link>
 
           <div className="flex-1" />
 
-          {/* Desktop Nav */}
-          <nav className="hidden items-center gap-1 md:flex" aria-label="Primary">
+          {/* Desktop Navigation (Exact ChanhDai NavDesktop typography) */}
+          <nav
+            className="hidden items-center gap-4 sm:flex"
+            aria-label="Primary Navigation"
+          >
             {NAV_ITEMS.map((item) => {
               const isActive = activeSection === item.id;
               return (
@@ -397,10 +415,11 @@ export default function Header({
                   key={item.id}
                   href={item.href}
                   onClick={(e) => handleNavClick(e, item.id)}
-                  className={`rounded-md px-2 py-1 font-mono text-xs transition-colors ${
+                  aria-current={isActive ? "page" : undefined}
+                  className={`text-sm font-medium tracking-wide transition-colors hover:text-[var(--foreground)] ${
                     isActive
-                      ? "bg-[var(--muted-bg)] font-medium text-[var(--foreground)]"
-                      : "text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
+                      ? "text-[var(--foreground)]"
+                      : "text-[var(--muted-foreground)]"
                   }`}
                 >
                   {item.label}
@@ -409,119 +428,171 @@ export default function Header({
             })}
             <Link
               href="/work"
-              className="rounded-md px-2 py-1 font-mono text-xs text-[var(--muted-foreground)] transition-colors hover:text-[var(--foreground)]"
+              className="text-sm font-medium tracking-wide text-[var(--muted-foreground)] transition-colors hover:text-[var(--foreground)]"
             >
               Archive
             </Link>
           </nav>
 
-          <div className="flex items-center gap-1.5">
-            <div className="hidden h-4 w-px bg-[var(--border)] sm:block" />
+          {/* Right Action Controls (Command Menu + GitHub + Coffee + ThemeToggle) */}
+          <div className="flex items-center">
+            <div className="mr-2 hidden h-5 w-px bg-[var(--border)] sm:block" />
 
-            {/* Command Menu Trigger (ChanhDai style) */}
+            {/* Command Menu Trigger (Ghost button with Search icon + [⌘][K] keycaps) */}
             <button
               type="button"
               onClick={() => setCmdOpen(true)}
-              className="inline-flex h-7 items-center gap-1.5 rounded-full border border-[var(--border)] bg-zinc-50/80 px-2.5 font-mono text-xs text-[var(--muted-foreground)] transition-colors hover:border-[var(--foreground)]/30 hover:text-[var(--foreground)] dark:bg-zinc-900/80"
-              aria-label="Open command palette"
+              className="hidden h-7 items-center gap-1.5 rounded-md px-1.5 text-[var(--muted-foreground)] transition-colors hover:bg-[var(--muted-bg)] hover:text-[var(--foreground)] select-none sm:inline-flex"
+              aria-label="Open command menu (⌘K)"
+              title="Search & Commands (⌘K)"
             >
-              <Search className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Search</span>
-              <kbd className="hidden rounded border border-[var(--border)] bg-[var(--background)] px-1 py-0.2 text-[10px] font-medium text-[var(--muted-foreground)] sm:inline-block">
-                ⌘K
-              </kbd>
+              <Search className="h-4 w-4" />
+              <span className="hidden items-center gap-0.5 md:inline-flex">
+                <kbd className="inline-flex h-5 w-5 items-center justify-center rounded border border-[var(--border)] bg-zinc-50 font-sans text-[11px] font-medium text-[var(--muted-foreground)] dark:bg-zinc-900">
+                  ⌘
+                </kbd>
+                <kbd className="inline-flex h-5 w-5 items-center justify-center rounded border border-[var(--border)] bg-zinc-50 font-sans text-[11px] font-medium text-[var(--muted-foreground)] dark:bg-zinc-900">
+                  K
+                </kbd>
+              </span>
             </button>
 
-            {alwaysShowCoffee && (
-              <>
-                <div className="h-4 w-px bg-[var(--border)]" />
-                <button
-                  type="button"
-                  onClick={handleCoffeeClick}
-                  title="Buy me a coffee (click to cheer!)"
-                  className="relative inline-flex h-7 items-center gap-1.5 rounded-full border border-[var(--border)] bg-zinc-50/80 px-2.5 font-mono text-xs text-[var(--foreground)] transition-all hover:border-amber-500/50 hover:bg-amber-500/10 active:scale-95 dark:bg-zinc-900/80"
-                >
-                  {justClicked && (
-                    <span
-                      key={floaterKey}
-                      className="pointer-events-none absolute -top-6 left-1/2 -translate-x-1/2 animate-bounce whitespace-nowrap rounded bg-amber-500 px-1.5 py-0.5 font-mono text-[10px] font-bold text-black shadow"
-                    >
-                      +1 ☕
-                    </span>
-                  )}
-                  <Coffee className="h-3.5 w-3.5 text-amber-500" />
-                  <span className="tabular-nums">{coffeeLoading ? ".." : coffeeCount}</span>
-                </button>
-              </>
-            )}
+            <div className="mx-2 hidden h-5 w-px bg-[var(--border)] sm:block" />
 
-            <div className="hidden h-4 w-px bg-[var(--border)] sm:block" />
-
+            {/* GitHub Icon + Stars/Repos Link */}
             <a
               href="https://github.com/Seavik2142"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="GitHub"
-              className="hidden h-7 w-7 items-center justify-center rounded-md text-[var(--muted-foreground)] transition-colors hover:bg-[var(--muted-bg)] hover:text-[var(--foreground)] sm:inline-flex"
+              title="GitHub (@Seavik2142)"
+              className="inline-flex h-7 items-center gap-1.5 rounded-md px-1.5 text-[var(--foreground)] transition-colors hover:bg-[var(--muted-bg)]"
             >
-              <Github className="h-4 w-4" />
+              <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M12 0C5.37 0 0 5.372 0 11.997 0 17.3 3.438 21.795 8.205 23.38c.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.725-4.042-1.609-4.042-1.609C4.422 17.77 3.633 17.4 3.633 17.4c-1.087-.744.084-.73.084-.73 1.205.085 1.838 1.237 1.838 1.237 1.07 1.834 2.809 1.304 3.495.997.108-.775.417-1.304.76-1.604-2.665-.3-5.466-1.332-5.466-5.929 0-1.31.465-2.38 1.235-3.219-.135-.303-.54-1.523.105-3.175 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.4 3-.405 1.02.006 2.04.138 3 .404 2.28-1.551 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.608-2.805 5.623-5.475 5.918.42.36.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.284 0 .315.21.69.825.57C20.565 21.79 24 17.291 24 11.997 24 5.372 18.627 0 12 0"
+                  fill="currentColor"
+                />
+              </svg>
+              <span className="text-[13px] leading-none text-[var(--muted-foreground)] tabular-nums">
+                23
+              </span>
             </a>
 
-            <div className="h-4 w-px bg-[var(--border)]" />
+            {alwaysShowCoffee && (
+              <>
+                <div className="mx-2 h-5 w-px bg-[var(--border)]" />
+                <button
+                  type="button"
+                  onClick={handleCoffeeClick}
+                  title="Send a coffee cheer!"
+                  className="relative inline-flex h-7 items-center gap-1.5 rounded-md px-1.5 text-[var(--foreground)] transition-colors hover:bg-[var(--muted-bg)] active:scale-95"
+                >
+                  {justClicked && (
+                    <span
+                      key={floaterKey}
+                      className="pointer-events-none absolute -top-6 left-1/2 -translate-x-1/2 animate-bounce whitespace-nowrap rounded bg-[var(--foreground)] px-1.5 py-0.5 font-mono text-[10px] font-semibold text-[var(--background)] shadow"
+                    >
+                      +1 ☕
+                    </span>
+                  )}
+                  <Coffee className="h-3.5 w-3.5 text-[var(--foreground)]/80" />
+                  <span className="text-[13px] leading-none text-[var(--muted-foreground)] tabular-nums">
+                    {coffeeLoading ? ".." : coffeeCount}
+                  </span>
+                </button>
+              </>
+            )}
 
-            <ThemeToggle className="inline-flex h-7 w-7 items-center justify-center rounded-md text-[var(--muted-foreground)] transition-colors hover:bg-[var(--muted-bg)] hover:text-[var(--foreground)]" />
+            <div className="mx-2 h-5 w-px bg-[var(--border)]" />
 
-            <button
-              type="button"
-              onClick={() => setMenuOpen((v) => !v)}
-              aria-label="Toggle navigation menu"
-              className="inline-flex h-7 w-7 items-center justify-center rounded-md text-[var(--muted-foreground)] transition-colors hover:bg-[var(--muted-bg)] hover:text-[var(--foreground)] md:hidden"
-            >
-              {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-            </button>
+            <ThemeToggle />
           </div>
         </div>
+      </header>
 
-        {/* Mobile Dropdown Menu inside CAD frame */}
-        {menuOpen && (
-          <div className="mx-auto border-x border-b border-[var(--line)] bg-[var(--background)] px-4 py-3 shadow-lg md:hidden md:max-w-3xl">
-            <div className="grid grid-cols-2 gap-1.5">
+      {/* ====================================================================
+          CHANHDAI FLOATING MOBILE BOTTOM DOCK (SiteBottomNav — sm:hidden)
+         ==================================================================== */}
+      <div
+        ref={mobileMenuRef}
+        className="fixed bottom-3 left-1/2 z-50 flex w-fit -translate-x-1/2 items-center rounded-xl bg-[var(--background)]/95 py-1 pr-1.5 pl-3 shadow-lg ring-1 ring-[var(--foreground)]/10 backdrop-blur-md sm:hidden dark:ring-[var(--foreground)]/20"
+      >
+        {/* Mobile Popover Menu */}
+        {mobileMenuOpen && (
+          <div className="absolute bottom-full left-1/2 mb-2.5 w-48 -translate-x-1/2 rounded-xl border border-[var(--border)] bg-[var(--background)] p-1.5 shadow-xl">
+            <div className="flex flex-col">
               {NAV_ITEMS.map((item) => {
-                const Icon = item.icon;
+                const isActive = activeSection === item.id;
                 return (
                   <a
                     key={item.id}
                     href={item.href}
                     onClick={(e) => handleNavClick(e, item.id)}
-                    className="flex items-center gap-2 rounded-md border border-[var(--line)] px-3 py-2 font-mono text-xs text-[var(--foreground)] hover:bg-[var(--muted-bg)]"
+                    className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+                      isActive
+                        ? "bg-[var(--muted-bg)] text-[var(--foreground)]"
+                        : "text-[var(--muted-foreground)] hover:bg-[var(--muted-bg)] hover:text-[var(--foreground)]"
+                    }`}
                   >
-                    <Icon className="h-3.5 w-3.5 text-[var(--muted-foreground)]" />
-                    <span>{item.label}</span>
+                    {item.label}
                   </a>
                 );
               })}
               <Link
                 href="/work"
-                onClick={() => setMenuOpen(false)}
-                className="flex items-center gap-2 rounded-md border border-[var(--line)] px-3 py-2 font-mono text-xs text-[var(--foreground)] hover:bg-[var(--muted-bg)]"
+                onClick={() => setMobileMenuOpen(false)}
+                className="rounded-lg px-3 py-1.5 text-sm font-medium text-[var(--muted-foreground)] hover:bg-[var(--muted-bg)] hover:text-[var(--foreground)]"
               >
-                <Box className="h-3.5 w-3.5 text-[var(--muted-foreground)]" />
-                <span>Work Archive</span>
+                Archive
               </Link>
               <a
                 href="/#contact"
                 onClick={(e) => handleNavClick(e, "contact")}
-                className="flex items-center justify-between rounded-md bg-[var(--foreground)] px-3 py-2 font-mono text-xs font-medium text-[var(--background)]"
+                className="rounded-lg px-3 py-1.5 text-sm font-medium text-[var(--muted-foreground)] hover:bg-[var(--muted-bg)] hover:text-[var(--foreground)]"
               >
-                <span>Contact Me</span>
-                <ArrowUpRight className="h-3.5 w-3.5" />
+                Contact
               </a>
             </div>
           </div>
         )}
-      </header>
 
-      {/* Command Palette Modal (⌘K) */}
+        <button
+          type="button"
+          onClick={() => {
+            setMobileMenuOpen(false);
+            setCmdOpen(true);
+          }}
+          className="inline-flex min-w-20 items-center gap-2 py-1 text-sm font-medium text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
+        >
+          <Search className="h-4 w-4" />
+          <span>Search…</span>
+        </button>
+
+        <div className="mr-1 ml-2.5 h-5 w-px bg-[var(--border)]" />
+
+        <button
+          type="button"
+          onClick={() => setMobileMenuOpen((v) => !v)}
+          aria-label="Toggle Menu"
+          aria-expanded={mobileMenuOpen}
+          className="relative flex h-7 w-7 flex-col items-center justify-center gap-1 rounded-lg hover:bg-[var(--muted-bg)]"
+        >
+          <span
+            className={`flex h-0.5 w-4 rounded-[1px] bg-[var(--foreground)] transition-transform ${
+              mobileMenuOpen ? "translate-y-[3px] rotate-45" : ""
+            }`}
+          />
+          <span
+            className={`flex h-0.5 w-4 rounded-[1px] bg-[var(--foreground)] transition-transform ${
+              mobileMenuOpen ? "-translate-y-[3px] -rotate-45" : ""
+            }`}
+          />
+        </button>
+      </div>
+
+      {/* ====================================================================
+          COMMAND PALETTE MODAL (⌘K / /)
+         ==================================================================== */}
       {cmdOpen && (
         <div
           className="fixed inset-0 z-[100] flex items-start justify-center bg-black/50 px-3 pt-16 backdrop-blur-xs sm:pt-24"
@@ -538,8 +609,8 @@ export default function Header({
                 type="text"
                 value={cmdQuery}
                 onChange={(e) => setCmdQuery(e.target.value)}
-                placeholder="Type a command or search sections, ML stack, projects…"
-                className="w-full bg-transparent font-mono text-xs text-[var(--foreground)] placeholder-[var(--muted-foreground)] outline-none"
+                placeholder="Type a command or search…"
+                className="w-full bg-transparent text-sm text-[var(--foreground)] placeholder-[var(--muted-foreground)] outline-none"
               />
               <button
                 type="button"
@@ -552,8 +623,8 @@ export default function Header({
 
             <div className="max-h-80 overflow-y-auto p-2">
               {commandGroups.length === 0 ? (
-                <div className="py-8 text-center font-mono text-xs text-[var(--muted-foreground)]">
-                  No matching results found.
+                <div className="py-8 text-center text-sm text-[var(--muted-foreground)]">
+                  No results found.
                 </div>
               ) : (
                 commandGroups.map((group) => (
@@ -589,15 +660,12 @@ export default function Header({
               )}
             </div>
 
-            <div className="flex items-center justify-between border-t border-[var(--line)] bg-zinc-50/50 px-3.5 py-2 font-mono text-[11px] text-[var(--muted-foreground)] dark:bg-zinc-900/50">
-              <div className="flex items-center gap-1.5">
-                <SeavikMark className="h-3.5 w-auto opacity-75" />
-                <span>maoseavik.com</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span>Select</span>
-                <kbd className="inline-flex h-4 items-center rounded border border-[var(--border)] bg-[var(--background)] px-1">
-                  <CornerDownLeft className="h-2.5 w-2.5" />
+            <div className="flex items-center justify-between border-t border-[var(--line)] bg-zinc-50/50 px-4 py-2 text-xs font-medium text-[var(--muted-foreground)] dark:bg-zinc-900/50">
+              <SeavikMark className="h-4 w-auto text-[var(--muted-foreground)]" />
+              <div className="flex items-center gap-2">
+                <span>Go to section</span>
+                <kbd className="inline-flex h-5 w-5 items-center justify-center rounded border border-[var(--border)] bg-[var(--background)]">
+                  <CornerDownLeft className="h-3 w-3" />
                 </kbd>
               </div>
             </div>
@@ -606,7 +674,7 @@ export default function Header({
       )}
 
       {/* Back to top button */}
-      {showBackToTop && !menuOpen && (
+      {showBackToTop && !mobileMenuOpen && (
         <button
           type="button"
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
