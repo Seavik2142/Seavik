@@ -433,44 +433,24 @@ function Tag({ children, logo, className = "" }) {
   );
 }
 
-function VerifiedIcon({ className = "h-5 w-5" }) {
+function VerifiedIcon({ className = "" }) {
   return (
     <span
-      className={`group/verified relative inline-flex items-center justify-center select-none ${className}`}
+      className={`group/verified relative inline-flex h-[18px] w-[18px] shrink-0 items-center justify-center select-none ${className}`}
+      style={{ width: 18, height: 18 }}
       title="Verified Machine Learning Engineer"
       aria-label="Verified"
     >
-      {/* Subtle outer pulse aura */}
-      <span
-        className="pointer-events-none absolute inset-0 rounded-full bg-[#2563eb]/25 opacity-75 animate-ping dark:bg-[#3b82f6]/30"
-        style={{ animationDuration: "3s" }}
-        aria-hidden="true"
-      />
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
-        className="relative z-10 h-full w-full text-[#2563eb] transition-transform duration-300 ease-out group-hover/verified:scale-110 group-hover/verified:rotate-6 dark:text-[#3b82f6]"
+        width={18}
+        height={18}
+        className="h-[18px] w-[18px] text-[#2563eb] transition-transform duration-300 ease-out group-hover/verified:scale-110 dark:text-[#3b82f6]"
       >
-        <defs>
-          <linearGradient id="verified-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#3b82f6" />
-            <stop offset="50%" stopColor="#2563eb" />
-            <stop offset="100%" stopColor="#1d4ed8" />
-          </linearGradient>
-        </defs>
-        {/* 10-point scalloped verified rosette */}
         <path
-          fill="url(#verified-grad)"
-          d="M24 12a4.454 4.454 0 0 0-2.564-3.91 4.437 4.437 0 0 0-.948-4.578 4.436 4.436 0 0 0-4.577-.948A4.44 4.44 0 0 0 12 0a4.423 4.423 0 0 0-3.9 2.564 4.434 4.434 0 0 0-2.43-.178 4.425 4.425 0 0 0-2.158 1.126 4.42 4.42 0 0 0-1.12 2.156 4.42 4.42 0 0 0 .183 2.421A4.456 4.456 0 0 0 0 12a4.465 4.465 0 0 0 2.576 3.91 4.433 4.433 0 0 0 .936 4.577 4.459 4.459 0 0 0 4.577.95A4.454 4.454 0 0 0 12 24a4.439 4.439 0 0 0 3.91-2.563 4.26 4.26 0 0 0 5.526-5.526A4.453 4.453 0 0 0 24 12Z"
-        />
-        {/* Crisp white checkmark */}
-        <path
-          fill="none"
-          stroke="#ffffff"
-          strokeWidth="2.2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="m7.8 12.3 2.6 2.6 6-6.2"
+          fill="currentColor"
+          d="M24 12a4.454 4.454 0 0 0-2.564-3.91 4.437 4.437 0 0 0-.948-4.578 4.436 4.436 0 0 0-4.577-.948A4.44 4.44 0 0 0 12 0a4.423 4.423 0 0 0-3.9 2.564 4.434 4.434 0 0 0-2.43-.178 4.425 4.425 0 0 0-2.158 1.126 4.42 4.42 0 0 0-1.12 2.156 4.42 4.42 0 0 0 .183 2.421A4.456 4.456 0 0 0 0 12a4.465 4.465 0 0 0 2.576 3.91 4.433 4.433 0 0 0 .936 4.577 4.459 4.459 0 0 0 4.577.95A4.454 4.454 0 0 0 12 24a4.439 4.439 0 0 0 3.91-2.563 4.26 4.26 0 0 0 5.526-5.526A4.453 4.453 0 0 0 24 12Zm-13.709 4.917-4.38-4.378 1.652-1.663 2.646 2.646L15.83 7.4l1.72 1.591-7.258 7.926Z"
         />
       </svg>
     </span>
@@ -1316,32 +1296,28 @@ export default function Portfolio() {
             {/* Bottom-Right Cell: Display Name + Verified Badge + Rotating Tagline */}
             <div className="flex flex-col">
               <div className="z-10 mt-auto border-t border-[var(--line)]">
-                <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-2">
-                  <div className="flex items-center gap-2">
-                    <h1 className="text-2xl font-medium tracking-tight sm:text-3xl">
+                <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-1.5">
+                  <div className="flex items-center gap-1.5">
+                    <h1 className="text-xl font-medium leading-none tracking-tight sm:text-2xl">
                       Mao Seavik
                     </h1>
-                    <VerifiedIcon className="h-4.5 w-4.5 shrink-0" />
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 font-mono text-[10px] font-medium text-emerald-600 dark:text-emerald-400">
-                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                      Available
-                    </span>
+                    <VerifiedIcon />
                   </div>
 
                   <button
                     type="button"
                     onClick={openResumePdf}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-zinc-50 px-2.5 py-1 font-mono text-xs text-[var(--foreground)] transition-colors hover:border-[var(--foreground)]/40 dark:bg-zinc-900"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-zinc-50 px-2.5 py-0.5 font-mono text-[11px] text-[var(--foreground)] transition-colors hover:border-[var(--foreground)]/40 dark:bg-zinc-900"
                   >
-                    <FileText className="h-3.5 w-3.5 text-[var(--muted-foreground)]" />
+                    <FileText className="h-3 w-3 text-[var(--muted-foreground)]" />
                     <span>Resume.pdf</span>
                   </button>
                 </div>
 
-                <div className="flex h-10 items-center border-t border-[var(--line)] px-4">
+                <div className="flex h-9 items-center border-t border-[var(--line)] px-4">
                   <p
                     key={taglineIndex}
-                    className="truncate font-mono text-xs text-[var(--muted-foreground)] sm:text-sm animate-fadeIn"
+                    className="truncate font-mono text-xs text-[var(--muted-foreground)] sm:text-sm"
                   >
                     {TAGLINES[taglineIndex]}
                   </p>
