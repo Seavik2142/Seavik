@@ -41,6 +41,7 @@ import { CERTIFICATES } from "../data/certificates";
 import Header from "./Header";
 import MediaModal from "./MediaModal";
 import { isPdf, getFormatLabel, safeMediaUrl } from "../lib/media";
+import { playMetalClick, playSoftClick } from "../lib/sound";
 
 /* ============================================================================
    DATA DEFINITIONS (Preserving all user content + ML Engineer & Data Science Stack)
@@ -372,6 +373,7 @@ function PanelTitle({ id, children, sup, onCopy }) {
 
   const handleCopy = () => {
     if (typeof window === "undefined") return;
+    playSoftClick();
     const url = `${window.location.origin}/#${id}`;
     navigator.clipboard?.writeText(url);
     setCopied(true);
@@ -591,25 +593,6 @@ const SK_ISOMETRIC_BOXES = [
   { name: "S_bot", p0: [244.37, 256.58], p1: [288.71, 282.18], p2: [222.2, 320.58], p3: [177.86, 294.98] },
 ];
 
-function playMechanicalClick() {
-  try {
-    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    if (!AudioCtx) return;
-    const ctx = new AudioCtx();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = "triangle";
-    osc.frequency.setValueAtTime(180, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(45, ctx.currentTime + 0.045);
-    gain.gain.setValueAtTime(0.18, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.045);
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start();
-    osc.stop(ctx.currentTime + 0.05);
-  } catch {}
-}
-
 function SeavikBlueprintIsometric() {
   const [pressed, setPressed] = useState(false);
   const [spot, setSpot] = useState({ x: 278, y: 177 });
@@ -627,7 +610,7 @@ function SeavikBlueprintIsometric() {
   }, []);
 
   const handlePress = () => {
-    playMechanicalClick();
+    playMetalClick();
     setPressed(true);
     setTimeout(() => setPressed(false), 180);
   };
@@ -1243,6 +1226,7 @@ export default function Portfolio() {
   }, []);
 
   const copyEmail = () => {
+    playSoftClick();
     navigator.clipboard?.writeText("MaoSeavik@gmail.com");
     setCopiedEmail(true);
     setTimeout(() => setCopiedEmail(false), 2000);

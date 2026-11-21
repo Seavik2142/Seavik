@@ -2,9 +2,15 @@
 
 import React, { useEffect } from "react";
 import { useTheme } from "./ThemeProvider";
+import { playSoftClick } from "../lib/sound";
 
 export default function ThemeToggle({ className = "", style }) {
   const { toggleTheme } = useTheme();
+
+  const handleToggle = () => {
+    playSoftClick();
+    toggleTheme();
+  };
 
   useEffect(() => {
     const onKeyDown = (e) => {
@@ -16,6 +22,7 @@ export default function ThemeToggle({ className = "", style }) {
         document.activeElement &&
         !["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)
       ) {
+        playSoftClick();
         toggleTheme();
       }
     };
@@ -27,7 +34,7 @@ export default function ThemeToggle({ className = "", style }) {
     <button
       type="button"
       className={`inline-flex h-7 w-7 items-center justify-center rounded-md text-[var(--foreground)]/80 transition-colors hover:bg-[var(--muted-bg)] hover:text-[var(--foreground)] ${className}`}
-      onClick={toggleTheme}
+      onClick={handleToggle}
       aria-label="Toggle mode (D)"
       title="Toggle theme (D)"
       style={style}
