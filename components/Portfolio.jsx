@@ -1001,9 +1001,13 @@ function GitHubContributionsPanel() {
    INTERACTIVE FOOTER HATCH LOGOTYPE + LIVE WIDTH DIMENSION
    ============================================================================ */
 
+const SEAVIK_LOGOTYPE_PATH =
+  "M33 1H129V33H33V1ZM129 33H161V65H129V33ZM1 33H33V97H1V33ZM33 97H129V129H33V97ZM129 129H161V225H129V129ZM1 193H33V225H1V193ZM33 225H129V257H33V225ZM225 65H321V97H225V65ZM321 97H353V129H321V97ZM225 129H321V161H225V129ZM193 97H225V225H193V97ZM225 225H353V257H225V225ZM417 65H513V97H417V65ZM513 65H545V257H513V65ZM385 97H417V225H385V97ZM481 193H513V225H481V193ZM417 225H481V257H417V225ZM577 65H609V129H577V65ZM609 129H641V193H609V129ZM641 193H673V257H641V193ZM673 129H705V193H673V129ZM705 65H737V129H705V65ZM801 1H833V33H801V1ZM769 65H801V97H769V65ZM801 65H833V257H801V65ZM865 1H897V257H865V1ZM961 65H1025V97H961V65ZM929 97H961V129H929V97ZM897 129H929V161H897V129ZM929 161H993V193H929V161ZM993 193H1025V257H993V193Z";
+
 function SiteFooterInteractiveLogotype() {
-  const [width, setWidth] = useState(768);
+  const [width, setWidth] = useState(1280);
   const [mousePct, setMousePct] = useState(0.5);
+  const [hovered, setHovered] = useState(false);
   const containerRef = useRef(null);
 
   useEffect(() => {
@@ -1019,86 +1023,108 @@ function SiteFooterInteractiveLogotype() {
   }, []);
 
   return (
-    <div className="mx-auto md:max-w-3xl" ref={containerRef}>
-      <div
-        className="screen-line-top screen-line-bottom relative overflow-hidden border-x border-[var(--line)]"
-        onMouseMove={(e) => {
-          const rect = e.currentTarget.getBoundingClientRect();
-          setMousePct((e.clientX - rect.left) / rect.width);
-        }}
-        onMouseLeave={() => setMousePct(0.5)}
-      >
-        <div className="flex w-full translate-y-[26%] items-center justify-center pt-2">
-          <svg
-            className="w-full h-auto select-none"
-            viewBox="0 0 900 170"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <defs>
-              <pattern
-                id="footer-logotype-hatch"
-                x="1"
-                y="1"
-                width="8"
-                height="8"
-                patternUnits="userSpaceOnUse"
-              >
-                <path
-                  d="M-1 1l2-2M0 8l8-8M7 9l2-2"
-                  stroke="var(--border)"
-                  strokeWidth="1"
-                />
-              </pattern>
-              <linearGradient
-                id="footer-logotype-grad"
-                x1={mousePct * 900}
-                y1="0"
-                x2="450"
-                y2="170"
-                gradientUnits="userSpaceOnUse"
-              >
-                <stop offset="0.35" stopColor="var(--foreground)" stopOpacity="0" />
-                <stop offset="1" stopColor="var(--foreground)" stopOpacity="0.9" />
-              </linearGradient>
-            </defs>
+    <>
+      <div className="screen-line-top screen-line-bottom relative after:z-10">
+        <div
+          className="overflow-hidden"
+          onMouseEnter={() => setHovered(true)}
+          onMouseMove={(e) => {
+            const rect = e.currentTarget.getBoundingClientRect();
+            setMousePct((e.clientX - rect.left) / rect.width);
+          }}
+          onMouseLeave={() => {
+            setHovered(false);
+            setMousePct(0.5);
+          }}
+        >
+          <div className="flex w-full translate-y-[37.5%] items-center justify-center">
+            <svg
+              className="mx-auto h-auto w-full max-w-7xl select-none"
+              viewBox="0 0 1026 258"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <use href="#seavik-logotype-glyphs" fill="url(#seavik-logotype-hatch)" />
+              <use
+                href="#seavik-logotype-outline"
+                stroke="var(--background)"
+                strokeWidth="2"
+              />
+              <use
+                href="#seavik-logotype-glyphs"
+                fill="url(#seavik-logotype-gradient)"
+                style={{
+                  opacity: hovered ? 0.55 : 0.12,
+                  transition: "opacity 0.35s ease",
+                }}
+              />
+              <use
+                href="#seavik-logotype-outline"
+                stroke="var(--foreground)"
+                strokeOpacity="0.14"
+                strokeWidth="2"
+              />
 
-            <text
-              x="450"
-              y="148"
-              textAnchor="middle"
-              fontFamily="Inter, sans-serif"
-              fontWeight="900"
-              fontSize="168"
-              letterSpacing="-0.04em"
-              fill="url(#footer-logotype-hatch)"
-              stroke="var(--border)"
-              strokeWidth="2"
-            >
-              SEAVIK
-            </text>
-            <text
-              x="450"
-              y="148"
-              textAnchor="middle"
-              fontFamily="Inter, sans-serif"
-              fontWeight="900"
-              fontSize="168"
-              letterSpacing="-0.04em"
-              fill="url(#footer-logotype-grad)"
-              stroke="var(--foreground)"
-              strokeOpacity="0.16"
-              strokeWidth="1.5"
-            >
-              SEAVIK
-            </text>
-          </svg>
+              <defs>
+                <g id="seavik-logotype-glyphs">
+                  <path
+                    fillRule="evenodd"
+                    clipRule="evenodd"
+                    d={SEAVIK_LOGOTYPE_PATH}
+                  />
+                </g>
+
+                <path id="seavik-logotype-outline" d={SEAVIK_LOGOTYPE_PATH} />
+
+                <pattern
+                  id="seavik-logotype-hatch"
+                  x="1"
+                  y="1"
+                  width="8"
+                  height="8"
+                  patternUnits="userSpaceOnUse"
+                >
+                  <path
+                    d="M-1 1l2-2M0 8l8-8M7 9l2-2"
+                    stroke="var(--line)"
+                    strokeWidth="1"
+                  />
+                </pattern>
+
+                <linearGradient
+                  id="seavik-logotype-gradient"
+                  x1={mousePct * 1026}
+                  y1="1"
+                  x2="513"
+                  y2="257"
+                  gradientUnits="userSpaceOnUse"
+                >
+                  <stop
+                    offset="0.625"
+                    stopColor="var(--foreground)"
+                    stopOpacity="0"
+                  />
+                  <stop offset="1" stopColor="var(--foreground)" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
         </div>
+
+        <div
+          className="pointer-events-none absolute bottom-0 left-1/2 hidden h-px w-1/2 max-w-full -translate-x-1/2 dark:block"
+          style={{
+            background:
+              "linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(228, 228, 231, 0.3) 50%, rgba(0, 0, 0, 0) 100%)",
+          }}
+          aria-hidden="true"
+        />
       </div>
 
-      {/* Live Width Dimension under logotype */}
+      {/* Live 1280px Container Width Dimension under logotype */}
       <div
-        className="pointer-events-none relative h-8 text-[var(--dimension)] select-none"
+        ref={containerRef}
+        className="pointer-events-none relative mx-auto h-8 w-full max-w-7xl text-[var(--dimension)] select-none"
         aria-hidden="true"
       >
         <div className="absolute top-1 bottom-0 left-0 w-px bg-current" />
@@ -1113,7 +1139,7 @@ function SiteFooterInteractiveLogotype() {
           <DimensionArrow orientation="horizontal" flip />
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
