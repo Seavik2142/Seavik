@@ -3,32 +3,56 @@
 @tailwind utilities;
 
 :root {
-  --bg: #D9DADD;
-  --surface: #FFFFFF;
-  --surface-2: #F5F5F7;
-  --line: rgba(0,0,0,0.08);
-  --text: #000000;
-  --muted: #555555;
-  --light-gray: #BFC1C5;
+  --background: #ffffff;
+  --foreground: #09090b;
+  --muted-bg: #f4f4f5;
+  --muted-foreground: #71717a;
+  --border: #e4e4e7;
+  --line: #ebebef;
+  --stripe-color: rgba(228, 228, 231, 0.72);
+  --accent-muted: rgba(244, 244, 245, 0.7);
+  --info: #2563eb;
+  --success: #16a34a;
+  --dimension: #d4d4d8;
+  --dimension-foreground: #a1a1aa;
+
+  /* Backwards-compatible aliases for modals & subpages */
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #f4f4f5;
+  --text: #09090b;
+  --muted: #71717a;
+  --light-gray: #e4e4e7;
   --surface-rgb: 255, 255, 255;
 }
 
 .dark {
-  --bg: #0f1115;
-  --surface: #1a1d23;
-  --surface-2: #252a33;
-  --line: rgba(255,255,255,0.10);
-  --text: #e7e9ee;
-  --muted: #9ca3af;
-  --light-gray: #374151;
-  --surface-rgb: 26, 29, 35;
+  --background: #09090b;
+  --foreground: #fafafa;
+  --muted-bg: #27272a;
+  --muted-foreground: #a1a1aa;
+  --border: #27272a;
+  --line: #1f1f23;
+  --stripe-color: rgba(39, 39, 42, 0.75);
+  --accent-muted: rgba(39, 39, 42, 0.4);
+  --info: #3b82f6;
+  --success: #22c55e;
+  --dimension: #3f3f46;
+  --dimension-foreground: #71717a;
+
+  /* Backwards-compatible aliases for modals & subpages */
+  --bg: #09090b;
+  --surface: #121215;
+  --surface-2: #18181b;
+  --text: #fafafa;
+  --muted: #a1a1aa;
+  --light-gray: #27272a;
+  --surface-rgb: 18, 18, 21;
 }
 
 html {
   scroll-behavior: smooth;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  background-color: var(--bg);
+  background-color: var(--background);
   color-scheme: light;
 }
 
@@ -36,24 +60,114 @@ html.dark {
   color-scheme: dark;
 }
 
-html::-webkit-scrollbar {
-  display: none;
-}
-
 body {
   margin: 0;
   padding: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Inter', 'Space Grotesk', sans-serif;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   overflow-x: hidden;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  transition: background-color 0.4s ease, color 0.4s ease;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-body::-webkit-scrollbar {
-  display: none;
+/* ChanhDai CAD / Blueprint Utilities */
+.screen-line-top {
+  position: relative;
+}
+.screen-line-top::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100vw;
+  z-index: 0;
+  height: 1px;
+  width: 200vw;
+  background-color: var(--line);
+  pointer-events: none;
+}
+
+.screen-line-bottom {
+  position: relative;
+}
+.screen-line-bottom::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: -100vw;
+  z-index: 0;
+  height: 1px;
+  width: 200vw;
+  background-color: var(--line);
+  pointer-events: none;
+}
+
+.screen-line-top-none::before {
+  content: none !important;
+}
+
+.screen-line-bottom-none::after {
+  content: none !important;
+}
+
+.diagonal-stripes {
+  background-image: repeating-linear-gradient(
+    315deg,
+    var(--stripe-color) 0,
+    var(--stripe-color) 1px,
+    transparent 0,
+    transparent 50%
+  );
+  background-size: 10px 10px;
+}
+
+.stripe-divider {
+  position: relative;
+  height: 2rem;
+}
+.stripe-divider::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100vw;
+  z-index: 0;
+  height: 100%;
+  width: 200vw;
+  background-image: repeating-linear-gradient(
+    315deg,
+    var(--stripe-color) 0,
+    var(--stripe-color) 1px,
+    transparent 0,
+    transparent 50%
+  );
+  background-size: 10px 10px;
+  pointer-events: none;
+}
+
+.dot-grid {
+  background-image: radial-gradient(var(--border) 1px, transparent 0);
+  background-size: 10px 10px;
+}
+
+.link-underline {
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, currentColor 30%, transparent);
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  transition: text-decoration-color 0.2s ease;
+}
+.link-underline:hover {
+  text-decoration-color: currentColor;
+}
+
+@keyframes cd-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.animate-cd-blink {
+  animation: cd-blink 2s step-end infinite;
 }
 
 /* Hero */
@@ -77,41 +191,6 @@ body::-webkit-scrollbar {
   height: 100%;
   pointer-events: none;
   z-index: 0;
-}
-
-/* ==========================================================================
-   Page-wide chaotic wave background
-   Three wave-pattern SVG tiles at different sizes/offsets, layered together
-   so the pattern reads as scattered and non-uniform rather than a visible
-   repeat. Painted on body::before, which -- per CSS stacking rules -- sits
-   above the flat body background but below every in-flow page element.
-   The hero section paints its own opaque background (see .hero-root above)
-   and so naturally covers/excludes this layer without any extra markup.
-   ========================================================================== */
-body {
-  position: relative;
-}
-
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background-image:
-    url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22980%22%20height%3D%22980%22%20viewBox%3D%220%200%20980%20980%22%3E%3Cpath%20d%3D%22M-100%20160%20C%20150%2060%2C%20350%20260%2C%20600%20150%20C%20780%2070%2C%20900%20200%2C%201080%20140%22%20stroke%3D%22rgba%280%2C0%2C0%2C0.03%29%22%20stroke-width%3D%222.2%22%20fill%3D%22none%22/%3E%3Cpath%20d%3D%22M-80%20700%20C%20200%20620%2C%20420%20800%2C%20680%20700%20C%20850%20640%2C%20950%20760%2C%201080%20700%22%20stroke%3D%22rgba%280%2C0%2C0%2C0.035%29%22%20stroke-width%3D%221.6%22%20fill%3D%22none%22%20transform%3D%22rotate%28-4%20500%20700%29%22/%3E%3Cpath%20d%3D%22M120%20-60%20C%2040%20200%2C%20240%20320%2C%20160%20560%20C%2090%20780%2C%20260%20860%2C%20190%201040%22%20stroke%3D%22rgba%280%2C0%2C0%2C0.025%29%22%20stroke-width%3D%221.2%22%20fill%3D%22none%22/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22380%22%20height%3D%22380%22%20viewBox%3D%220%200%20380%20380%22%3E%3Cpath%20d%3D%22M-30%2060%20C%2020%2020%2C%2070%20100%2C%20120%2060%20C%20170%2020%2C%20220%20100%2C%20270%2065%20C%20310%2040%2C%20340%2070%2C%20410%2055%22%20stroke%3D%22rgba%280%2C0%2C0%2C0.05%29%22%20stroke-width%3D%221.3%22%20fill%3D%22none%22%20transform%3D%22rotate%28-8%20190%2060%29%22/%3E%3Cpath%20d%3D%22M-30%20250%20C%2030%20210%2C%2090%20290%2C%20150%20250%20C%20210%20210%2C%20270%20290%2C%20410%20240%22%20stroke%3D%22rgba%280%2C0%2C0%2C0.035%29%22%20stroke-width%3D%221%22%20fill%3D%22none%22/%3E%3Cpath%20d%3D%22M280%20-20%20C%20240%2060%2C%20320%2090%2C%20290%20170%20C%20260%20250%2C%20330%20280%2C%20300%20360%22%20stroke%3D%22rgba%280%2C0%2C0%2C0.045%29%22%20stroke-width%3D%221.5%22%20fill%3D%22none%22%20transform%3D%22rotate%2814%20290%20170%29%22/%3E%3Cpath%20d%3D%22M-20%20340%20C%2040%20310%2C%2090%20360%2C%20150%20335%20C%20210%20310%2C%20250%20355%2C%20320%20330%22%20stroke%3D%22rgba%280%2C0%2C0%2C0.03%29%22%20stroke-width%3D%221%22%20fill%3D%22none%22/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22620%22%20height%3D%22620%22%20viewBox%3D%220%200%20620%20620%22%3E%3Cpath%20d%3D%22M-40%2090%20C%2060%2040%2C%20140%20140%2C%20240%2090%20C%20340%2040%2C%20420%20140%2C%20520%20100%20C%20580%2080%2C%20620%20110%2C%20660%2090%22%20stroke%3D%22rgba%280%2C0%2C0%2C0.055%29%22%20stroke-width%3D%222%22%20fill%3D%22none%22/%3E%3Cpath%20d%3D%22M-40%20340%20C%2080%20280%2C%20160%20400%2C%20280%20340%20C%20400%20280%2C%20480%20400%2C%20660%20330%22%20stroke%3D%22rgba%280%2C0%2C0%2C0.04%29%22%20stroke-width%3D%221.4%22%20fill%3D%22none%22%20transform%3D%22rotate%28-12%20310%20340%29%22/%3E%3Cpath%20d%3D%22M-40%20520%20C%2040%20470%2C%20120%20570%2C%20220%20520%20C%20320%20470%2C%20400%20570%2C%20500%20520%20C%20560%20495%2C%20600%20530%2C%20660%20505%22%20stroke%3D%22rgba%280%2C0%2C0%2C0.05%29%22%20stroke-width%3D%221.6%22%20fill%3D%22none%22/%3E%3Cpath%20d%3D%22M60%20-20%20C%2020%2060%2C%20120%20100%2C%2090%20180%20C%2060%20260%2C%20160%20300%2C%20130%20380%22%20stroke%3D%22rgba%280%2C0%2C0%2C0.045%29%22%20stroke-width%3D%221.4%22%20fill%3D%22none%22%20transform%3D%22rotate%2820%2090%20180%29%22/%3E%3Cpath%20d%3D%22M420%20-30%20C%20460%2060%2C%20380%20110%2C%20430%20190%20C%20480%20270%2C%20400%20320%2C%20450%20400%22%20stroke%3D%22rgba%280%2C0%2C0%2C0.035%29%22%20stroke-width%3D%221.2%22%20fill%3D%22none%22/%3E%3Cpath%20d%3D%22M-40%20210%20C%20100%20170%2C%20180%20250%2C%20320%20210%20C%20460%20170%2C%20520%20250%2C%20660%20220%22%20stroke%3D%22rgba%280%2C0%2C0%2C0.06%29%22%20stroke-width%3D%222.4%22%20fill%3D%22none%22%20transform%3D%22rotate%286%20310%20210%29%22/%3E%3Cpath%20d%3D%22M100%20560%20C%20180%20610%2C%20260%20560%2C%20340%20610%20C%20420%20660%2C%20480%20600%2C%20560%20640%22%20stroke%3D%22rgba%280%2C0%2C0%2C0.04%29%22%20stroke-width%3D%221.2%22%20fill%3D%22none%22/%3E%3Cpath%20d%3D%22M-60%20440%20Q%2040%20400%20130%20440%20T%20320%20440%20T%20510%20440%20T%20700%20440%20L%20700%20700%20L%20-60%20700%20Z%22%20fill%3D%22rgba%280%2C0%2C0%2C0.02%29%22/%3E%3C/svg%3E");
-  background-repeat: repeat, repeat, repeat;
-  background-size: 980px 980px, 380px 380px, 620px 620px;
-  background-position: -160px -60px, 90px 210px, 0 0;
-}
-
-.dark body::before {
-  background-image:
-    url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22980%22%20height%3D%22980%22%20viewBox%3D%220%200%20980%20980%22%3E%3Cpath%20d%3D%22M-100%20160%20C%20150%2060%2C%20350%20260%2C%20600%20150%20C%20780%2070%2C%20900%20200%2C%201080%20140%22%20stroke%3D%22rgba%28255%2C255%2C255%2C0.04%29%22%20stroke-width%3D%222.2%22%20fill%3D%22none%22/%3E%3Cpath%20d%3D%22M-80%20700%20C%20200%20620%2C%20420%20800%2C%20680%20700%20C%20850%20640%2C%20950%20760%2C%201080%20700%22%20stroke%3D%22rgba%28255%2C255%2C255%2C0.045%29%22%20stroke-width%3D%221.6%22%20fill%3D%22none%22%20transform%3D%22rotate%28-4%20500%20700%29%22/%3E%3Cpath%20d%3D%22M120%20-60%20C%2040%20200%2C%20240%20320%2C%20160%20560%20C%2090%20780%2C%20260%20860%2C%20190%201040%22%20stroke%3D%22rgba%28255%2C255%2C255%2C0.035%29%22%20stroke-width%3D%221.2%22%20fill%3D%22none%22/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22380%22%20height%3D%22380%22%20viewBox%3D%220%200%20380%20380%22%3E%3Cpath%20d%3D%22M-30%2060%20C%2020%2020%2C%2070%20100%2C%20120%2060%20C%20170%2020%2C%20220%20100%2C%20270%2065%20C%20310%2040%2C%20340%2070%2C%20410%2055%22%20stroke%3D%22rgba%28255%2C255%2C255%2C0.06%29%22%20stroke-width%3D%221.3%22%20fill%3D%22none%22%20transform%3D%22rotate%28-8%20190%2060%29%22/%3E%3Cpath%20d%3D%22M-30%20250%20C%2030%20210%2C%2090%20290%2C%20150%20250%20C%20210%20210%2C%20270%20290%2C%20410%20240%22%20stroke%3D%22rgba%28255%2C255%2C255%2C0.045%29%22%20stroke-width%3D%221%22%20fill%3D%22none%22/%3E%3Cpath%20d%3D%22M280%20-20%20C%20240%2060%2C%20320%2090%2C%20290%20170%20C%20260%20250%2C%20330%20280%2C%20300%20360%22%20stroke%3D%22rgba%28255%2C255%2C255%2C0.05%29%22%20stroke-width%3D%221.5%22%20fill%3D%22none%22%20transform%3D%22rotate%2814%20290%20170%29%22/%3E%3Cpath%20d%3D%22M-20%20340%20C%2040%20310%2C%2090%20360%2C%20150%20335%20C%20210%20310%2C%20250%20355%2C%20320%20330%22%20stroke%3D%22rgba%28255%2C255%2C255%2C0.04%29%22%20stroke-width%3D%221%22%20fill%3D%22none%22/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22620%22%20height%3D%22620%22%20viewBox%3D%220%200%20620%20620%22%3E%3Cpath%20d%3D%22M-40%2090%20C%2060%2040%2C%20140%20140%2C%20240%2090%20C%20340%2040%2C%20420%20140%2C%20520%20100%20C%20580%2080%2C%20620%20110%2C%20660%2090%22%20stroke%3D%22rgba%28255%2C255%2C255%2C0.065%29%22%20stroke-width%3D%222%22%20fill%3D%22none%22/%3E%3Cpath%20d%3D%22M-40%20340%20C%2080%20280%2C%20160%20400%2C%20280%20340%20C%20400%20280%2C%20480%20400%2C%20660%20330%22%20stroke%3D%22rgba%28255%2C255%2C255%2C0.05%29%22%20stroke-width%3D%221.4%22%20fill%3D%22none%22%20transform%3D%22rotate%28-12%20310%20340%29%22/%3E%3Cpath%20d%3D%22M-40%20520%20C%2040%20470%2C%20120%20570%2C%20220%20520%20C%20320%20470%2C%20400%20570%2C%20500%20520%20C%20560%20495%2C%20600%20530%2C%20660%20505%22%20stroke%3D%22rgba%28255%2C255%2C255%2C0.06%29%22%20stroke-width%3D%221.6%22%20fill%3D%22none%22/%3E%3Cpath%20d%3D%22M60%20-20%20C%2020%2060%2C%20120%20100%2C%2090%20180%20C%2060%20260%2C%20160%20300%2C%20130%20380%22%20stroke%3D%22rgba%28255%2C255%2C255%2C0.05%29%22%20stroke-width%3D%221.4%22%20fill%3D%22none%22%20transform%3D%22rotate%2820%2090%20180%29%22/%3E%3Cpath%20d%3D%22M420%20-30%20C%20460%2060%2C%20380%20110%2C%20430%20190%20C%20480%20270%2C%20400%20320%2C%20450%20400%22%20stroke%3D%22rgba%28255%2C255%2C255%2C0.045%29%22%20stroke-width%3D%221.2%22%20fill%3D%22none%22/%3E%3Cpath%20d%3D%22M-40%20210%20C%20100%20170%2C%20180%20250%2C%20320%20210%20C%20460%20170%2C%20520%20250%2C%20660%20220%22%20stroke%3D%22rgba%28255%2C255%2C255%2C0.07%29%22%20stroke-width%3D%222.4%22%20fill%3D%22none%22%20transform%3D%22rotate%286%20310%20210%29%22/%3E%3Cpath%20d%3D%22M100%20560%20C%20180%20610%2C%20260%20560%2C%20340%20610%20C%20420%20660%2C%20480%20600%2C%20560%20640%22%20stroke%3D%22rgba%28255%2C255%2C255%2C0.05%29%22%20stroke-width%3D%221.2%22%20fill%3D%22none%22/%3E%3Cpath%20d%3D%22M-60%20440%20Q%2040%20400%20130%20440%20T%20320%20440%20T%20510%20440%20T%20700%20440%20L%20700%20700%20L%20-60%20700%20Z%22%20fill%3D%22rgba%28255%2C255%2C255%2C0.03%29%22/%3E%3C/svg%3E");
 }
 
 /* Marquee Background Text */
