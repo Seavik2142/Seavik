@@ -221,6 +221,7 @@ const EXPERIENCE = [
     location: "Phnom Penh, Cambodia",
     locationType: "On-site",
     isCurrentEmployer: false,
+    logo: "/images/partners/kru-it.png",
     title: "Backend Development Internship",
     subtitle: "API Architecture, Relational Databases & MVC Systems",
     employmentType: "Internship · 10 Weeks",
@@ -338,6 +339,66 @@ const CURRENTLY = [
   { icon: Cpu, label: "ML & Data Science", detail: "PyTorch, TensorFlow & LangChain" },
   { icon: Bot, label: "Building", detail: "OmniChat AI CRM (ChhlatAI)" },
   { icon: Rocket, label: "Deploying", detail: "Hugging Face ZeroGPU Spaces" },
+];
+
+const SUPPORTED_COMPANIES = [
+  {
+    id: "aba-bank",
+    name: "ABA Bank",
+    role: "KHQR & Payment Ecosystem",
+    detail: "Bakong KHQR & PayWay payment slip verification integrated in ChhlatAI OmniChat CRM.",
+    logo: "/images/partners/aba-bank.png",
+    rounded: "rounded-md",
+  },
+  {
+    id: "angkor-green",
+    name: "Angkor Green",
+    role: "AgriTech & Crop Innovation",
+    detail: "Agricultural domain reference & crop disease knowledge supporting AgriSystem AI.",
+    logo: "/images/partners/angkor-green.png",
+    rounded: "rounded-full",
+  },
+  {
+    id: "dg-academy",
+    name: "DG Academy",
+    role: "Digital & Tech Academy",
+    detail: "Digital growth, technology education, and software innovation ecosystem partner.",
+    logo: "/images/partners/dg-academy.png",
+    rounded: "rounded-md",
+  },
+  {
+    id: "canadia-bank",
+    name: "Canadia Bank",
+    role: "Banking & KHQR Ecosystem",
+    detail: "Multi-bank KHQR receipt OCR & automated checkout verification support.",
+    logo: "/images/partners/canadia-bank.png",
+    rounded: "rounded-md",
+  },
+  {
+    id: "as-tech",
+    name: "AS Tech Center",
+    role: "IT & Systems Training",
+    detail: "Practical software engineering, systems architecture, and technical mentorship.",
+    logo: "/images/partners/as-tech.png",
+    rounded: "rounded-full",
+  },
+  {
+    id: "kru-it",
+    name: "KRU IT Solution",
+    role: "Backend Engineering Partner",
+    detail: "10-week intensive backend engineering internship building production Laravel & MySQL APIs.",
+    logo: "/images/partners/kru-it.png",
+    rounded: "rounded-full",
+  },
+  {
+    id: "sala-it",
+    name: "Sala-IT",
+    role: "Software Engineering Academy",
+    detail: "Full-stack software engineering program (React, TypeScript, PostgreSQL & Docker).",
+    logo: "/images/partners/sala-it.png",
+    rounded: "rounded-md",
+    invertDark: true,
+  },
 ];
 
 /* ============================================================================
@@ -2199,6 +2260,79 @@ export default function Portfolio() {
                   <Eye className="h-3.5 w-3.5" />
                   <span>View my resume (PDF) →</span>
                 </button>
+              </div>
+            </div>
+
+            <div className="screen-line-bottom h-px" />
+
+            {/* ==============================================================
+                CHANHDAI SPONSORS / SUPPORTED BY SCROLLING MARQUEE PANEL
+               ============================================================== */}
+            <div className="relative">
+              {/* Vertical dashed CAD grid lines behind marquee */}
+              <div
+                className="pointer-events-none absolute inset-0 -z-10 hidden grid-cols-4 *:border-r *:border-dashed *:border-[var(--line)] sm:grid"
+                aria-hidden="true"
+              >
+                <div />
+                <div />
+                <div />
+              </div>
+
+              <div className="flex items-center justify-center">
+                <div className="bg-[var(--background)] px-3 py-3">
+                  <h3 className="flex items-center gap-2 text-center font-mono text-xs font-medium tracking-wider text-[var(--muted-foreground)] uppercase">
+                    <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                    <span>Known &amp; Supported By</span>
+                  </h3>
+                </div>
+              </div>
+
+              <div className="screen-line-bottom h-px" />
+
+              {/* Seamless Infinite Scrolling Marquee Track (Pauses on Hover) */}
+              <div className="cd-partners-marquee-mask py-4">
+                <div className="cd-partners-marquee-track gap-3 px-2">
+                  {[...SUPPORTED_COMPANIES, ...SUPPORTED_COMPANIES].map((company, idx) => (
+                    <button
+                      key={`${company.id}-${idx}`}
+                      type="button"
+                      onClick={() => playTickClick()}
+                      onMouseEnter={() => playTickClick()}
+                      title={company.detail}
+                      className="group/partner relative flex shrink-0 items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--background)]/90 px-3.5 py-2.5 text-left shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-[var(--foreground)]/40 hover:bg-[var(--muted-bg)]/70 active:scale-95"
+                    >
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-[var(--border)]/80 bg-white p-1 shadow-2xs transition-transform duration-300 ease-out group-hover/partner:scale-110 dark:bg-zinc-900">
+                        <img
+                          src={company.logo}
+                          alt={company.name}
+                          className={`h-full w-full object-contain ${company.rounded} ${
+                            company.invertDark ? "dark:invert" : ""
+                          }`}
+                          draggable={false}
+                        />
+                      </div>
+
+                      <div className="pr-1">
+                        <div className="flex items-center gap-1.5 text-sm font-medium leading-tight text-[var(--foreground)]">
+                          <span>{company.name}</span>
+                        </div>
+                        <div className="mt-0.5 font-mono text-[11px] text-[var(--muted-foreground)]">
+                          {company.role}
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Handwritten "big thanks" margin note on left outer gutter (ChanhDai style) */}
+              <div
+                className="pointer-events-none absolute top-4 right-full mr-3 hidden w-24 flex-col items-end font-handwritten text-lg leading-none text-blue-900 select-none lg:flex dark:text-[var(--muted-foreground)]"
+                aria-hidden="true"
+              >
+                <span className="-rotate-6">big thanks</span>
+                <HandwrittenArrow className="h-7 w-7 translate-x-2 -scale-x-100 -rotate-6" />
               </div>
             </div>
 

@@ -239,6 +239,45 @@ body {
   animation: cd-minimap-slide 200ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+/* Infinite Smooth Scrolling Partner Logos Marquee */
+@keyframes cd-partners-marquee {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.cd-partners-marquee-mask {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 8%,
+    black 92%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 8%,
+    black 92%,
+    transparent 100%
+  );
+}
+
+.cd-partners-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: cd-partners-marquee 28s linear infinite;
+  will-change: transform;
+}
+
+.cd-partners-marquee-mask:hover .cd-partners-marquee-track {
+  animation-play-state: paused;
+}
+
 /* Hero */
 .hero-root {
   position: relative;
