@@ -98,7 +98,7 @@ export function ThemeProvider({ children }) {
   };
 
   return (
-    <ThemeContext.Provider value={{ dark, toggleTheme }}>
+    <ThemeContext.Provider value={{ dark, theme: dark ? "dark" : "light", toggleTheme }}>
       {children}
       {animating && (
         <div className="theme-transition-circle" style={clipStyle} aria-hidden="true" />
