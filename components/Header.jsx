@@ -21,12 +21,21 @@ import {
   CornerDownLeft,
   Copy,
   Check,
+  Volume2,
+  VolumeX,
 } from "lucide-react";
 import Link from "next/link";
 import ThemeToggle from "./ThemeToggle";
 import { useTheme } from "./ThemeProvider";
 import { PROJECTS } from "../lib/projects";
 import { CERTIFICATES } from "../data/certificates";
+import {
+  playSoftClick,
+  playTickClick,
+  playMiniMapOpen,
+  isSoundEnabled,
+  setSoundEnabled,
+} from "../lib/sound";
 
 const NAV_ITEMS = [
   { label: "About", href: "/#about", id: "about", icon: User },
@@ -74,9 +83,23 @@ export default function Header({
   const [justClicked, setJustClicked] = useState(false);
   const [floaterKey, setFloaterKey] = useState(0);
   const [activeSection, setActiveSection] = useState("");
+  const [soundOn, setSoundOn] = useState(true);
   const cmdInputRef = useRef(null);
   const mobileMenuRef = useRef(null);
   const { theme, toggleTheme } = useTheme();
+
+  useEffect(() => {
+    setSoundOn(isSoundEnabled());
+  }, []);
+
+  const toggleSoundPref = () => {
+    const next = !soundOn;
+    setSoundEnabled(next);
+    setSoundOn(next);
+    if (next) {
+      playSoftClick();
+    }
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -116,7 +139,12 @@ export default function Header({
     const onKeyDown = (e) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
-        setCmdOpen((v) => !v);
+        setCmdOpen((v) => {
+          const next = !v;
+          if (next) playMiniMapOpen();
+          else playTickClick();
+          return next;
+        });
       } else if (
         e.key === "/" &&
         !cmdOpen &&
@@ -124,15 +152,17 @@ export default function Header({
         !["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)
       ) {
         e.preventDefault();
+        playMiniMapOpen();
         setCmdOpen(true);
       } else if (e.key === "Escape") {
+        if (cmdOpen || mobileMenuOpen) playTickClick();
         setCmdOpen(false);
         setMobileMenuOpen(false);
       }
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [cmdOpen]);
+  }, [cmdOpen, mobileMenuOpen]);
 
   // Close mobile popover when clicking outside
   useEffect(() => {
@@ -223,6 +253,7 @@ export default function Header({
   }, []);
 
   const handleNavClick = (e, targetId) => {
+    playSoftClick();
     if (typeof window !== "undefined" && (window.location.pathname === "/" || window.location.pathname === "")) {
       const el = document.getElementById(targetId);
       if (el) {
@@ -346,7 +377,18 @@ export default function Header({
         meta: "Appearance",
         icon: theme === "dark" ? Sun : Moon,
         onSelect: () => {
+          playSoftClick();
           toggleTheme();
+          setCmdOpen(false);
+        },
+      },
+      {
+        id: "act-sound",
+        label: `Toggle UI Sound Effects (Current: ${soundOn ? "On" : "Muted"})`,
+        meta: "Audio",
+        icon: soundOn ? Volume2 : VolumeX,
+        onSelect: () => {
+          toggleSoundPref();
           setCmdOpen(false);
         },
       },
@@ -356,6 +398,7 @@ export default function Header({
         meta: "External",
         icon: Sparkles,
         onSelect: () => {
+          playSoftClick();
           setCmdOpen(false);
           window.open("https://huggingface.co/Maoseavik", "_blank", "noopener,noreferrer");
         },
@@ -366,6 +409,7 @@ export default function Header({
         meta: "External",
         icon: Github,
         onSelect: () => {
+          playSoftClick();
           setCmdOpen(false);
           window.open("https://github.com/Seavik2142", "_blank", "noopener,noreferrer");
         },
@@ -376,6 +420,7 @@ export default function Header({
         meta: "External",
         icon: Linkedin,
         onSelect: () => {
+          playSoftClick();
           setCmdOpen(false);
           window.open("https://www.linkedin.com/in/mao-seavik", "_blank", "noopener,noreferrer");
         },
@@ -389,20 +434,21 @@ export default function Header({
       { heading: "Certificates", items: certItems },
       { heading: "Pages", items: pages },
     ].filter((g) => g.items.length > 0);
-  }, [cmdQuery, copiedEmail, theme, toggleTheme, onOpenResume]);
+  }, [cmdQuery, copiedEmail, theme, soundOn, toggleTheme, onOpenResume]);
 
   return (
     <>
       {/* ====================================================================
           CHANHDAI STICKY TOP HEADER (Minimalist 60px CAD Frame)
          ==================================================================== */}
-      <header className="sticky top-0 z-50 h-[60px] max-w-[100vw] overflow-x-clip bg-[var(--background)] px-2 pt-1">
+      <header className="sticky top-0 z-50 h-[60px] max-w-[100vw] overflow-x-clip bg-[var(--background)]/95 px-2 pt-1 backdrop-blur-md">
         <div className="screen-line-top screen-line-bottom mx-auto flex h-full items-center gap-2 border-x border-[var(--line)] pr-2 pl-4 after:z-10 sm:gap-4 md:max-w-3xl">
           {/* Left: Clean Pixel-Grid Geometric Mark */}
           <Link
             href="/"
             aria-label="Home"
-            className="flex items-center text-[var(--foreground)] transition-opacity hover:opacity-80"
+            onClick={() => playSoftClick()}
+            className="flex items-center text-[var(--foreground)] transition-all duration-200 hover:opacity-80 active:scale-95"
           >
             <SeavikMark className="h-6 w-auto shrink-0" />
           </Link>
@@ -422,7 +468,7 @@ export default function Header({
                   href={item.href}
                   onClick={(e) => handleNavClick(e, item.id)}
                   aria-current={isActive ? "page" : undefined}
-                  className={`text-sm font-medium tracking-wide transition-colors hover:text-[var(--foreground)] ${
+                  className={`relative text-sm font-medium tracking-wide transition-colors duration-200 hover:text-[var(--foreground)] ${
                     isActive
                       ? "text-[var(--foreground)]"
                       : "text-[var(--muted-foreground)]"
@@ -434,21 +480,25 @@ export default function Header({
             })}
             <Link
               href="/work"
-              className="text-sm font-medium tracking-wide text-[var(--muted-foreground)] transition-colors hover:text-[var(--foreground)]"
+              onClick={() => playSoftClick()}
+              className="text-sm font-medium tracking-wide text-[var(--muted-foreground)] transition-colors duration-200 hover:text-[var(--foreground)]"
             >
               Archive
             </Link>
           </nav>
 
-          {/* Right Action Controls (Command Menu + GitHub + Coffee + ThemeToggle) */}
+          {/* Right Action Controls (Command Menu + GitHub + Sound + ThemeToggle) */}
           <div className="flex items-center">
             <div className="mr-2 hidden h-5 w-px bg-[var(--border)] sm:block" />
 
             {/* Command Menu Trigger (Ghost button with Search icon + [⌘][K] keycaps) */}
             <button
               type="button"
-              onClick={() => setCmdOpen(true)}
-              className="hidden h-7 items-center gap-1.5 rounded-md px-1.5 text-[var(--muted-foreground)] transition-colors hover:bg-[var(--muted-bg)] hover:text-[var(--foreground)] select-none sm:inline-flex"
+              onClick={() => {
+                playMiniMapOpen();
+                setCmdOpen(true);
+              }}
+              className="hidden h-7 items-center gap-1.5 rounded-md px-1.5 text-[var(--muted-foreground)] transition-all duration-150 hover:bg-[var(--muted-bg)] hover:text-[var(--foreground)] active:scale-95 select-none sm:inline-flex"
               aria-label="Open command menu (⌘K)"
               title="Search & Commands (⌘K)"
             >
@@ -470,8 +520,9 @@ export default function Header({
               href="https://github.com/Seavik2142"
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => playSoftClick()}
               title="GitHub (@Seavik2142)"
-              className="inline-flex h-7 items-center gap-1.5 rounded-md px-1.5 text-[var(--foreground)] transition-colors hover:bg-[var(--muted-bg)]"
+              className="inline-flex h-7 items-center gap-1.5 rounded-md px-1.5 text-[var(--foreground)] transition-all duration-150 hover:bg-[var(--muted-bg)] active:scale-95"
             >
               <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
                 <path
@@ -500,7 +551,7 @@ export default function Header({
       >
         {/* Mobile Popover Menu */}
         {mobileMenuOpen && (
-          <div className="absolute bottom-full left-1/2 mb-2.5 w-48 -translate-x-1/2 rounded-xl border border-[var(--border)] bg-[var(--background)] p-1.5 shadow-xl">
+          <div className="animate-cd-popover absolute bottom-full left-1/2 mb-2.5 w-48 -translate-x-1/2 rounded-xl border border-[var(--border)] bg-[var(--background)] p-1.5 shadow-xl">
             <div className="flex flex-col">
               {NAV_ITEMS.map((item) => {
                 const isActive = activeSection === item.id;
@@ -521,7 +572,10 @@ export default function Header({
               })}
               <Link
                 href="/work"
-                onClick={() => setMobileMenuOpen(false)}
+                onClick={() => {
+                  playSoftClick();
+                  setMobileMenuOpen(false);
+                }}
                 className="rounded-lg px-3 py-1.5 text-sm font-medium text-[var(--muted-foreground)] hover:bg-[var(--muted-bg)] hover:text-[var(--foreground)]"
               >
                 Archive
@@ -540,6 +594,7 @@ export default function Header({
         <button
           type="button"
           onClick={() => {
+            playMiniMapOpen();
             setMobileMenuOpen(false);
             setCmdOpen(true);
           }}
@@ -553,7 +608,10 @@ export default function Header({
 
         <button
           type="button"
-          onClick={() => setMobileMenuOpen((v) => !v)}
+          onClick={() => {
+            playSoftClick();
+            setMobileMenuOpen((v) => !v);
+          }}
           aria-label="Toggle Menu"
           aria-expanded={mobileMenuOpen}
           className="relative flex h-7 w-7 flex-col items-center justify-center gap-1 rounded-lg hover:bg-[var(--muted-bg)]"
@@ -577,10 +635,13 @@ export default function Header({
       {cmdOpen && (
         <div
           className="fixed inset-0 z-[100] flex items-start justify-center bg-black/50 px-3 pt-16 backdrop-blur-xs sm:pt-24"
-          onClick={() => setCmdOpen(false)}
+          onClick={() => {
+            playTickClick();
+            setCmdOpen(false);
+          }}
         >
           <div
-            className="w-full max-w-lg overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] shadow-2xl"
+            className="animate-cd-popover w-full max-w-lg overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center gap-2.5 border-b border-[var(--line)] px-3.5 py-2.5">
@@ -595,7 +656,10 @@ export default function Header({
               />
               <button
                 type="button"
-                onClick={() => setCmdOpen(false)}
+                onClick={() => {
+                  playTickClick();
+                  setCmdOpen(false);
+                }}
                 className="rounded border border-[var(--border)] px-1.5 py-0.5 font-mono text-[10px] text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
               >
                 ESC
@@ -620,7 +684,10 @@ export default function Header({
                           <button
                             key={item.id}
                             type="button"
-                            onClick={item.onSelect}
+                            onClick={(e) => {
+                              playSoftClick();
+                              item.onSelect(e);
+                            }}
                             className="flex w-full items-center justify-between gap-2 rounded-lg px-2.5 py-2 text-left text-xs transition-colors hover:bg-[var(--muted-bg)]"
                           >
                             <div className="flex min-w-0 items-center gap-2.5">
@@ -658,7 +725,10 @@ export default function Header({
       {showBackToTop && !mobileMenuOpen && (
         <button
           type="button"
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          onClick={() => {
+            playSoftClick();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
           aria-label="Scroll to top"
           className="fixed right-4 bottom-4 z-40 flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] shadow-md transition-transform hover:-translate-y-0.5 active:scale-95"
         >

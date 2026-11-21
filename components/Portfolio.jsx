@@ -41,7 +41,16 @@ import { CERTIFICATES } from "../data/certificates";
 import Header from "./Header";
 import MediaModal from "./MediaModal";
 import { isPdf, getFormatLabel, safeMediaUrl } from "../lib/media";
-import { playMetalClick, playSoftClick, playPenScratch } from "../lib/sound";
+import {
+  playMetalClick,
+  playSoftClick,
+  playTickClick,
+  playExpandSound,
+  playCollapseSound,
+  playMiniMapOpen,
+  playPenScratch,
+  playNamePronunciation,
+} from "../lib/sound";
 
 /* ============================================================================
    DATA DEFINITIONS (Preserving all user content + ML Engineer & Data Science Stack)
@@ -459,6 +468,224 @@ function VerifiedIcon({ className = "" }) {
   );
 }
 
+function PronounceMyName() {
+  const [speaking, setSpeaking] = useState(false);
+  const [waveStep, setWaveStep] = useState(2);
+
+  const triggerPronounce = useCallback(() => {
+    setSpeaking(true);
+    setWaveStep(0);
+    setTimeout(() => setWaveStep(1), 110);
+    setTimeout(() => setWaveStep(2), 230);
+    playNamePronunciation(() => {
+      setSpeaking(false);
+    });
+  }, []);
+
+  useEffect(() => {
+    const onKeyDown = (e) => {
+      if (
+        e.key.toLowerCase() === "p" &&
+        !e.metaKey &&
+        !e.ctrlKey &&
+        !e.altKey &&
+        document.activeElement &&
+        !["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)
+      ) {
+        triggerPronounce();
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [triggerPronounce]);
+
+  return (
+    <button
+      type="button"
+      onClick={triggerPronounce}
+      aria-label="Pronounce my name (P)"
+      title="Pronounce my name (P)"
+      className={`relative inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md transition-all duration-150 select-none hover:bg-[var(--muted-bg)] hover:text-[var(--foreground)] active:scale-90 ${
+        speaking ? "text-[var(--foreground)]" : "text-[var(--muted-foreground)]"
+      }`}
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        width={17}
+        height={17}
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+        className="h-[17px] w-[17px]"
+        style={{ width: 17, height: 17 }}
+        aria-hidden="true"
+      >
+        <path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z" />
+        <path
+          d="M16 9a5 5 0 0 1 0 6"
+          className="transition-opacity duration-150"
+          style={{ opacity: waveStep >= 1 ? 1 : 0.15 }}
+        />
+        <path
+          d="M19.364 18.364a9 9 0 0 0 0-12.728"
+          className="transition-opacity duration-150"
+          style={{ opacity: waveStep >= 2 ? 1 : 0.15 }}
+        />
+      </svg>
+    </button>
+  );
+}
+
+function AnimatedChevronsUpDown({ isOpen, className = "h-4 w-4 shrink-0 text-[var(--muted-foreground)]" }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={16}
+      height={16}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path
+        d={isOpen ? "M7 20L12 15L17 20" : "M7 15L12 20L17 15"}
+        className="transition-all duration-200 ease-out"
+      />
+      <path
+        d={isOpen ? "M7 4L12 9L17 4" : "M7 9L12 4L17 9"}
+        className="transition-all duration-200 ease-out"
+      />
+    </svg>
+  );
+}
+
+function CollapsibleDrawer({ isOpen, children }) {
+  return (
+    <div className="cd-collapsible-drawer" data-open={isOpen ? "true" : "false"}>
+      <div className="cd-collapsible-inner">{children}</div>
+    </div>
+  );
+}
+
+const TOC_SECTIONS = [
+  { id: "hero", title: "Overview", depth: 2 },
+  { id: "about", title: "About & Telemetry", depth: 2 },
+  { id: "what-i-can-do", title: "Technical Stack", depth: 2 },
+  { id: "trainings", title: "Experience", depth: 2 },
+  { id: "education", title: "Education", depth: 2 },
+  { id: "work", title: "Projects", depth: 2 },
+  { id: "awards", title: "Recognition", depth: 2 },
+  { id: "contact", title: "Contact", depth: 2 },
+];
+
+function TOCMinimap() {
+  const [activeId, setActiveId] = useState("hero");
+  const [hovered, setHovered] = useState(false);
+
+  useEffect(() => {
+    const els = TOC_SECTIONS.map((s) => document.getElementById(s.id)).filter(Boolean);
+    if (!els.length) return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveId(entry.target.id);
+          }
+        });
+      },
+      { rootMargin: "-20% 0px -65% 0px", threshold: 0 }
+    );
+    els.forEach((el) => obs.observe(el));
+    return () => obs.disconnect();
+  }, []);
+
+  const handleMouseEnter = () => {
+    if (!hovered) {
+      playMiniMapOpen();
+    }
+    setHovered(true);
+  };
+
+  const handleJump = (e, id) => {
+    e.preventDefault();
+    playSoftClick();
+    setHovered(false);
+    const el = document.getElementById(id);
+    if (el) {
+      window.history.pushState(null, "", `#${id}`);
+      el.scrollIntoView({ behavior: "smooth" });
+      setActiveId(id);
+    }
+  };
+
+  return (
+    <div
+      className="fixed top-28 right-5 z-40 hidden xl:block"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {/* Minimalist Tick Bars */}
+      <div
+        className={`flex flex-col items-end gap-3 py-3 pl-6 transition-opacity duration-200 ${
+          hovered ? "opacity-0 pointer-events-none" : "opacity-100"
+        }`}
+        aria-label="Page sections minimap"
+      >
+        {TOC_SECTIONS.map((sec) => {
+          const isActive = activeId === sec.id;
+          return (
+            <div
+              key={sec.id}
+              className={`h-0.5 rounded-full transition-all duration-200 ease-out ${
+                isActive
+                  ? "w-6 bg-[var(--foreground)]"
+                  : "w-4 bg-[var(--muted-foreground)]/40"
+              }`}
+              aria-hidden="true"
+            />
+          );
+        })}
+      </div>
+
+      {/* Expanded Hover Card */}
+      {hovered && (
+        <div className="animate-cd-minimap absolute top-0 right-0 w-52 overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--background)]/95 p-2 shadow-xl backdrop-blur-md">
+          <div className="px-3 py-1.5 font-mono text-[10px] font-medium tracking-wider text-[var(--muted-foreground)] uppercase">
+            On this page
+          </div>
+          <ul className="flex flex-col text-xs">
+            {TOC_SECTIONS.map((sec) => {
+              const isActive = activeId === sec.id;
+              return (
+                <li key={sec.id} className="flex">
+                  <a
+                    href={`#${sec.id}`}
+                    onClick={(e) => handleJump(e, sec.id)}
+                    className={`w-full rounded-lg px-3 py-1.5 transition-colors duration-150 ${
+                      isActive
+                        ? "bg-[var(--muted-bg)] font-medium text-[var(--foreground)]"
+                        : "text-[var(--muted-foreground)] hover:bg-[var(--muted-bg)]/60 hover:text-[var(--foreground)]"
+                    }`}
+                  >
+                    {sec.title}
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ============================================================================
    CAD DIMENSION ANNOTATIONS (768, Ø160, 32, Handwritten Notes)
    ============================================================================ */
@@ -594,35 +821,103 @@ const SK_ISOMETRIC_BOXES = [
 ];
 
 function SeavikBlueprintIsometric() {
-  const [pressed, setPressed] = useState(false);
+  const [pressOffset, setPressOffset] = useState(0);
+  const [isPressed, setIsPressed] = useState(false);
   const [spot, setSpot] = useState({ x: 278, y: 177 });
   const svgRef = useRef(null);
+  const physicsRef = useRef({
+    targetX: 278,
+    targetY: 177,
+    curX: 278,
+    curY: 177,
+    velX: 0,
+    velY: 0,
+    targetPress: 0,
+    curPress: 0,
+    velPress: 0,
+    rafId: null,
+  });
+
+  const startPhysicsLoop = useCallback(() => {
+    const p = physicsRef.current;
+    if (p.rafId) return;
+
+    const step = () => {
+      // Damped spring for spotlight (stiffness 0.14, damping 0.76)
+      p.velX = (p.velX + (p.targetX - p.curX) * 0.14) * 0.76;
+      p.velY = (p.velY + (p.targetY - p.curY) * 0.14) * 0.76;
+      p.curX += p.velX;
+      p.curY += p.velY;
+
+      // Damped spring for 3D isometric extrusion press (stiffness 0.24, damping 0.72)
+      p.velPress = (p.velPress + (p.targetPress - p.curPress) * 0.24) * 0.72;
+      p.curPress += p.velPress;
+
+      setSpot({ x: p.curX, y: p.curY });
+      setPressOffset(p.curPress);
+
+      const moving =
+        Math.abs(p.targetX - p.curX) > 0.15 ||
+        Math.abs(p.targetY - p.curY) > 0.15 ||
+        Math.abs(p.targetPress - p.curPress) > 0.05 ||
+        Math.abs(p.velPress) > 0.05;
+
+      if (moving) {
+        p.rafId = requestAnimationFrame(step);
+      } else {
+        p.curX = p.targetX;
+        p.curY = p.targetY;
+        p.curPress = p.targetPress;
+        setSpot({ x: p.curX, y: p.curY });
+        setPressOffset(p.curPress);
+        p.rafId = null;
+      }
+    };
+
+    p.rafId = requestAnimationFrame(step);
+  }, []);
 
   useEffect(() => {
     const onMove = (e) => {
-      if (!svgRef.current) return;
-      const x = (e.clientX / window.innerWidth) * 556;
-      const y = (e.clientY / window.innerHeight) * 354;
-      setSpot({ x, y });
+      const p = physicsRef.current;
+      p.targetX = (e.clientX / window.innerWidth) * 556;
+      p.targetY = (e.clientY / window.innerHeight) * 354;
+      startPhysicsLoop();
     };
     window.addEventListener("mousemove", onMove, { passive: true });
-    return () => window.removeEventListener("mousemove", onMove);
-  }, []);
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      if (physicsRef.current.rafId) {
+        cancelAnimationFrame(physicsRef.current.rafId);
+      }
+    };
+  }, [startPhysicsLoop]);
 
-  const handlePress = () => {
+  const handlePointerDown = () => {
     playMetalClick();
-    setPressed(true);
-    setTimeout(() => setPressed(false), 180);
+    setIsPressed(true);
+    physicsRef.current.targetPress = 16;
+    startPhysicsLoop();
   };
 
-  const topOffset = pressed ? 14 : 0;
+  const handlePointerUp = () => {
+    if (!isPressed && physicsRef.current.targetPress === 0) return;
+    setIsPressed(false);
+    physicsRef.current.targetPress = 0;
+    startPhysicsLoop();
+  };
+
+  const topOffset = pressOffset;
   const baseDepth = 32;
 
   return (
     <svg
       ref={svgRef}
-      onClick={handlePress}
-      className="h-auto w-full cursor-pointer overflow-visible select-none"
+      onPointerDown={handlePointerDown}
+      onPointerUp={handlePointerUp}
+      onPointerLeave={handlePointerUp}
+      onPointerCancel={handlePointerUp}
+      className="h-auto w-full cursor-pointer touch-manipulation overflow-visible select-none"
       viewBox="0 0 556 354"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -692,9 +987,10 @@ function SeavikBlueprintIsometric() {
         );
       })}
 
-      {/* 30° CAD Angle Callout at top vertex of K */}
+      {/* 30° CAD Angle Callout at top vertex of K (fades while pressed, returns at rest) */}
       <g
-        className="pointer-events-none hidden text-[var(--dimension)] sm:block"
+        className="pointer-events-none hidden text-[var(--dimension)] transition-opacity duration-200 sm:block"
+        style={{ opacity: isPressed ? 0 : 1 }}
         fill="none"
         stroke="currentColor"
         strokeWidth="1"
@@ -1005,6 +1301,7 @@ function SeavikSignature({ className = "" }) {
   const btnRef = useRef(null);
   const pathRef = useRef(null);
   const rafRef = useRef(null);
+  const soundRef = useRef(null);
   const hasSignedRef = useRef(false);
 
   const [state, setState] = useState({
@@ -1082,7 +1379,12 @@ function SeavikSignature({ className = "" }) {
   }, [runSignatureAnimation]);
 
   const handleReplay = () => {
-    playPenScratch();
+    if (soundRef.current?.stop) {
+      soundRef.current.stop();
+    }
+    void playPenScratch({ playbackRate: 0.84 / 1.95 }).then((handle) => {
+      soundRef.current = handle;
+    });
     runSignatureAnimation();
   };
 
@@ -1154,7 +1456,8 @@ function SiteFooterInteractiveLogotype() {
     <>
       <div className="screen-line-top screen-line-bottom relative after:z-10">
         <div
-          className="overflow-hidden"
+          className="cursor-pointer overflow-hidden"
+          onClick={() => playTickClick()}
           onMouseEnter={() => setHovered(true)}
           onMouseMove={(e) => {
             const rect = e.currentTarget.getBoundingClientRect();
@@ -1341,8 +1644,45 @@ export default function Portfolio() {
   const [isMediaModalOpen, setIsMediaModalOpen] = useState(false);
 
   const openMedia = useCallback((media) => {
+    playMiniMapOpen();
     setSelectedMedia(media);
     setIsMediaModalOpen(true);
+  }, []);
+
+  const toggleExpItem = useCallback((id) => {
+    setExpandedExp((prev) => {
+      const next = !prev[id];
+      if (next) playExpandSound();
+      else playCollapseSound();
+      return { ...prev, [id]: next };
+    });
+  }, []);
+
+  const toggleEduItem = useCallback((id) => {
+    setExpandedEdu((prev) => {
+      const next = !prev[id];
+      if (next) playExpandSound();
+      else playCollapseSound();
+      return { ...prev, [id]: next };
+    });
+  }, []);
+
+  const toggleProjectItem = useCallback((num) => {
+    setExpandedProjects((prev) => {
+      const next = !prev[num];
+      if (next) playExpandSound();
+      else playCollapseSound();
+      return { ...prev, [num]: next };
+    });
+  }, []);
+
+  const toggleCertItem = useCallback((id) => {
+    setExpandedCerts((prev) => {
+      const next = !prev[id];
+      if (next) playExpandSound();
+      else playCollapseSound();
+      return { ...prev, [id]: next };
+    });
   }, []);
 
   const openResumePdf = useCallback(() => {
@@ -1393,6 +1733,7 @@ export default function Portfolio() {
   return (
     <div className="group/layout relative isolate min-h-screen bg-[var(--background)] text-[var(--foreground)]">
       <Header onOpenResume={openResumePdf} />
+      <TOCMinimap />
 
       <main className="max-w-[100vw] overflow-x-clip px-2">
         <div className="mx-auto md:max-w-3xl">
@@ -1457,22 +1798,30 @@ export default function Portfolio() {
                       Mao Seavik
                     </h1>
                     <VerifiedIcon />
+                    <PronounceMyName />
                   </div>
 
                   <button
                     type="button"
                     onClick={openResumePdf}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-zinc-50 px-2.5 py-0.5 font-mono text-[11px] text-[var(--foreground)] transition-colors hover:border-[var(--foreground)]/40 dark:bg-zinc-900"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-zinc-50 px-2.5 py-0.5 font-mono text-[11px] text-[var(--foreground)] transition-all duration-150 hover:border-[var(--foreground)]/40 active:scale-95 dark:bg-zinc-900"
                   >
                     <FileText className="h-3 w-3 text-[var(--muted-foreground)]" />
                     <span>Resume.pdf</span>
                   </button>
                 </div>
 
-                <div className="flex h-9 items-center border-t border-[var(--line)] px-4">
+                <div
+                  onClick={() => {
+                    playTickClick();
+                    setTaglineIndex((prev) => (prev + 1) % TAGLINES.length);
+                  }}
+                  title="Click to cycle tagline"
+                  className="flex h-9 cursor-pointer items-center overflow-hidden border-t border-[var(--line)] px-4 select-none"
+                >
                   <p
                     key={taglineIndex}
-                    className="truncate font-mono text-xs text-[var(--muted-foreground)] sm:text-sm"
+                    className="animate-text-swap truncate font-mono text-xs text-[var(--muted-foreground)] sm:text-sm"
                   >
                     {TAGLINES[taglineIndex]}
                   </p>
@@ -1600,7 +1949,8 @@ export default function Portfolio() {
                     href="https://github.com/Seavik2142"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex h-8 items-center gap-2 rounded-lg border border-[var(--border)] bg-zinc-50/70 px-3 font-mono text-xs text-[var(--foreground)] transition-colors hover:bg-[var(--muted-bg)] dark:bg-zinc-900/70"
+                    onClick={() => playSoftClick()}
+                    className="inline-flex h-8 items-center gap-2 rounded-lg border border-[var(--border)] bg-zinc-50/70 px-3 font-mono text-xs text-[var(--foreground)] transition-all duration-150 hover:border-[var(--foreground)]/30 hover:bg-[var(--muted-bg)] active:scale-95 dark:bg-zinc-900/70"
                   >
                     <Github className="h-3.5 w-3.5" />
                     <span>GitHub</span>
@@ -1612,7 +1962,8 @@ export default function Portfolio() {
                     href="https://huggingface.co/Maoseavik"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex h-8 items-center gap-2 rounded-lg border border-[var(--border)] bg-zinc-50/70 px-3 font-mono text-xs text-[var(--foreground)] transition-colors hover:bg-[var(--muted-bg)] dark:bg-zinc-900/70"
+                    onClick={() => playSoftClick()}
+                    className="inline-flex h-8 items-center gap-2 rounded-lg border border-[var(--border)] bg-zinc-50/70 px-3 font-mono text-xs text-[var(--foreground)] transition-all duration-150 hover:border-[var(--foreground)]/30 hover:bg-[var(--muted-bg)] active:scale-95 dark:bg-zinc-900/70"
                   >
                     <img
                       src="/images/logos/huggingface.svg"
@@ -1628,7 +1979,8 @@ export default function Portfolio() {
                     href="https://www.linkedin.com/in/mao-seavik"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex h-8 items-center gap-2 rounded-lg border border-[var(--border)] bg-zinc-50/70 px-3 font-mono text-xs text-[var(--foreground)] transition-colors hover:bg-[var(--muted-bg)] dark:bg-zinc-900/70"
+                    onClick={() => playSoftClick()}
+                    className="inline-flex h-8 items-center gap-2 rounded-lg border border-[var(--border)] bg-zinc-50/70 px-3 font-mono text-xs text-[var(--foreground)] transition-all duration-150 hover:border-[var(--foreground)]/30 hover:bg-[var(--muted-bg)] active:scale-95 dark:bg-zinc-900/70"
                   >
                     <Linkedin className="h-3.5 w-3.5" />
                     <span>LinkedIn</span>
@@ -1637,7 +1989,8 @@ export default function Portfolio() {
                 <li>
                   <a
                     href="mailto:MaoSeavik@gmail.com"
-                    className="inline-flex h-8 items-center gap-2 rounded-lg border border-[var(--border)] bg-zinc-50/70 px-3 font-mono text-xs text-[var(--foreground)] transition-colors hover:bg-[var(--muted-bg)] dark:bg-zinc-900/70"
+                    onClick={() => playSoftClick()}
+                    className="inline-flex h-8 items-center gap-2 rounded-lg border border-[var(--border)] bg-zinc-50/70 px-3 font-mono text-xs text-[var(--foreground)] transition-all duration-150 hover:border-[var(--foreground)]/30 hover:bg-[var(--muted-bg)] active:scale-95 dark:bg-zinc-900/70"
                   >
                     <Mail className="h-3.5 w-3.5" />
                     <span>Email</span>
@@ -1648,10 +2001,11 @@ export default function Portfolio() {
               <button
                 type="button"
                 onClick={() => {
+                  playMiniMapOpen();
                   setIsModalOpen(true);
                   setIsModalMinimized(false);
                 }}
-                className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-[var(--foreground)] px-3 font-mono text-xs font-medium text-[var(--background)] transition-opacity hover:opacity-90"
+                className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-[var(--foreground)] px-3 font-mono text-xs font-medium text-[var(--background)] transition-all duration-150 hover:opacity-90 active:scale-95"
               >
                 <Send className="h-3 w-3" />
                 <span>Send Message</span>
@@ -1813,7 +2167,8 @@ export default function Portfolio() {
                           href={item.href}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex h-6 items-center justify-center gap-1.5 rounded-full border border-[var(--border)] bg-zinc-50/80 px-2.5 font-mono text-xs text-[var(--foreground)] transition-colors hover:border-[var(--foreground)]/40 hover:bg-[var(--muted-bg)] dark:bg-zinc-900/80"
+                          onClick={() => playTickClick()}
+                          className="inline-flex h-6 items-center justify-center gap-1.5 rounded-full border border-[var(--border)] bg-zinc-50/80 px-2.5 font-mono text-xs text-[var(--foreground)] transition-all duration-150 hover:-translate-y-px hover:border-[var(--foreground)]/40 hover:bg-[var(--muted-bg)] active:scale-95 dark:bg-zinc-900/80"
                         >
                           <img
                             src={item.logo}
@@ -1943,12 +2298,7 @@ export default function Portfolio() {
 
                       <button
                         type="button"
-                        onClick={() =>
-                          setExpandedExp((prev) => ({
-                            ...prev,
-                            [exp.id]: !prev[exp.id],
-                          }))
-                        }
+                        onClick={() => toggleExpItem(exp.id)}
                         className="group block w-full rounded-lg text-left transition-colors hover:bg-[var(--accent-muted)] p-1 -ml-1"
                       >
                         <div className="relative z-10 mb-1 flex items-start gap-3">
@@ -1965,7 +2315,7 @@ export default function Portfolio() {
                               </div>
                             )}
                           </div>
-                          <ChevronsUpDown className="h-4 w-4 shrink-0 text-[var(--muted-foreground)]" />
+                          <AnimatedChevronsUpDown isOpen={isOpen} />
                         </div>
 
                         <div className="flex flex-wrap items-center gap-2 pl-9 font-mono text-xs text-[var(--muted-foreground)]">
@@ -1983,7 +2333,7 @@ export default function Portfolio() {
                         </div>
                       </button>
 
-                      {isOpen && (
+                      <CollapsibleDrawer isOpen={isOpen}>
                         <div className="space-y-3 pt-3 pl-9">
                           <p className="text-sm leading-relaxed text-[var(--foreground)]/90">
                             {exp.desc}
@@ -2037,6 +2387,7 @@ export default function Portfolio() {
                                     href={cert.link}
                                     target="_blank"
                                     rel="noopener noreferrer"
+                                    onClick={() => playSoftClick()}
                                     className="inline-flex items-center gap-1.5 rounded-md border border-[var(--border)] bg-zinc-50 px-2.5 py-1 font-mono text-xs text-[var(--foreground)] hover:bg-[var(--muted-bg)] dark:bg-zinc-900"
                                   >
                                     <ExternalLink className="h-3 w-3 text-[var(--muted-foreground)]" />
@@ -2074,7 +2425,7 @@ export default function Portfolio() {
                             </ul>
                           )}
                         </div>
-                      )}
+                      </CollapsibleDrawer>
                     </div>
                   </div>
                 );
@@ -2085,12 +2436,19 @@ export default function Portfolio() {
               <div className="screen-line-top flex items-center justify-center py-3">
                 <button
                   type="button"
-                  onClick={() => setShowAllExp((v) => !v)}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-zinc-50 px-3 py-1.5 font-mono text-xs font-medium text-[var(--foreground)] transition-colors hover:bg-[var(--muted-bg)] dark:bg-zinc-900"
+                  onClick={() => {
+                    setShowAllExp((v) => {
+                      const next = !v;
+                      if (next) playExpandSound();
+                      else playCollapseSound();
+                      return next;
+                    });
+                  }}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-zinc-50 px-3 py-1.5 font-mono text-xs font-medium text-[var(--foreground)] transition-all duration-150 hover:bg-[var(--muted-bg)] active:scale-95 dark:bg-zinc-900"
                 >
                   <span>{showAllExp ? "Show less" : `Show more (${EXPERIENCE.length - 3})`}</span>
                   <ChevronDown
-                    className={`h-3.5 w-3.5 transition-transform ${showAllExp ? "rotate-180" : ""}`}
+                    className={`h-3.5 w-3.5 transition-transform duration-200 ${showAllExp ? "rotate-180" : ""}`}
                   />
                 </button>
               </div>
@@ -2124,12 +2482,7 @@ export default function Portfolio() {
 
                     <button
                       type="button"
-                      onClick={() =>
-                        setExpandedEdu((prev) => ({
-                          ...prev,
-                          [edu.id]: !prev[edu.id],
-                        }))
-                      }
+                      onClick={() => toggleEduItem(edu.id)}
                       className="block w-full rounded-lg p-1 -ml-1 text-left transition-colors hover:bg-[var(--accent-muted)]"
                     >
                       <div className="relative z-10 mb-1 flex items-start gap-3">
@@ -2139,7 +2492,7 @@ export default function Portfolio() {
                         <h3 className="flex-1 text-base font-medium">
                           {edu.school}
                         </h3>
-                        <ChevronsUpDown className="h-4 w-4 shrink-0 text-[var(--muted-foreground)]" />
+                        <AnimatedChevronsUpDown isOpen={isOpen} />
                       </div>
 
                       <div className="flex flex-wrap items-center gap-x-2 gap-y-1 pl-9 font-mono text-xs text-[var(--muted-foreground)]">
@@ -2153,7 +2506,7 @@ export default function Portfolio() {
                       </div>
                     </button>
 
-                    {isOpen && (
+                    <CollapsibleDrawer isOpen={isOpen}>
                       <div className="space-y-3 pt-3 pl-9">
                         <p className="text-sm leading-relaxed text-[var(--foreground)]/90">
                           {edu.description}
@@ -2178,7 +2531,7 @@ export default function Portfolio() {
                                 <img
                                   src={safeMediaUrl(imgSrc)}
                                   alt=""
-                                  className="h-full w-full object-cover"
+                                  className="h-full w-full object-cover transition-transform duration-300 group-hover/thumb:scale-105"
                                 />
                               </button>
                             ))}
@@ -2213,7 +2566,7 @@ export default function Portfolio() {
                           ))}
                         </ul>
                       </div>
-                    )}
+                    </CollapsibleDrawer>
                   </div>
                 </div>
               );
@@ -2236,8 +2589,11 @@ export default function Portfolio() {
                   <button
                     key={tab}
                     type="button"
-                    onClick={() => setProjectFilter(tab)}
-                    className={`rounded-full px-2.5 py-0.5 font-mono text-[11px] transition-colors ${
+                    onClick={() => {
+                      playTickClick();
+                      setProjectFilter(tab);
+                    }}
+                    className={`rounded-full px-2.5 py-0.5 font-mono text-[11px] transition-all duration-150 active:scale-95 ${
                       projectFilter === tab
                         ? "bg-[var(--foreground)] font-medium text-[var(--background)]"
                         : "border border-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
@@ -2248,7 +2604,8 @@ export default function Portfolio() {
                 ))}
                 <Link
                   href="/work"
-                  className="ml-1 inline-flex items-center gap-1 rounded-full border border-[var(--border)] bg-zinc-50 px-2.5 py-0.5 font-mono text-[11px] text-[var(--foreground)] hover:bg-[var(--muted-bg)] dark:bg-zinc-900"
+                  onClick={() => playSoftClick()}
+                  className="ml-1 inline-flex items-center gap-1 rounded-full border border-[var(--border)] bg-zinc-50 px-2.5 py-0.5 font-mono text-[11px] text-[var(--foreground)] transition-all duration-150 hover:bg-[var(--muted-bg)] active:scale-95 dark:bg-zinc-900"
                 >
                   <span>Archive</span>
                   <ArrowUpRight className="h-3 w-3" />
@@ -2277,12 +2634,7 @@ export default function Portfolio() {
                       <div className="flex flex-1 items-center gap-2 border-l border-dashed border-[var(--line)] p-4">
                         <button
                           type="button"
-                          onClick={() =>
-                            setExpandedProjects((prev) => ({
-                              ...prev,
-                              [project.num]: !prev[project.num],
-                            }))
-                          }
+                          onClick={() => toggleProjectItem(project.num)}
                           className="flex-1 text-left"
                         >
                           <div className="mb-0.5 flex flex-wrap items-center gap-2">
@@ -2324,6 +2676,7 @@ export default function Portfolio() {
                           href={project.link}
                           target="_blank"
                           rel="noopener noreferrer"
+                          onClick={() => playSoftClick()}
                           title="Open project repository"
                           className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-[var(--muted-foreground)] hover:bg-[var(--muted-bg)] hover:text-[var(--foreground)]"
                         >
@@ -2332,21 +2685,16 @@ export default function Portfolio() {
 
                         <button
                           type="button"
-                          onClick={() =>
-                            setExpandedProjects((prev) => ({
-                              ...prev,
-                              [project.num]: !prev[project.num],
-                            }))
-                          }
+                          onClick={() => toggleProjectItem(project.num)}
                           aria-label="Toggle project details"
                           className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-[var(--muted-foreground)]"
                         >
-                          <ChevronsUpDown className="h-4 w-4" />
+                          <AnimatedChevronsUpDown isOpen={isOpen} />
                         </button>
                       </div>
                     </div>
 
-                    {isOpen && (
+                    <CollapsibleDrawer isOpen={isOpen}>
                       <div className="space-y-4 border-t border-[var(--line)] bg-zinc-50/30 p-4 dark:bg-zinc-900/20">
                         <div className="grid gap-4 sm:grid-cols-[200px_1fr]">
                           {/* Thumbnail Preview Card */}
@@ -2409,6 +2757,7 @@ export default function Portfolio() {
                                 href={project.link}
                                 target="_blank"
                                 rel="noopener noreferrer"
+                                onClick={() => playSoftClick()}
                                 className="inline-flex items-center gap-1.5 rounded-md bg-[var(--foreground)] px-2.5 py-1 font-mono text-xs font-medium text-[var(--background)] hover:opacity-90"
                               >
                                 <span>{project.linkText || "View Project →"}</span>
@@ -2418,7 +2767,7 @@ export default function Portfolio() {
                           </div>
                         </div>
                       </div>
-                    )}
+                    </CollapsibleDrawer>
                   </li>
                 );
               })}
@@ -2428,8 +2777,15 @@ export default function Portfolio() {
               <div className="screen-line-top flex items-center justify-center py-3">
                 <button
                   type="button"
-                  onClick={() => setShowAllProjects((v) => !v)}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-zinc-50 px-3 py-1.5 font-mono text-xs font-medium text-[var(--foreground)] transition-colors hover:bg-[var(--muted-bg)] dark:bg-zinc-900"
+                  onClick={() => {
+                    setShowAllProjects((v) => {
+                      const next = !v;
+                      if (next) playExpandSound();
+                      else playCollapseSound();
+                      return next;
+                    });
+                  }}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-zinc-50 px-3 py-1.5 font-mono text-xs font-medium text-[var(--foreground)] transition-all duration-150 hover:bg-[var(--muted-bg)] active:scale-95 dark:bg-zinc-900"
                 >
                   <span>
                     {showAllProjects
@@ -2437,7 +2793,7 @@ export default function Portfolio() {
                       : `Show all ${filteredProjects.length} projects`}
                   </span>
                   <ChevronDown
-                    className={`h-3.5 w-3.5 transition-transform ${
+                    className={`h-3.5 w-3.5 transition-transform duration-200 ${
                       showAllProjects ? "rotate-180" : ""
                     }`}
                   />
@@ -2477,12 +2833,7 @@ export default function Portfolio() {
                       <div className="flex flex-1 items-center gap-2 border-l border-dashed border-[var(--line)] p-4">
                         <button
                           type="button"
-                          onClick={() =>
-                            setExpandedCerts((prev) => ({
-                              ...prev,
-                              [cert.id]: !prev[cert.id],
-                            }))
-                          }
+                          onClick={() => toggleCertItem(cert.id)}
                           className="flex-1 text-left"
                         >
                           <h3 className="mb-0.5 font-medium leading-snug">
@@ -2517,6 +2868,7 @@ export default function Portfolio() {
                         <a
                           href={cert.pdf}
                           download
+                          onClick={() => playSoftClick()}
                           title="Download PDF"
                           className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-[var(--muted-foreground)] hover:bg-[var(--muted-bg)] hover:text-[var(--foreground)]"
                         >
@@ -2525,21 +2877,16 @@ export default function Portfolio() {
 
                         <button
                           type="button"
-                          onClick={() =>
-                            setExpandedCerts((prev) => ({
-                              ...prev,
-                              [cert.id]: !prev[cert.id],
-                            }))
-                          }
+                          onClick={() => toggleCertItem(cert.id)}
                           aria-label="Toggle certificate preview"
                           className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-[var(--muted-foreground)]"
                         >
-                          <ChevronsUpDown className="h-4 w-4" />
+                          <AnimatedChevronsUpDown isOpen={isOpen} />
                         </button>
                       </div>
                     </div>
 
-                    {isOpen && (
+                    <CollapsibleDrawer isOpen={isOpen}>
                       <div className="grid gap-4 border-t border-[var(--line)] bg-zinc-50/30 p-4 sm:grid-cols-[180px_1fr] dark:bg-zinc-900/20">
                         <button
                           type="button"
@@ -2603,6 +2950,7 @@ export default function Portfolio() {
                             <a
                               href={cert.pdf}
                               download
+                              onClick={() => playSoftClick()}
                               className="inline-flex items-center gap-1.5 rounded-md border border-[var(--border)] bg-[var(--background)] px-2.5 py-1.5 font-mono text-xs text-[var(--foreground)] hover:bg-[var(--muted-bg)]"
                             >
                               <Download className="h-3.5 w-3.5 text-[var(--muted-foreground)]" />
@@ -2611,7 +2959,7 @@ export default function Portfolio() {
                           </div>
                         </div>
                       </div>
-                    )}
+                    </CollapsibleDrawer>
                   </li>
                 );
               })}
