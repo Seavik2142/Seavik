@@ -2958,14 +2958,22 @@ textarea.contact-modal-input {
 
 @media (max-width: 768px) {
   .contact-modal {
+    left: 0;
     right: 0;
+    bottom: 0;
+    width: 100%;
     max-width: 100%;
     border-radius: 16px 16px 0 0;
-    height: min(560px, 88vh);
+    height: min(560px, 88dvh);
+    padding-bottom: env(safe-area-inset-bottom);
   }
 
   .contact-modal-inner {
-    padding: 20px 20px 24px;
+    padding: 16px 16px 24px;
+  }
+
+  .contact-modal-input {
+    font-size: 16px;
   }
 
   .contact-modal-title {
@@ -4917,16 +4925,30 @@ textarea.contact-modal-input {
 }
 
 @media (max-width: 768px) {
+  .media-modal-overlay {
+    padding: 0;
+  }
+
   .media-modal-container {
     width: 100vw;
-    height: 100vh;
-    max-height: 100vh;
+    height: 100dvh;
+    max-height: 100dvh;
     border-radius: 0;
     margin: 0;
+    padding-bottom: env(safe-area-inset-bottom);
   }
 
   .media-modal-header {
-    padding: 12px 14px;
+    padding: 10px 12px;
+    gap: 10px;
+  }
+
+  .media-modal-title {
+    font-size: 14px;
+  }
+
+  .media-modal-zoom-group {
+    display: none;
   }
 
   .media-modal-btn-text {

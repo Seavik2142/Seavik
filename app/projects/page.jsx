@@ -30,6 +30,7 @@ export default function ProjectsPage() {
           <WorkCTA />
 
           <div className="stripe-divider h-12 w-full border-x border-[var(--line)]" />
+          <div className="h-20 sm:h-8" />
         </div>
       </main>
     </div>

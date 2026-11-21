@@ -440,7 +440,7 @@ function PanelHeader({ className = "", children }) {
   return (
     <header
       data-slot="panel-header"
-      className={`screen-line-bottom flex items-center justify-between px-4 py-3 ${className}`}
+      className={`screen-line-bottom flex flex-wrap items-center justify-between gap-x-3 gap-y-1 px-3 py-3 sm:px-4 ${className}`}
     >
       {children}
     </header>
@@ -1189,7 +1189,7 @@ function CurrentLocalTimeItem({ timeZone = "Asia/Phnom_Penh" }) {
   }, [timeZone]);
 
   return (
-    <div className="flex items-center gap-3.5 font-mono text-sm">
+    <div className="flex min-w-0 items-center gap-2.5 font-mono text-xs sm:gap-3.5 sm:text-sm">
       <IconTile>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -1204,7 +1204,7 @@ function CurrentLocalTimeItem({ timeZone = "Asia/Phnom_Penh" }) {
           <path d={clock.hands} />
         </svg>
       </IconTile>
-      <p className="truncate">
+      <p className="min-w-0 truncate">
         <span className="tabular-nums">{clock.hour}</span>
         <span className="animate-cd-blink">:</span>
         <span className="tabular-nums">{clock.minute}</span>{" "}
@@ -1301,37 +1301,39 @@ function GitHubContributionsPanel() {
   return (
     <Panel>
       <h2 className="sr-only">GitHub & Hugging Face Contributions</h2>
-      <div className="px-4 py-4">
-        {/* Month Header */}
-        <div className="mb-1.5 flex justify-between px-1 font-mono text-[10px] text-[var(--muted-foreground)] select-none">
-          {MONTHS.map((m) => (
-            <span key={m}>{m}</span>
-          ))}
-        </div>
+      <div className="px-3 py-3.5 sm:px-4 sm:py-4">
+        {/* Scrollable Month Header + 52-week Matrix kept in perfect alignment on mobile */}
+        <div className="overflow-x-auto pb-1.5 [-webkit-overflow-scrolling:touch]">
+          <div className="min-w-[660px]">
+            <div className="mb-1.5 flex justify-between px-1 font-mono text-[10px] text-[var(--muted-foreground)] select-none">
+              {MONTHS.map((m) => (
+                <span key={m}>{m}</span>
+              ))}
+            </div>
 
-        {/* 52-week SVG/Grid Matrix */}
-        <div className="overflow-x-auto pb-1">
-          <div className="inline-flex gap-[3px] min-w-full justify-between">
-            {CONTRIBUTION_DATA.cells.map((week, wIdx) => (
-              <div key={wIdx} className="flex flex-col gap-[3px]">
-                {week.map((cell, dIdx) => (
-                  <div
-                    key={dIdx}
-                    onMouseEnter={() => setHoveredCell(cell)}
-                    onMouseLeave={() => setHoveredCell(null)}
-                    className={`h-[11px] w-[11px] rounded-[2px] transition-transform hover:scale-125 ${getLevelClass(
-                      cell.level
-                    )}`}
-                    title={`${cell.count} contributions (Week ${cell.w + 1})`}
-                  />
-                ))}
-              </div>
-            ))}
+            <div className="inline-flex min-w-full justify-between gap-[3px]">
+              {CONTRIBUTION_DATA.cells.map((week, wIdx) => (
+                <div key={wIdx} className="flex flex-col gap-[3px]">
+                  {week.map((cell, dIdx) => (
+                    <div
+                      key={dIdx}
+                      onMouseEnter={() => setHoveredCell(cell)}
+                      onMouseLeave={() => setHoveredCell(null)}
+                      onClick={() => setHoveredCell(cell)}
+                      className={`h-[11px] w-[11px] rounded-[2px] transition-transform hover:scale-125 ${getLevelClass(
+                        cell.level
+                      )}`}
+                      title={`${cell.count} contributions (Week ${cell.w + 1})`}
+                    />
+                  ))}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="mt-2.5 flex flex-wrap items-center justify-between gap-2 font-mono text-xs text-[var(--muted-foreground)]">
+        <div className="mt-2 flex flex-wrap items-center justify-between gap-2 font-mono text-[11px] text-[var(--muted-foreground)] sm:text-xs">
           <div>
             {hoveredCell ? (
               <span className="text-[var(--foreground)] font-medium">
@@ -1564,7 +1566,7 @@ function SeavikSignature({ className = "" }) {
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        className="block h-11 w-36 max-w-full overflow-visible text-blue-900 dark:text-[var(--foreground)]"
+        className="block h-10 w-32 max-w-full overflow-visible text-blue-900 sm:h-11 sm:w-36 dark:text-[var(--foreground)]"
         fill="none"
         viewBox="0 0 201 72"
         stroke="currentColor"
@@ -1727,22 +1729,24 @@ function SiteFooterInteractiveLogotype() {
         />
       </div>
 
-      {/* Live 1280px Container Width Dimension under logotype */}
-      <div
-        ref={containerRef}
-        className="pointer-events-none relative mx-auto h-8 w-full max-w-7xl text-[var(--dimension)] select-none"
-        aria-hidden="true"
-      >
-        <div className="absolute top-1 bottom-0 left-0 w-px bg-current" />
-        <div className="absolute top-1 right-0 bottom-0 w-px bg-current" />
-        <div className="absolute inset-x-0 bottom-0 flex items-center px-px">
-          <DimensionArrow orientation="horizontal" />
-          <div className="h-px flex-1 bg-current" />
-          <span className="px-1.5 font-mono text-xs leading-none text-[var(--dimension-foreground)] tabular-nums">
-            {width}
-          </span>
-          <div className="h-px flex-1 bg-current" />
-          <DimensionArrow orientation="horizontal" flip />
+      {/* Live Container Width Dimension under logotype */}
+      <div className="px-1 sm:px-0">
+        <div
+          ref={containerRef}
+          className="pointer-events-none relative mx-auto h-7 w-full max-w-7xl text-[var(--dimension)] select-none sm:h-8"
+          aria-hidden="true"
+        >
+          <div className="absolute top-1 bottom-0 left-0 w-px bg-current" />
+          <div className="absolute top-1 right-0 bottom-0 w-px bg-current" />
+          <div className="absolute inset-x-0 bottom-0 flex items-center px-px">
+            <DimensionArrow orientation="horizontal" />
+            <div className="h-px flex-1 bg-current" />
+            <span className="px-1.5 font-mono text-xs leading-none text-[var(--dimension-foreground)] tabular-nums">
+              {width}
+            </span>
+            <div className="h-px flex-1 bg-current" />
+            <DimensionArrow orientation="horizontal" flip />
+          </div>
         </div>
       </div>
     </>
@@ -1920,10 +1924,10 @@ export default function Portfolio() {
              ================================================================ */}
           <div
             id="hero"
-            className="screen-line-top screen-line-bottom grid grid-cols-1 overflow-y-clip border-x border-[var(--line)] sm:grid-cols-[auto_1fr] sm:grid-rows-[1fr_auto]"
+            className="screen-line-top screen-line-bottom grid grid-cols-[auto_1fr] grid-rows-[1fr_auto] overflow-y-clip border-x border-[var(--line)]"
           >
             {/* Isometric 3D Blueprint Figure */}
-            <figure className="relative col-span-1 p-3 sm:col-start-2 sm:p-5">
+            <figure className="relative col-span-2 p-3 sm:col-span-1 sm:col-start-2 sm:p-5">
               <SeavikBlueprintIsometric />
 
               {/* Handwritten margin annotation (right outer gutter on xl screens) */}
@@ -1942,9 +1946,9 @@ export default function Portfolio() {
 
             {/* Left Column: Circular Avatar with Ø160 CAD Diameter Callout */}
             <div className="flex flex-col sm:row-span-2 sm:row-start-1">
-              <div className="screen-line-top mt-auto shrink-0 border-b border-[var(--line)] sm:border-r sm:border-b-0">
-                <div className="-mx-px my-0 flex justify-center outline-none sm:justify-start">
-                  <div className="relative z-10 h-32 w-32 rounded-full sm:h-40 sm:w-40">
+              <div className="screen-line-top mt-auto shrink-0 border-r border-[var(--line)] p-1.5 sm:p-0">
+                <div className="-mx-px my-0 flex outline-none">
+                  <div className="relative z-10 h-24 w-24 rounded-full min-[390px]:h-28 min-[390px]:w-28 sm:h-40 sm:w-40">
                     <img
                       src="/images/about/profile-light.jpg"
                       alt="Mao Seavik"
@@ -1965,11 +1969,11 @@ export default function Portfolio() {
             </div>
 
             {/* Bottom-Right Cell: Display Name + Verified Badge + Rotating Tagline */}
-            <div className="flex flex-col">
+            <div className="flex min-w-0 flex-col">
               <div className="z-10 mt-auto border-t border-[var(--line)]">
-                <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-1.5">
-                  <div className="flex items-center gap-1.5">
-                    <h1 className="text-xl font-medium leading-none tracking-tight sm:text-2xl">
+                <div className="flex flex-wrap items-center justify-between gap-1.5 px-3 py-1.5 sm:gap-2 sm:px-4">
+                  <div className="flex min-w-0 items-center gap-1.5">
+                    <h1 className="truncate text-lg font-medium leading-none tracking-tight min-[390px]:text-xl sm:text-2xl">
                       Mao Seavik
                     </h1>
                     <VerifiedIcon />
@@ -1979,7 +1983,7 @@ export default function Portfolio() {
                   <button
                     type="button"
                     onClick={openResumePdf}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-zinc-50 px-2.5 py-0.5 font-mono text-[11px] text-[var(--foreground)] transition-all duration-150 hover:border-[var(--foreground)]/40 active:scale-95 dark:bg-zinc-900"
+                    className="inline-flex items-center gap-1 rounded-full border border-[var(--border)] bg-zinc-50 px-2 py-0.5 font-mono text-[10px] text-[var(--foreground)] transition-all duration-150 hover:border-[var(--foreground)]/40 active:scale-95 sm:gap-1.5 sm:px-2.5 sm:text-[11px] dark:bg-zinc-900"
                   >
                     <FileText className="h-3 w-3 text-[var(--muted-foreground)]" />
                     <span>Resume.pdf</span>
@@ -1992,11 +1996,11 @@ export default function Portfolio() {
                     setTaglineIndex((prev) => (prev + 1) % TAGLINES.length);
                   }}
                   title="Click to cycle tagline"
-                  className="flex h-9 cursor-pointer items-center overflow-hidden border-t border-[var(--line)] px-4 select-none"
+                  className="flex min-h-[2.75rem] cursor-pointer items-center overflow-hidden border-t border-[var(--line)] px-3 py-1.5 select-none sm:h-9 sm:min-h-0 sm:px-4 sm:py-0"
                 >
                   <p
                     key={taglineIndex}
-                    className="animate-text-swap truncate font-mono text-xs text-[var(--muted-foreground)] sm:text-sm"
+                    className="animate-text-swap line-clamp-2 font-mono text-[11px] leading-snug text-[var(--muted-foreground)] sm:truncate sm:text-sm"
                   >
                     {TAGLINES[taglineIndex]}
                   </p>
@@ -2015,12 +2019,12 @@ export default function Portfolio() {
              ================================================================ */}
           <Panel>
             <h2 className="sr-only">Overview</h2>
-            <div className="grid gap-x-4 gap-y-2.5 p-4 sm:grid-cols-2">
-              <div className="flex items-center gap-3.5 font-mono text-sm">
+            <div className="grid gap-x-4 gap-y-2.5 p-3 sm:grid-cols-2 sm:p-4">
+              <div className="flex min-w-0 items-center gap-2.5 font-mono text-xs sm:gap-3.5 sm:text-sm">
                 <IconTile>
                   <Cpu />
                 </IconTile>
-                <p className="truncate">
+                <p className="min-w-0 truncate">
                   Machine Learning Engineer{" "}
                   <span className="text-[var(--muted-foreground)]">@</span>
                   <a
@@ -2034,11 +2038,11 @@ export default function Portfolio() {
                 </p>
               </div>
 
-              <div className="flex items-center gap-3.5 font-mono text-sm">
+              <div className="flex min-w-0 items-center gap-2.5 font-mono text-xs sm:gap-3.5 sm:text-sm">
                 <IconTile>
                   <GraduationCap />
                 </IconTile>
-                <p className="truncate">
+                <p className="min-w-0 truncate">
                   B.Sc. Computer Science{" "}
                   <span className="text-[var(--muted-foreground)]">@</span>
                   <a href="#education" className="link-underline ml-1 font-medium">
@@ -2047,11 +2051,11 @@ export default function Portfolio() {
                 </p>
               </div>
 
-              <div className="flex items-center gap-3.5 font-mono text-sm">
+              <div className="flex min-w-0 items-center gap-2.5 font-mono text-xs sm:gap-3.5 sm:text-sm">
                 <IconTile>
                   <MapPin />
                 </IconTile>
-                <p className="truncate">
+                <p className="min-w-0 truncate">
                   <a
                     href="https://www.google.com/maps/search/?api=1&query=Phnom+Penh,+Cambodia"
                     target="_blank"
@@ -2065,14 +2069,14 @@ export default function Portfolio() {
 
               <CurrentLocalTimeItem timeZone="Asia/Phnom_Penh" />
 
-              <div className="flex items-center gap-3.5 font-mono text-sm">
+              <div className="flex min-w-0 items-center gap-2.5 font-mono text-xs sm:gap-3.5 sm:text-sm">
                 <IconTile>
                   <Mail />
                 </IconTile>
                 <div className="flex min-w-0 items-center gap-1.5">
                   <a
                     href="mailto:MaoSeavik@gmail.com"
-                    className="truncate hover:underline"
+                    className="min-w-0 truncate hover:underline"
                   >
                     MaoSeavik@gmail.com
                   </a>
@@ -2080,7 +2084,7 @@ export default function Portfolio() {
                     type="button"
                     onClick={copyEmail}
                     title="Copy email address"
-                    className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded text-[var(--muted-foreground)] hover:bg-[var(--muted-bg)] hover:text-[var(--foreground)]"
+                    className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded text-[var(--muted-foreground)] hover:bg-[var(--muted-bg)] hover:text-[var(--foreground)] sm:h-5 sm:w-5"
                   >
                     {copiedEmail ? (
                       <Check className="h-3 w-3 text-emerald-500" />
@@ -2091,14 +2095,14 @@ export default function Portfolio() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-3.5 font-mono text-sm">
+              <div className="flex min-w-0 items-center gap-2.5 font-mono text-xs sm:gap-3.5 sm:text-sm">
                 <IconTile>
                   <FileText />
                 </IconTile>
                 <button
                   type="button"
                   onClick={openResumePdf}
-                  className="link-underline truncate text-left"
+                  className="link-underline min-w-0 truncate text-left"
                 >
                   Mao Seavik_Resume.pdf (Verified CV)
                 </button>
@@ -2117,19 +2121,19 @@ export default function Portfolio() {
              ================================================================ */}
           <Panel className="screen-line-top-none screen-line-bottom-none">
             <h2 className="sr-only">Social Links</h2>
-            <div className="flex flex-wrap items-center justify-between gap-2 p-4">
-              <ul className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-col gap-2.5 p-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:p-4">
+              <ul className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center">
                 <li>
                   <a
                     href="https://github.com/Seavik2142"
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => playSoftClick()}
-                    className="inline-flex h-8 items-center gap-2 rounded-lg border border-[var(--border)] bg-zinc-50/70 px-3 font-mono text-xs text-[var(--foreground)] transition-all duration-150 hover:border-[var(--foreground)]/30 hover:bg-[var(--muted-bg)] active:scale-95 dark:bg-zinc-900/70"
+                    className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-lg border border-[var(--border)] bg-zinc-50/70 px-3 font-mono text-xs text-[var(--foreground)] transition-all duration-150 hover:border-[var(--foreground)]/30 hover:bg-[var(--muted-bg)] active:scale-95 sm:h-8 sm:w-auto sm:justify-start dark:bg-zinc-900/70"
                   >
-                    <Github className="h-3.5 w-3.5" />
+                    <Github className="h-3.5 w-3.5 shrink-0" />
                     <span>GitHub</span>
-                    <span className="text-[var(--muted-foreground)]">@Seavik2142</span>
+                    <span className="hidden text-[var(--muted-foreground)] sm:inline">@Seavik2142</span>
                   </a>
                 </li>
                 <li>
@@ -2138,15 +2142,15 @@ export default function Portfolio() {
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => playSoftClick()}
-                    className="inline-flex h-8 items-center gap-2 rounded-lg border border-[var(--border)] bg-zinc-50/70 px-3 font-mono text-xs text-[var(--foreground)] transition-all duration-150 hover:border-[var(--foreground)]/30 hover:bg-[var(--muted-bg)] active:scale-95 dark:bg-zinc-900/70"
+                    className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-lg border border-[var(--border)] bg-zinc-50/70 px-3 font-mono text-xs text-[var(--foreground)] transition-all duration-150 hover:border-[var(--foreground)]/30 hover:bg-[var(--muted-bg)] active:scale-95 sm:h-8 sm:w-auto sm:justify-start dark:bg-zinc-900/70"
                   >
                     <img
                       src="/images/logos/huggingface.svg"
                       alt=""
-                      className="h-3.5 w-3.5"
+                      className="h-3.5 w-3.5 shrink-0"
                     />
-                    <span>Hugging Face</span>
-                    <span className="text-[var(--muted-foreground)]">@Maoseavik</span>
+                    <span className="truncate">Hugging Face</span>
+                    <span className="hidden text-[var(--muted-foreground)] sm:inline">@Maoseavik</span>
                   </a>
                 </li>
                 <li>
@@ -2155,9 +2159,9 @@ export default function Portfolio() {
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => playSoftClick()}
-                    className="inline-flex h-8 items-center gap-2 rounded-lg border border-[var(--border)] bg-zinc-50/70 px-3 font-mono text-xs text-[var(--foreground)] transition-all duration-150 hover:border-[var(--foreground)]/30 hover:bg-[var(--muted-bg)] active:scale-95 dark:bg-zinc-900/70"
+                    className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-lg border border-[var(--border)] bg-zinc-50/70 px-3 font-mono text-xs text-[var(--foreground)] transition-all duration-150 hover:border-[var(--foreground)]/30 hover:bg-[var(--muted-bg)] active:scale-95 sm:h-8 sm:w-auto sm:justify-start dark:bg-zinc-900/70"
                   >
-                    <Linkedin className="h-3.5 w-3.5" />
+                    <Linkedin className="h-3.5 w-3.5 shrink-0" />
                     <span>LinkedIn</span>
                   </a>
                 </li>
@@ -2165,9 +2169,9 @@ export default function Portfolio() {
                   <a
                     href="mailto:MaoSeavik@gmail.com"
                     onClick={() => playSoftClick()}
-                    className="inline-flex h-8 items-center gap-2 rounded-lg border border-[var(--border)] bg-zinc-50/70 px-3 font-mono text-xs text-[var(--foreground)] transition-all duration-150 hover:border-[var(--foreground)]/30 hover:bg-[var(--muted-bg)] active:scale-95 dark:bg-zinc-900/70"
+                    className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-lg border border-[var(--border)] bg-zinc-50/70 px-3 font-mono text-xs text-[var(--foreground)] transition-all duration-150 hover:border-[var(--foreground)]/30 hover:bg-[var(--muted-bg)] active:scale-95 sm:h-8 sm:w-auto sm:justify-start dark:bg-zinc-900/70"
                   >
-                    <Mail className="h-3.5 w-3.5" />
+                    <Mail className="h-3.5 w-3.5 shrink-0" />
                     <span>Email</span>
                   </a>
                 </li>
@@ -2180,7 +2184,7 @@ export default function Portfolio() {
                   setIsModalOpen(true);
                   setIsModalMinimized(false);
                 }}
-                className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-[var(--foreground)] px-3 font-mono text-xs font-medium text-[var(--background)] transition-all duration-150 hover:opacity-90 active:scale-95"
+                className="inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-lg bg-[var(--foreground)] px-3 font-mono text-xs font-medium text-[var(--background)] transition-all duration-150 hover:opacity-90 active:scale-95 sm:h-8 sm:w-auto"
               >
                 <Send className="h-3 w-3" />
                 <span>Send Message</span>
@@ -2582,7 +2586,7 @@ export default function Portfolio() {
                       </button>
 
                       <CollapsibleDrawer isOpen={isOpen}>
-                        <div className="space-y-3 pt-3 pl-9">
+                        <div className="space-y-3 pt-3 pl-5 sm:pl-9">
                           <p className="text-sm leading-relaxed text-[var(--foreground)]/90">
                             {exp.desc}
                           </p>
@@ -2873,33 +2877,33 @@ export default function Portfolio() {
                     className="border-b border-[var(--line)] last:border-b-0"
                   >
                     <div className="relative flex items-center transition-colors hover:bg-[var(--accent-muted)]">
-                      <IconTile className="mx-4">
+                      <IconTile className="mx-2.5 sm:mx-4">
                         <span className="font-mono text-[10px] font-semibold">
                           {project.num}
                         </span>
                       </IconTile>
 
-                      <div className="flex flex-1 items-center gap-2 border-l border-dashed border-[var(--line)] p-4">
+                      <div className="flex min-w-0 flex-1 items-center gap-1.5 border-l border-dashed border-[var(--line)] p-3 sm:gap-2 sm:p-4">
                         <button
                           type="button"
                           onClick={() => toggleProjectItem(project.num)}
-                          className="flex-1 text-left"
+                          className="min-w-0 flex-1 text-left"
                         >
-                          <div className="mb-0.5 flex flex-wrap items-center gap-2">
-                            <h3 className="font-medium leading-snug">
+                          <div className="mb-0.5 flex flex-wrap items-center gap-1.5 sm:gap-2">
+                            <h3 className="text-sm font-medium leading-snug sm:text-base">
                               {project.title}
                             </h3>
                             {project.awards && project.awards.length > 0 && (
-                              <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.2 font-mono text-[10px] font-medium text-amber-600 dark:text-amber-400">
+                              <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 font-mono text-[10px] font-medium text-amber-600 dark:text-amber-400">
                                 <Trophy className="h-2.5 w-2.5" />
                                 {project.awards[0]}
                               </span>
                             )}
                           </div>
-                          <div className="flex flex-wrap items-center gap-2 font-mono text-xs text-[var(--muted-foreground)]">
+                          <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 font-mono text-[11px] text-[var(--muted-foreground)] sm:gap-2 sm:text-xs">
                             <span>{project.category}</span>
-                            <span>·</span>
-                            <span>{project.tech.slice(0, 3).join(", ")}</span>
+                            <span className="hidden sm:inline">·</span>
+                            <span className="truncate">{project.tech.slice(0, 3).join(", ")}</span>
                           </div>
                         </button>
 
@@ -2914,7 +2918,7 @@ export default function Portfolio() {
                             })
                           }
                           title={`Preview ${formatLabel}`}
-                          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-[var(--muted-foreground)] hover:bg-[var(--muted-bg)] hover:text-[var(--foreground)]"
+                          className="hidden h-7 w-7 shrink-0 items-center justify-center rounded-md text-[var(--muted-foreground)] hover:bg-[var(--muted-bg)] hover:text-[var(--foreground)] sm:flex"
                         >
                           <Eye className="h-4 w-4" />
                         </button>
@@ -3074,20 +3078,20 @@ export default function Portfolio() {
                     className="border-b border-[var(--line)] last:border-b-0"
                   >
                     <div className="relative flex items-center transition-colors hover:bg-[var(--accent-muted)]">
-                      <IconTile className="mx-4">
+                      <IconTile className="mx-2.5 sm:mx-4">
                         <CircleCheckBig />
                       </IconTile>
 
-                      <div className="flex flex-1 items-center gap-2 border-l border-dashed border-[var(--line)] p-4">
+                      <div className="flex min-w-0 flex-1 items-center gap-1.5 border-l border-dashed border-[var(--line)] p-3 sm:gap-2 sm:p-4">
                         <button
                           type="button"
                           onClick={() => toggleCertItem(cert.id)}
-                          className="flex-1 text-left"
+                          className="min-w-0 flex-1 text-left"
                         >
-                          <h3 className="mb-0.5 font-medium leading-snug">
+                          <h3 className="mb-0.5 text-sm font-medium leading-snug sm:text-base">
                             {cert.title} — {cert.subtitle}
                           </h3>
-                          <div className="flex flex-wrap items-center gap-x-2 font-mono text-xs text-[var(--muted-foreground)]">
+                          <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 font-mono text-[11px] text-[var(--muted-foreground)] sm:text-xs">
                             <span>Certificate</span>
                             <span className="h-3 w-px bg-[var(--border)]" />
                             <span>@{cert.org}</span>
@@ -3107,10 +3111,10 @@ export default function Portfolio() {
                             })
                           }
                           title="Preview Verified PDF"
-                          className="inline-flex h-7 items-center gap-1 rounded-md border border-[var(--border)] bg-zinc-50 px-2 font-mono text-[11px] text-[var(--foreground)] hover:bg-[var(--muted-bg)] dark:bg-zinc-900"
+                          className="hidden h-7 items-center gap-1 rounded-md border border-[var(--border)] bg-zinc-50 px-2 font-mono text-[11px] text-[var(--foreground)] hover:bg-[var(--muted-bg)] sm:inline-flex dark:bg-zinc-900"
                         >
                           <FileText className="h-3 w-3 text-[var(--muted-foreground)]" />
-                          <span className="hidden sm:inline">View PDF</span>
+                          <span>View PDF</span>
                         </button>
 
                         <a
@@ -3118,7 +3122,7 @@ export default function Portfolio() {
                           download
                           onClick={() => playSoftClick()}
                           title="Download PDF"
-                          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-[var(--muted-foreground)] hover:bg-[var(--muted-bg)] hover:text-[var(--foreground)]"
+                          className="hidden h-7 w-7 shrink-0 items-center justify-center rounded-md text-[var(--muted-foreground)] hover:bg-[var(--muted-bg)] hover:text-[var(--foreground)] sm:flex"
                         >
                           <Download className="h-3.5 w-3.5" />
                         </a>
@@ -3251,99 +3255,104 @@ export default function Portfolio() {
               <div className="grid gap-2 sm:grid-cols-2">
                 <a
                   href="mailto:MaoSeavik@gmail.com"
-                  className="flex items-center justify-between rounded-lg border border-[var(--line)] bg-zinc-50/50 p-3 transition-colors hover:border-[var(--foreground)]/30 dark:bg-zinc-900/40"
+                  onClick={() => playSoftClick()}
+                  className="flex min-w-0 items-center justify-between gap-2 rounded-lg border border-[var(--line)] bg-zinc-50/50 p-3 transition-colors hover:border-[var(--foreground)]/30 dark:bg-zinc-900/40"
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex min-w-0 items-center gap-3">
                     <IconTile>
                       <Mail />
                     </IconTile>
-                    <div>
+                    <div className="min-w-0">
                       <div className="font-mono text-[10px] text-[var(--muted-foreground)] uppercase">
                         01 · EMAIL
                       </div>
-                      <div className="font-mono text-xs font-medium">
+                      <div className="truncate font-mono text-xs font-medium">
                         MaoSeavik@gmail.com
                       </div>
                     </div>
                   </div>
-                  <ArrowUpRight className="h-4 w-4 text-[var(--muted-foreground)]" />
+                  <ArrowUpRight className="h-4 w-4 shrink-0 text-[var(--muted-foreground)]" />
                 </a>
 
                 <a
                   href="https://huggingface.co/Maoseavik"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-between rounded-lg border border-[var(--line)] bg-zinc-50/50 p-3 transition-colors hover:border-[var(--foreground)]/30 dark:bg-zinc-900/40"
+                  onClick={() => playSoftClick()}
+                  className="flex min-w-0 items-center justify-between gap-2 rounded-lg border border-[var(--line)] bg-zinc-50/50 p-3 transition-colors hover:border-[var(--foreground)]/30 dark:bg-zinc-900/40"
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex min-w-0 items-center gap-3">
                     <IconTile>
                       <Sparkles />
                     </IconTile>
-                    <div>
+                    <div className="min-w-0">
                       <div className="font-mono text-[10px] text-[var(--muted-foreground)] uppercase">
                         02 · HUGGING FACE
                       </div>
-                      <div className="font-mono text-xs font-medium">
+                      <div className="truncate font-mono text-xs font-medium">
                         huggingface.co/Maoseavik
                       </div>
                     </div>
                   </div>
-                  <ArrowUpRight className="h-4 w-4 text-[var(--muted-foreground)]" />
+                  <ArrowUpRight className="h-4 w-4 shrink-0 text-[var(--muted-foreground)]" />
                 </a>
 
                 <a
                   href="https://github.com/Seavik2142"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-between rounded-lg border border-[var(--line)] bg-zinc-50/50 p-3 transition-colors hover:border-[var(--foreground)]/30 dark:bg-zinc-900/40"
+                  onClick={() => playSoftClick()}
+                  className="flex min-w-0 items-center justify-between gap-2 rounded-lg border border-[var(--line)] bg-zinc-50/50 p-3 transition-colors hover:border-[var(--foreground)]/30 dark:bg-zinc-900/40"
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex min-w-0 items-center gap-3">
                     <IconTile>
                       <Github />
                     </IconTile>
-                    <div>
+                    <div className="min-w-0">
                       <div className="font-mono text-[10px] text-[var(--muted-foreground)] uppercase">
                         03 · GITHUB
                       </div>
-                      <div className="font-mono text-xs font-medium">
+                      <div className="truncate font-mono text-xs font-medium">
                         github.com/Seavik2142
                       </div>
                     </div>
                   </div>
-                  <ArrowUpRight className="h-4 w-4 text-[var(--muted-foreground)]" />
+                  <ArrowUpRight className="h-4 w-4 shrink-0 text-[var(--muted-foreground)]" />
                 </a>
 
                 <a
                   href="https://www.linkedin.com/in/mao-seavik"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-between rounded-lg border border-[var(--line)] bg-zinc-50/50 p-3 transition-colors hover:border-[var(--foreground)]/30 dark:bg-zinc-900/40"
+                  onClick={() => playSoftClick()}
+                  className="flex min-w-0 items-center justify-between gap-2 rounded-lg border border-[var(--line)] bg-zinc-50/50 p-3 transition-colors hover:border-[var(--foreground)]/30 dark:bg-zinc-900/40"
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex min-w-0 items-center gap-3">
                     <IconTile>
                       <Linkedin />
                     </IconTile>
-                    <div>
+                    <div className="min-w-0">
                       <div className="font-mono text-[10px] text-[var(--muted-foreground)] uppercase">
                         04 · LINKEDIN
                       </div>
-                      <div className="font-mono text-xs font-medium">
+                      <div className="truncate font-mono text-xs font-medium">
                         linkedin.com/in/mao-seavik
                       </div>
                     </div>
                   </div>
-                  <ArrowUpRight className="h-4 w-4 text-[var(--muted-foreground)]" />
+                  <ArrowUpRight className="h-4 w-4 shrink-0 text-[var(--muted-foreground)]" />
                 </a>
               </div>
 
-              <div className="flex flex-wrap items-center gap-2.5 pt-1">
+              <div className="flex flex-col gap-2 pt-1 sm:flex-row sm:flex-wrap sm:items-center sm:gap-2.5">
                 <button
                   type="button"
                   onClick={() => {
+                    playMiniMapOpen();
                     setIsModalOpen(true);
                     setIsModalMinimized(false);
                   }}
-                  className="inline-flex h-9 items-center gap-2 rounded-lg bg-[var(--foreground)] px-4 font-mono text-xs font-medium text-[var(--background)] transition-opacity hover:opacity-90"
+                  className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-[var(--foreground)] px-4 font-mono text-xs font-medium text-[var(--background)] transition-all hover:opacity-90 active:scale-95 sm:h-9 sm:w-auto"
                 >
                   <Send className="h-3.5 w-3.5" />
                   <span>SEND ME A MESSAGE →</span>
@@ -3352,7 +3361,7 @@ export default function Portfolio() {
                 <button
                   type="button"
                   onClick={openResumePdf}
-                  className="inline-flex h-9 items-center gap-2 rounded-lg border border-[var(--border)] bg-zinc-50 px-4 font-mono text-xs font-medium text-[var(--foreground)] transition-colors hover:bg-[var(--muted-bg)] dark:bg-zinc-900"
+                  className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-[var(--border)] bg-zinc-50 px-4 font-mono text-xs font-medium text-[var(--foreground)] transition-all hover:bg-[var(--muted-bg)] active:scale-95 sm:h-9 sm:w-auto dark:bg-zinc-900"
                 >
                   <FileText className="h-3.5 w-3.5 text-[var(--muted-foreground)]" />
                   <span>VIEW RESUME (PDF) →</span>
@@ -3521,13 +3530,13 @@ export default function Portfolio() {
                 </dd>
               </div>
 
-              <div className="flex flex-col justify-between gap-2 bg-[var(--background)] px-4 py-3">
+              <div className="flex min-w-0 flex-col justify-between gap-2 bg-[var(--background)] px-3 py-3 sm:px-4">
                 <dt className="text-[10px] font-medium tracking-wider text-[var(--muted-foreground)] uppercase">
                   Approved by
                 </dt>
-                <dd className="flex h-full flex-col justify-end gap-2">
-                  <SeavikSignature className="self-start" />
-                  <span className="border-t border-[var(--line)] pt-2 font-sans text-sm leading-none font-medium tracking-wide uppercase">
+                <dd className="flex h-full min-w-0 flex-col justify-end gap-2">
+                  <SeavikSignature className="max-w-full self-start" />
+                  <span className="border-t border-[var(--line)] pt-2 font-sans text-xs leading-none font-medium tracking-wide uppercase sm:text-sm">
                     MAO SEAVIK
                   </span>
                 </dd>
@@ -3537,7 +3546,7 @@ export default function Portfolio() {
         </div>
 
         <SiteFooterInteractiveLogotype />
-        <div className="h-14" />
+        <div className="h-24 sm:h-14" />
       </footer>
 
       {/* ====================================================================

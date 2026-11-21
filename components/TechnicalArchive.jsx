@@ -352,18 +352,18 @@ export default function TechnicalArchive({ projects = [] }) {
                   className="border-b border-[var(--line)] last:border-b-0"
                 >
                   <div className="relative flex items-center transition-colors hover:bg-[var(--accent-muted)]">
-                    <div className="mx-4 flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-[var(--muted-foreground)]/15 bg-[var(--muted-bg)] font-mono text-[10px] font-semibold text-[var(--muted-foreground)] ring-1 ring-[var(--border)]/60 ring-offset-1 ring-offset-[var(--background)] select-none">
+                    <div className="mx-2.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-[var(--muted-foreground)]/15 bg-[var(--muted-bg)] font-mono text-[10px] font-semibold text-[var(--muted-foreground)] ring-1 ring-[var(--border)]/60 ring-offset-1 ring-offset-[var(--background)] select-none sm:mx-4">
                       {project.num}
                     </div>
 
-                    <div className="flex flex-1 items-center gap-2 border-l border-dashed border-[var(--line)] p-4">
+                    <div className="flex min-w-0 flex-1 items-center gap-1.5 border-l border-dashed border-[var(--line)] p-3 sm:gap-2 sm:p-4">
                       <button
                         type="button"
                         onClick={() => toggleRow(project.num)}
-                        className="flex-1 text-left"
+                        className="min-w-0 flex-1 text-left"
                       >
-                        <div className="mb-0.5 flex flex-wrap items-center gap-2">
-                          <h3 className="font-medium leading-snug text-[var(--foreground)]">
+                        <div className="mb-0.5 flex flex-wrap items-center gap-1.5 sm:gap-2">
+                          <h3 className="text-sm font-medium leading-snug text-[var(--foreground)] sm:text-base">
                             {project.title}
                           </h3>
                           {project.awards && project.awards.length > 0 && (
@@ -373,10 +373,10 @@ export default function TechnicalArchive({ projects = [] }) {
                             </span>
                           )}
                         </div>
-                        <div className="flex flex-wrap items-center gap-2 font-mono text-xs text-[var(--muted-foreground)]">
+                        <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 font-mono text-[11px] text-[var(--muted-foreground)] sm:text-xs">
                           <span>{project.category}</span>
-                          <span>·</span>
-                          <span>{project.tech.slice(0, 4).join(", ")}</span>
+                          <span className="hidden sm:inline">·</span>
+                          <span className="truncate">{project.tech.slice(0, 3).join(", ")}</span>
                         </div>
                       </button>
 
@@ -384,7 +384,7 @@ export default function TechnicalArchive({ projects = [] }) {
                         type="button"
                         onClick={() => openMedia(project)}
                         title={`Preview ${formatLabel}`}
-                        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-[var(--muted-foreground)] transition-colors hover:bg-[var(--muted-bg)] hover:text-[var(--foreground)] active:scale-95"
+                        className="hidden h-7 w-7 shrink-0 items-center justify-center rounded-md text-[var(--muted-foreground)] transition-colors hover:bg-[var(--muted-bg)] hover:text-[var(--foreground)] active:scale-95 sm:flex"
                       >
                         <Eye className="h-4 w-4" />
                       </button>

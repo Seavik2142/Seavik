@@ -548,12 +548,12 @@ export default function Header({
          ==================================================================== */}
       <div
         ref={mobileMenuRef}
-        className="fixed bottom-3 left-1/2 z-50 flex w-fit -translate-x-1/2 items-center rounded-xl bg-[var(--background)]/95 py-1 pr-1.5 pl-3 shadow-lg ring-1 ring-[var(--foreground)]/10 backdrop-blur-md sm:hidden dark:ring-[var(--foreground)]/20"
+        className="fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-1/2 z-50 flex w-fit -translate-x-1/2 items-center rounded-xl bg-[var(--background)]/95 py-1.5 pr-2 pl-3.5 shadow-lg ring-1 ring-[var(--foreground)]/10 backdrop-blur-md sm:hidden dark:ring-[var(--foreground)]/20"
       >
         {/* Mobile Popover Menu */}
         {mobileMenuOpen && (
-          <div className="animate-cd-popover absolute bottom-full left-1/2 mb-2.5 w-48 -translate-x-1/2 rounded-xl border border-[var(--border)] bg-[var(--background)] p-1.5 shadow-xl">
-            <div className="flex flex-col">
+          <div className="animate-cd-popover absolute bottom-full left-1/2 mb-2.5 w-52 -translate-x-1/2 rounded-xl border border-[var(--border)] bg-[var(--background)] p-1.5 shadow-xl">
+            <div className="flex flex-col gap-0.5">
               {NAV_ITEMS.map((item) => {
                 const isActive = activeSection === item.id;
                 return (
@@ -561,7 +561,7 @@ export default function Header({
                     key={item.id}
                     href={item.href}
                     onClick={(e) => handleNavClick(e, item.id)}
-                    className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+                    className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
                       isActive
                         ? "bg-[var(--muted-bg)] text-[var(--foreground)]"
                         : "text-[var(--muted-foreground)] hover:bg-[var(--muted-bg)] hover:text-[var(--foreground)]"
@@ -577,17 +577,34 @@ export default function Header({
                   playSoftClick();
                   setMobileMenuOpen(false);
                 }}
-                className="rounded-lg px-3 py-1.5 text-sm font-medium text-[var(--muted-foreground)] hover:bg-[var(--muted-bg)] hover:text-[var(--foreground)]"
+                className="rounded-lg px-3 py-2 text-sm font-medium text-[var(--muted-foreground)] hover:bg-[var(--muted-bg)] hover:text-[var(--foreground)]"
               >
                 Archive
               </Link>
               <a
                 href="/#contact"
                 onClick={(e) => handleNavClick(e, "contact")}
-                className="rounded-lg px-3 py-1.5 text-sm font-medium text-[var(--muted-foreground)] hover:bg-[var(--muted-bg)] hover:text-[var(--foreground)]"
+                className="rounded-lg px-3 py-2 text-sm font-medium text-[var(--muted-foreground)] hover:bg-[var(--muted-bg)] hover:text-[var(--foreground)]"
               >
                 Contact
               </a>
+              <div className="my-1 h-px bg-[var(--line)]" />
+              <button
+                type="button"
+                onClick={() => {
+                  playSoftClick();
+                  setMobileMenuOpen(false);
+                  if (onOpenResume) {
+                    onOpenResume();
+                  } else {
+                    window.open("/resume/Mao Seavik_Resume.pdf", "_blank", "noopener,noreferrer");
+                  }
+                }}
+                className="flex items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium text-[var(--foreground)] hover:bg-[var(--muted-bg)]"
+              >
+                <FileText className="h-3.5 w-3.5 text-[var(--muted-foreground)]" />
+                <span>Resume.pdf</span>
+              </button>
             </div>
           </div>
         )}
@@ -605,7 +622,7 @@ export default function Header({
           <span>Search…</span>
         </button>
 
-        <div className="mr-1 ml-2.5 h-5 w-px bg-[var(--border)]" />
+        <div className="mr-1.5 ml-2.5 h-5 w-px bg-[var(--border)]" />
 
         <button
           type="button"
@@ -615,7 +632,7 @@ export default function Header({
           }}
           aria-label="Toggle Menu"
           aria-expanded={mobileMenuOpen}
-          className="relative flex h-7 w-7 flex-col items-center justify-center gap-1 rounded-lg hover:bg-[var(--muted-bg)]"
+          className="relative flex h-8 w-8 flex-col items-center justify-center gap-1 rounded-lg hover:bg-[var(--muted-bg)]"
         >
           <span
             className={`flex h-0.5 w-4 rounded-[1px] bg-[var(--foreground)] transition-transform ${
@@ -722,7 +739,7 @@ export default function Header({
         </div>
       )}
 
-      {/* Back to top button */}
+      {/* Back to top button (positioned cleanly above Mobile Bottom Dock on < sm) */}
       {showBackToTop && !mobileMenuOpen && (
         <button
           type="button"
@@ -731,7 +748,7 @@ export default function Header({
             window.scrollTo({ top: 0, behavior: "smooth" });
           }}
           aria-label="Scroll to top"
-          className="fixed right-4 bottom-4 z-40 flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] shadow-md transition-transform hover:-translate-y-0.5 active:scale-95"
+          className="fixed right-3 bottom-[calc(4.25rem+env(safe-area-inset-bottom))] z-40 flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--background)]/95 text-[var(--foreground)] shadow-md backdrop-blur-sm transition-transform hover:-translate-y-0.5 active:scale-95 sm:right-4 sm:bottom-4"
         >
           <ArrowUp className="h-4 w-4" />
         </button>
