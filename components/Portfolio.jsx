@@ -41,7 +41,7 @@ import { CERTIFICATES } from "../data/certificates";
 import Header from "./Header";
 import MediaModal from "./MediaModal";
 import { isPdf, getFormatLabel, safeMediaUrl } from "../lib/media";
-import { playMetalClick, playSoftClick } from "../lib/sound";
+import { playMetalClick, playSoftClick, playPenScratch } from "../lib/sound";
 
 /* ============================================================================
    DATA DEFINITIONS (Preserving all user content + ML Engineer & Data Science Stack)
@@ -981,8 +981,153 @@ function GitHubContributionsPanel() {
 }
 
 /* ============================================================================
-   INTERACTIVE FOOTER HATCH LOGOTYPE + LIVE WIDTH DIMENSION
+   ANIMATED TECHNICAL PEN SIGNATURE (Mao Seavik's Handwritten Signature)
    ============================================================================ */
+
+// Vectorized from Mao Seavik's actual handwritten ink signature (viewBox 0 0 201 74):
+// Continuous single-path stroke with the double-arch monogram + horizontal loop + diagonal underline flourish
+const SEAVIK_SIGNATURE_STROKE =
+  "M 74.5 14.5 C 73.5 7.2 84.0 3.2 91.5 6.8 C 99.8 10.8 102.5 24.5 98.8 41.2 C 98.4 43.0 98.0 43.5 98.6 41.5 C 102.5 24.0 109.2 6.8 115.6 2.6 C 117.2 1.6 118.5 3.4 119.4 9.5 C 121.0 20.5 119.8 32.8 118.2 38.4 C 117.8 39.8 117.2 38.6 117.6 36.2 C 119.2 28.5 121.2 22.8 114.5 20.0 C 103.5 15.4 81.5 18.8 73.8 29.2 C 69.8 34.6 73.8 37.8 83.5 36.8 C 102.5 34.8 139.5 27.2 162.5 26.8 C 166.8 26.7 166.5 28.6 161.2 29.2 C 156.5 29.7 151.5 30.2 148.5 30.6 M 24.5 66.2 C 21.8 67.5 22.5 66.8 27.5 65.2 C 64.5 53.2 128.5 31.8 172.8 16.5 C 174.5 15.9 173.8 16.8 172.2 17.5";
+
+function TechnicalPen({ transform }) {
+  return (
+    <g fill="var(--background)" transform={transform}>
+      <path d="M-5 -34V-74Q-5 -76 -3 -76H3Q5 -76 5 -74V-34Z" />
+      <path fill="currentColor" d="M-5.5 -30H5.5V-34H-5.5Z" />
+      <path d="M-4.5 -14H4.5V-30H-4.5Z" />
+      <path d="M-1.5 -6L-4.5 -14H4.5L1.5 -6Z" />
+      <path d="M0 0V-6" />
+    </g>
+  );
+}
+
+function SeavikSignature({ className = "" }) {
+  const btnRef = useRef(null);
+  const pathRef = useRef(null);
+  const rafRef = useRef(null);
+  const hasSignedRef = useRef(false);
+
+  const [state, setState] = useState({
+    totalLen: 600,
+    drawnLen: 600,
+    penX: 172,
+    penY: 17,
+    penOpacity: 0,
+  });
+
+  const runSignatureAnimation = useCallback(() => {
+    const pathEl = pathRef.current;
+    if (!pathEl) return;
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+
+    const totalLen = pathEl.getTotalLength() || 600;
+    const durationMs = 1950;
+    const startTime = performance.now();
+    const angleRad = (45 * Math.PI) / 180;
+
+    const tick = (now) => {
+      const elapsed = now - startTime;
+      const t = Math.min(1, elapsed / durationMs);
+      // Smooth ease-in-out curve
+      const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+      const currentLen = eased * totalLen;
+
+      let pt = { x: 74.5, y: 14.5 };
+      try {
+        pt = pathEl.getPointAtLength(currentLen);
+      } catch {}
+
+      // Pen lift at start (first 8%) and end (last 10%)
+      let lift = 0;
+      if (t < 0.08) {
+        lift = 1 - t / 0.08;
+      } else if (t > 0.9) {
+        lift = (t - 0.9) / 0.1;
+      }
+
+      const liftDist = lift * 12;
+      setState({
+        totalLen,
+        drawnLen: currentLen,
+        penX: pt.x + liftDist * Math.sin(angleRad),
+        penY: pt.y - liftDist * Math.cos(angleRad),
+        penOpacity: t >= 1 ? 0 : 1 - lift * 0.85,
+      });
+
+      if (t < 1) {
+        rafRef.current = requestAnimationFrame(tick);
+      }
+    };
+
+    rafRef.current = requestAnimationFrame(tick);
+  }, []);
+
+  useEffect(() => {
+    const node = btnRef.current;
+    if (!node || typeof IntersectionObserver === "undefined") return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !hasSignedRef.current) {
+          hasSignedRef.current = true;
+          runSignatureAnimation();
+        }
+      },
+      { threshold: 0.6 }
+    );
+    obs.observe(node);
+    return () => {
+      obs.disconnect();
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, [runSignatureAnimation]);
+
+  const handleReplay = () => {
+    playPenScratch();
+    runSignatureAnimation();
+  };
+
+  return (
+    <button
+      ref={btnRef}
+      type="button"
+      onClick={handleReplay}
+      title="Click to sign again"
+      aria-label="Replay signature"
+      className={`group/sig relative inline-flex items-center rounded-sm outline-none transition-opacity hover:opacity-90 ${className}`}
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="block h-11 w-36 max-w-full overflow-visible text-blue-900 dark:text-[var(--foreground)]"
+        fill="none"
+        viewBox="0 0 201 72"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.75"
+        aria-hidden="true"
+      >
+        <path
+          ref={pathRef}
+          d={SEAVIK_SIGNATURE_STROKE}
+          strokeDasharray={state.totalLen}
+          strokeDashoffset={Math.max(0, state.totalLen - state.drawnLen)}
+        />
+        {/* Terminal signature dot */}
+        {state.drawnLen >= state.totalLen * 0.96 && (
+          <circle cx="177.5" cy="14.5" r="1.1" fill="currentColor" stroke="none" />
+        )}
+        {state.penOpacity > 0.01 && (
+          <g
+            transform={`translate(${state.penX.toFixed(2)}, ${state.penY.toFixed(2)})`}
+            opacity={state.penOpacity}
+          >
+            <TechnicalPen transform="rotate(45)" />
+          </g>
+        )}
+      </svg>
+    </button>
+  );
+}
 
 const SEAVIK_LOGOTYPE_PATH =
   "M33 1H129V33H33V1ZM129 33H161V65H129V33ZM1 33H33V97H1V33ZM33 97H129V129H33V97ZM129 129H161V225H129V129ZM1 193H33V225H1V193ZM33 225H129V257H33V225ZM225 65H321V97H225V65ZM321 97H353V129H321V97ZM225 129H321V161H225V129ZM193 97H225V225H193V97ZM225 225H353V257H225V225ZM417 65H513V97H417V65ZM513 65H545V257H513V65ZM385 97H417V225H385V97ZM481 193H513V225H481V193ZM417 225H481V257H417V225ZM577 65H609V129H577V65ZM609 129H641V193H609V129ZM641 193H673V257H641V193ZM673 129H705V193H673V129ZM705 65H737V129H705V65ZM801 1H833V33H801V1ZM769 65H801V97H769V65ZM801 65H833V257H801V65ZM865 1H897V257H865V1ZM961 65H1025V97H961V65ZM929 97H961V129H929V97ZM897 129H929V161H897V129ZM929 161H993V193H929V161ZM993 193H1025V257H993V193Z";
@@ -2784,11 +2929,9 @@ export default function Portfolio() {
                 <dt className="text-[10px] font-medium tracking-wider text-[var(--muted-foreground)] uppercase">
                   Approved by
                 </dt>
-                <dd className="flex flex-col justify-end gap-1.5">
-                  <span className="font-handwritten text-2xl leading-none text-blue-900 dark:text-[var(--foreground)] select-none">
-                    Mao Seavik
-                  </span>
-                  <span className="border-t border-[var(--line)] pt-1.5 font-sans text-xs font-medium tracking-wide uppercase">
+                <dd className="flex h-full flex-col justify-end gap-2">
+                  <SeavikSignature className="self-start" />
+                  <span className="border-t border-[var(--line)] pt-2 font-sans text-sm leading-none font-medium tracking-wide uppercase">
                     MAO SEAVIK
                   </span>
                 </dd>
