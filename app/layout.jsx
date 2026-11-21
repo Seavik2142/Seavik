@@ -5,31 +5,51 @@ export const viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#09090b" },
+  ],
 };
 
 export const metadata = {
-  metadataBase: new URL("https://seavik-portfolio.vercel.app"),
-  title: "MAO SEAVIK | Portfolio",
-  description: "Portfolio of Mao Seavik (Seavik) - Machine Learning Engineer & Full Stack Developer specializing in ML systems, expert diagnostics, and web applications.",
+  metadataBase: new URL("https://seavik-gamma.vercel.app"),
+  title: {
+    default: "Mao Seavik — ML Engineer & Full-Stack Developer",
+    template: "%s — Mao Seavik",
+  },
+  description:
+    "Portfolio of Mao Seavik (Seavik) — Machine Learning Engineer & Full-Stack Developer specializing in Deep Learning, LLM Fine-Tuning (LoRA/PEFT), Data Science, and full-stack web applications.",
+  icons: {
+    icon: [
+      { url: "/favicon.svg?v=3", type: "image/svg+xml" },
+      { url: "/favicon.ico?v=3", sizes: "32x32" },
+    ],
+    shortcut: "/favicon.ico?v=3",
+    apple: [
+      { url: "/apple-touch-icon.png?v=3", sizes: "180x180", type: "image/png" },
+    ],
+  },
   openGraph: {
-    title: "MAO SEAVIK | Portfolio",
-    description: "Portfolio of Mao Seavik (Seavik) - Machine Learning Engineer & Full Stack Developer specializing in ML systems, expert diagnostics, and web applications.",
-    url: "https://seavik-portfolio.vercel.app",
-    siteName: "MAO SEAVIK PORTFOLIO",
+    title: "Mao Seavik — ML Engineer & Full-Stack Developer",
+    description:
+      "Portfolio of Mao Seavik (Seavik) — Machine Learning Engineer & Full-Stack Developer specializing in Deep Learning, LLM Fine-Tuning, and production web systems.",
+    url: "https://seavik-gamma.vercel.app",
+    siteName: "Mao Seavik",
     images: [
       {
         url: "/images/about/profile.png",
         width: 1200,
         height: 630,
-        alt: "MAO SEAVIK PORTFOLIO",
+        alt: "Mao Seavik — ML Engineer & Full-Stack Developer",
       },
     ],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "MAO SEAVIK | Portfolio",
-    description: "Portfolio of Mao Seavik (Seavik) - Machine Learning Engineer & Full Stack Developer specializing in ML systems, expert diagnostics, and web applications.",
+    title: "Mao Seavik — ML Engineer & Full-Stack Developer",
+    description:
+      "Portfolio of Mao Seavik (Seavik) — Machine Learning Engineer & Full-Stack Developer specializing in Deep Learning, LLM Fine-Tuning, and production web systems.",
     images: ["/images/about/profile.png"],
   },
 };
@@ -38,8 +58,6 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-        <link rel="apple-touch-icon" href="/favicon.svg" />
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&matchMedia('(prefers-color-scheme:dark)').matches))document.documentElement.classList.add('dark');}catch(e){}})();`,
