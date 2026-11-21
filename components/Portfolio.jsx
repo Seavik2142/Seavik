@@ -433,19 +433,47 @@ function Tag({ children, logo, className = "" }) {
   );
 }
 
-function VerifiedIcon({ className = "h-4.5 w-4.5" }) {
+function VerifiedIcon({ className = "h-5 w-5" }) {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      className={`text-[var(--info)] ${className}`}
+    <span
+      className={`group/verified relative inline-flex items-center justify-center select-none ${className}`}
+      title="Verified Machine Learning Engineer"
       aria-label="Verified"
     >
-      <path
-        fill="currentColor"
-        d="M24 12a4.454 4.454 0 0 0-2.564-3.91 4.437 4.437 0 0 0-.948-4.578 4.436 4.436 0 0 0-4.577-.948A4.44 4.44 0 0 0 12 0a4.423 4.423 0 0 0-3.9 2.564 4.434 4.434 0 0 0-2.43-.178 4.425 4.425 0 0 0-2.158 1.126 4.42 4.42 0 0 0-1.12 2.156 4.42 4.42 0 0 0 .183 2.421A4.456 4.456 0 0 0 0 12a4.465 4.465 0 0 0 2.576 3.91 4.433 4.433 0 0 0 .936 4.577 4.459 4.459 0 0 0 4.577.95A4.454 4.454 0 0 0 12 24a4.439 4.439 0 0 0 3.91-2.563 4.26 4.26 0 0 0 5.526-5.526A4.453 4.453 0 0 0 24 12Zm-13.709 4.917-4.38-4.378 1.652-1.663 2.646 2.646L15.83 7.4l1.72 1.591-7.258 7.926Z"
+      {/* Subtle outer pulse aura */}
+      <span
+        className="pointer-events-none absolute inset-0 rounded-full bg-[#2563eb]/25 opacity-75 animate-ping dark:bg-[#3b82f6]/30"
+        style={{ animationDuration: "3s" }}
+        aria-hidden="true"
       />
-    </svg>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        className="relative z-10 h-full w-full text-[#2563eb] transition-transform duration-300 ease-out group-hover/verified:scale-110 group-hover/verified:rotate-6 dark:text-[#3b82f6]"
+      >
+        <defs>
+          <linearGradient id="verified-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#3b82f6" />
+            <stop offset="50%" stopColor="#2563eb" />
+            <stop offset="100%" stopColor="#1d4ed8" />
+          </linearGradient>
+        </defs>
+        {/* 10-point scalloped verified rosette */}
+        <path
+          fill="url(#verified-grad)"
+          d="M24 12a4.454 4.454 0 0 0-2.564-3.91 4.437 4.437 0 0 0-.948-4.578 4.436 4.436 0 0 0-4.577-.948A4.44 4.44 0 0 0 12 0a4.423 4.423 0 0 0-3.9 2.564 4.434 4.434 0 0 0-2.43-.178 4.425 4.425 0 0 0-2.158 1.126 4.42 4.42 0 0 0-1.12 2.156 4.42 4.42 0 0 0 .183 2.421A4.456 4.456 0 0 0 0 12a4.465 4.465 0 0 0 2.576 3.91 4.433 4.433 0 0 0 .936 4.577 4.459 4.459 0 0 0 4.577.95A4.454 4.454 0 0 0 12 24a4.439 4.439 0 0 0 3.91-2.563 4.26 4.26 0 0 0 5.526-5.526A4.453 4.453 0 0 0 24 12Z"
+        />
+        {/* Crisp white checkmark */}
+        <path
+          fill="none"
+          stroke="#ffffff"
+          strokeWidth="2.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="m7.8 12.3 2.6 2.6 6-6.2"
+        />
+      </svg>
+    </span>
   );
 }
 
@@ -557,7 +585,7 @@ function HandwrittenArrow({ className = "" }) {
 
 const ISOMETRIC_ANGLE = Math.PI / 6;
 const ANGLE_RADIUS = 88;
-const ANGLE_VERTEX = { x: 443.9, y: 0.58 };
+const ANGLE_VERTEX = { x: 333.05, y: 0.58 };
 const ANGLE_START = { x: ANGLE_VERTEX.x + ANGLE_RADIUS, y: ANGLE_VERTEX.y };
 const ANGLE_END = {
   x: ANGLE_VERTEX.x + ANGLE_RADIUS * Math.cos(ISOMETRIC_ANGLE),
@@ -567,6 +595,21 @@ const ANGLE_LABEL = {
   x: ANGLE_VERTEX.x + (ANGLE_RADIUS + 18) * Math.cos(ISOMETRIC_ANGLE / 2),
   y: ANGLE_VERTEX.y + (ANGLE_RADIUS + 18) * Math.sin(ISOMETRIC_ANGLE / 2),
 };
+
+// Back-to-front ordered 30-degree isometric prisms for "S" and "K" (SK = Seavik)
+const SK_ISOMETRIC_BOXES = [
+  // K (Upper-Right Isometric Letter)
+  { name: "K_top_arm", p0: [333.05, 0.58], p1: [416.19, 48.58], p2: [360.76, 80.58], p3: [277.62, 32.58] },
+  { name: "K_knot", p0: [360.76, 80.58], p1: [416.19, 112.58], p2: [360.76, 144.58], p3: [305.34, 112.58] },
+  { name: "K_bot_leg", p0: [471.61, 80.58], p1: [554.75, 128.58], p2: [499.33, 160.58], p3: [416.19, 112.58] },
+  { name: "K_stem", p0: [222.2, 64.58], p1: [443.9, 192.58], p2: [388.48, 224.58], p3: [166.77, 96.58] },
+  // S (Lower-Left Isometric Letter)
+  { name: "S_top", p0: [111.35, 128.58], p1: [155.69, 154.18], p2: [44.84, 218.18], p3: [0.5, 192.58] },
+  { name: "S_ul", p0: [44.84, 218.18], p1: [89.18, 243.78], p2: [44.84, 269.38], p3: [0.5, 243.78] },
+  { name: "S_mid", p0: [155.69, 205.38], p1: [200.03, 230.98], p2: [133.52, 269.38], p3: [89.18, 243.78] },
+  { name: "S_lr", p0: [244.37, 205.38], p1: [288.71, 230.98], p2: [244.37, 256.58], p3: [200.03, 230.98] },
+  { name: "S_bot", p0: [244.37, 256.58], p1: [288.71, 282.18], p2: [222.2, 320.58], p3: [177.86, 294.98] },
+];
 
 function playMechanicalClick() {
   try {
@@ -609,20 +652,8 @@ function SeavikBlueprintIsometric() {
     setTimeout(() => setPressed(false), 180);
   };
 
-  const normalStroke = [
-    "M28.21 240.58 L0.50 224.58 V192.58 L111.35 128.58 L166.78 160.58 V192.58 L83.64 240.58",
-    "M166.78 160.58 L0.50 256.58 V288.58 L111.35 352.58 L166.78 320.58 L222.20 352.58 L333.05 288.58 V256.58 L277.63 224.58 L166.78 288.58 L0.50 192.58",
-    "M0.50 256.58 L111.35 320.58 L166.78 288.58 L222.20 320.58 L333.05 256.58",
-    "M111.35 320.58 V352.58",
-    "M166.78 288.58 V320.58",
-    "M222.20 320.58 V352.58",
-    "M499.33 96.58 L554.76 128.58 V160.58 L388.48 256.58 L166.78 128.58 V96.58 L333.05 0.58 L499.33 96.58",
-    "M166.78 96.58 L388.48 224.58 L554.76 128.58",
-    "M527.04 112.58 L554.76 96.58 V64.58 L443.90 0.58 L277.63 96.58 L388.48 160.58 L554.76 64.58",
-    "M305.34 112.58 L388.48 64.58 L471.62 112.58",
-    "M388.48 224.58 V256.58",
-    "M388.48 32.58 V64.58",
-  ].join("");
+  const topOffset = pressed ? 14 : 0;
+  const baseDepth = 32;
 
   return (
     <svg
@@ -632,7 +663,7 @@ function SeavikBlueprintIsometric() {
       viewBox="0 0 556 354"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      aria-label="Interactive Isometric CAD Blueprint"
+      aria-label="Interactive SK Isometric CAD Blueprint"
     >
       <defs>
         <pattern
@@ -650,34 +681,11 @@ function SeavikBlueprintIsometric() {
           />
         </pattern>
 
-        <g
-          id="seavik-face-fill"
-          style={{
-            transform: pressed ? "translateY(12px)" : "translateY(0px)",
-            transition: "transform 0.18s cubic-bezier(0.22, 1, 0.36, 1)",
-          }}
-        >
-          <path d="M333.05 256.58L222.20 320.58L166.78 288.58L277.63 224.58L333.05 256.58Z" />
-          <path d="M388.48 32.58L277.63 96.58L388.48 160.58L499.33 96.58L554.76 128.58L388.48 224.58L166.78 96.58L333.05 0.58L388.48 32.58Z" />
-          <path d="M166.78 288.58L111.35 320.58L0.50 256.58L55.93 224.58L166.78 288.58Z" />
-          <path d="M554.76 64.58L499.33 96.58L388.48 32.58L443.90 0.58L554.76 64.58Z" />
-          <path d="M166.78 160.58L55.93 224.58L0.50 192.58L111.35 128.58L166.78 160.58Z" />
-        </g>
-
-        <path
-          id="seavik-iso-stroke"
-          d={normalStroke}
-          style={{
-            transform: pressed ? "translateY(8px)" : "translateY(0px)",
-            transition: "transform 0.18s cubic-bezier(0.22, 1, 0.36, 1)",
-          }}
-        />
-
         <radialGradient
           id="seavik-radial-spot"
           cx={spot.x}
           cy={spot.y}
-          r="210"
+          r="220"
           gradientUnits="userSpaceOnUse"
         >
           <stop offset="0%" stopColor="var(--foreground)" stopOpacity="0.95" />
@@ -692,21 +700,36 @@ function SeavikBlueprintIsometric() {
         <path d="M1143.65 692.58L-588.39 -307.42" />
       </g>
 
-      {/* Solid extrusions */}
-      <g fill="var(--background)" fillRule="evenodd" clipRule="evenodd">
-        <path d="M166.78 160.58L55.93 224.58L0.50 192.58V224.58L55.93 256.58L166.78 192.58V160.58Z" />
-        <path d="M166.78 288.58L111.35 320.58L0.50 256.58V288.58L111.35 352.58L166.78 320.58L222.20 352.58L333.05 288.58V256.58L222.20 320.58L166.78 288.58Z" />
-        <path d="M388.48 224.58L166.78 96.58V128.58L388.48 256.58L554.76 160.58V128.58L388.48 224.58Z" />
-        <path d="M388.48 32.58L277.63 96.58V128.58L388.48 64.58L499.33 128.58L554.75 96.58V64.58L499.33 96.58L388.48 32.58Z" />
-      </g>
+      {/* Back-to-Front 3D Isometric Extruded Prisms for "S" and "K" */}
+      {SK_ISOMETRIC_BOXES.map((box) => {
+        const [x0, y0] = [box.p0[0], box.p0[1] + topOffset];
+        const [x1, y1] = [box.p1[0], box.p1[1] + topOffset];
+        const [x2, y2] = [box.p2[0], box.p2[1] + topOffset];
+        const [x3, y3] = [box.p3[0], box.p3[1] + topOffset];
 
-      <use href="#seavik-face-fill" fill="var(--background)" />
-      <use href="#seavik-face-fill" fill="url(#seavik-face-pattern)" />
+        const by1 = box.p1[1] + baseDepth;
+        const by2 = box.p2[1] + baseDepth;
+        const by3 = box.p3[1] + baseDepth;
 
-      <use href="#seavik-iso-stroke" stroke="var(--border)" strokeWidth="1.2" />
-      <use href="#seavik-iso-stroke" stroke="url(#seavik-radial-spot)" strokeWidth="1.35" />
+        const topPath = `M${x0.toFixed(2)} ${y0.toFixed(2)}L${x1.toFixed(2)} ${y1.toFixed(2)}L${x2.toFixed(2)} ${y2.toFixed(2)}L${x3.toFixed(2)} ${y3.toFixed(2)}Z`;
+        const wallPath = `M${x3.toFixed(2)} ${y3.toFixed(2)}L${x2.toFixed(2)} ${y2.toFixed(2)}L${x1.toFixed(2)} ${y1.toFixed(2)}L${x1.toFixed(2)} ${by1.toFixed(2)}L${x2.toFixed(2)} ${by2.toFixed(2)}L${x3.toFixed(2)} ${by3.toFixed(2)}Z`;
+        const edgePath = `${topPath}M${x3.toFixed(2)} ${y3.toFixed(2)}V${by3.toFixed(2)}L${x2.toFixed(2)} ${by2.toFixed(2)}L${x1.toFixed(2)} ${by1.toFixed(2)}V${y1.toFixed(2)}M${x2.toFixed(2)} ${y2.toFixed(2)}V${by2.toFixed(2)}`;
 
-      {/* 30° CAD Angle Callout */}
+        return (
+          <g key={box.name}>
+            {/* Extruded vertical side walls */}
+            <path d={wallPath} fill="var(--background)" />
+            {/* Top isometric face + diagonal hatch fill */}
+            <path d={topPath} fill="var(--background)" />
+            <path d={topPath} fill="url(#seavik-face-pattern)" />
+            {/* Base wireframe + cursor-reactive spotlight stroke */}
+            <path d={edgePath} stroke="var(--border)" strokeWidth="1.2" strokeLinejoin="round" />
+            <path d={edgePath} stroke="url(#seavik-radial-spot)" strokeWidth="1.35" strokeLinejoin="round" />
+          </g>
+        );
+      })}
+
+      {/* 30° CAD Angle Callout at top vertex of K */}
       <g
         className="pointer-events-none hidden text-[var(--dimension)] sm:block"
         fill="none"
@@ -1268,16 +1291,24 @@ export default function Portfolio() {
 
             {/* Left Column: Circular Avatar with Ø160 CAD Diameter Callout */}
             <div className="flex flex-col sm:row-span-2 sm:row-start-1">
-              <div className="screen-line-top mt-auto flex shrink-0 justify-center border-b border-[var(--line)] py-4 sm:justify-start sm:border-r sm:border-b-0 sm:p-0">
-                <div className="relative z-10 h-32 w-32 rounded-full sm:h-40 sm:w-40">
-                  <img
-                    src="/images/profile.png?v=suit_2026"
-                    alt="Mao Seavik"
-                    className="block h-full w-full rounded-full object-cover select-none"
-                    draggable={false}
-                  />
-                  <div className="pointer-events-none absolute inset-0 rounded-full ring-1 ring-inset ring-[var(--foreground)]/20" />
-                  <DiameterDimension diameter={160} />
+              <div className="screen-line-top mt-auto shrink-0 border-b border-[var(--line)] sm:border-r sm:border-b-0">
+                <div className="-mx-px my-0 flex justify-center outline-none sm:justify-start">
+                  <div className="relative z-10 h-32 w-32 rounded-full sm:h-40 sm:w-40">
+                    <img
+                      src="/images/about/profile-light.jpg"
+                      alt="Mao Seavik"
+                      className="block h-full w-full rounded-full object-cover select-none dark:hidden"
+                      draggable={false}
+                    />
+                    <img
+                      src="/images/about/profile-dark.jpg"
+                      alt="Mao Seavik"
+                      className="hidden h-full w-full rounded-full object-cover select-none dark:block"
+                      draggable={false}
+                    />
+                    <div className="pointer-events-none absolute inset-0 rounded-full ring-1 ring-inset ring-[var(--foreground)] dark:ring-[var(--foreground)]/20" />
+                    <DiameterDimension diameter={160} />
+                  </div>
                 </div>
               </div>
             </div>

@@ -45,9 +45,15 @@ export function SeavikMark({ className = "h-6 w-auto" }) {
       aria-hidden="true"
       className={className}
     >
+      {/* S (Pixel-Block Grid: x=0..192, y=0..256) */}
       <path
         fill="currentColor"
-        d="M192 256H64v-64h128v64ZM448 64H320v128h128v64H256V0h192v64ZM64 192H0V64h64v128ZM512 192h-64V64h64v128ZM192 64H64V0h128v64Z"
+        d="M64 0h128v52H64V0ZM0 52h64v52H0V52Zm64 52h64v48H64v-48Zm64 48h64v52h-64v-52ZM0 204h128v52H0v-52Z"
+      />
+      {/* K (Pixel-Block Grid: x=288..512, y=0..256) */}
+      <path
+        fill="currentColor"
+        d="M288 0h64v256h-64V0Zm64 96h80v64h-80V96Zm80-96h80v96h-80V0Zm0 160h80v96h-80v-96Z"
       />
     </svg>
   );
