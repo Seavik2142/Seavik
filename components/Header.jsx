@@ -478,31 +478,6 @@ export default function Header({
               </span>
             </a>
 
-            {alwaysShowCoffee && (
-              <>
-                <div className="mx-2 h-5 w-px bg-[var(--border)]" />
-                <button
-                  type="button"
-                  onClick={handleCoffeeClick}
-                  title="Send a coffee cheer!"
-                  className="relative inline-flex h-7 items-center gap-1.5 rounded-md px-1.5 text-[var(--foreground)] transition-colors hover:bg-[var(--muted-bg)] active:scale-95"
-                >
-                  {justClicked && (
-                    <span
-                      key={floaterKey}
-                      className="pointer-events-none absolute -top-6 left-1/2 -translate-x-1/2 animate-bounce whitespace-nowrap rounded bg-[var(--foreground)] px-1.5 py-0.5 font-mono text-[10px] font-semibold text-[var(--background)] shadow"
-                    >
-                      +1 ☕
-                    </span>
-                  )}
-                  <Coffee className="h-3.5 w-3.5 text-[var(--foreground)]/80" />
-                  <span className="text-[13px] leading-none text-[var(--muted-foreground)] tabular-nums">
-                    {coffeeLoading ? ".." : coffeeCount}
-                  </span>
-                </button>
-              </>
-            )}
-
             <div className="mx-2 h-5 w-px bg-[var(--border)]" />
 
             <ThemeToggle />
