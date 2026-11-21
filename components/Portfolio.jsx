@@ -2640,7 +2640,7 @@ export default function Portfolio() {
                   paintOrder: "stroke fill",
                 }}
               >
-                maoseavik.com
+                maoseavik
               </span>
               <span className="font-mono text-xs text-[var(--muted-foreground)]">
                 Machine Learning Engineer &amp; Full-Stack Developer
