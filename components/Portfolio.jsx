@@ -974,6 +974,9 @@ function SeavikBlueprintIsometric() {
         </radialGradient>
       </defs>
 
+      {/* Full 556x354 hit rect so clicking anywhere in the SK blueprint area triggers press & sound */}
+      <rect width="556" height="354" fill="transparent" />
+
       {/* Isometric projection construction lines */}
       <g stroke="var(--line)" strokeWidth="1" strokeDasharray="4 2">
         <path d="M-477.55 756.57L1254.51 -243.41" />
