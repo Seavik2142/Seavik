@@ -9,11 +9,11 @@ const nextConfig = {
   async headers() {
     return [
       {
-        source: "/:all*(svg|jpg|jpeg|png|webp|avif|gif|ico)",
+        source: "/images/:all*(svg|jpg|jpeg|png|webp|avif|gif|ico)",
         headers: [
           {
             key: "Cache-Control",
-            value: "public, max-age=86400, stale-while-revalidate=604800",
+            value: "public, max-age=3600, stale-while-revalidate=86400",
           },
         ],
       },

@@ -42,6 +42,10 @@ import { CERTIFICATES } from "../data/certificates";
 import Header from "./Header";
 import MediaModal from "./MediaModal";
 import { useTheme } from "./ThemeProvider";
+import profileMonoLightImg from "../public/images/about/profile-mono-light.jpg";
+import profileMonoDarkImg from "../public/images/about/profile-mono-dark.jpg";
+import profileLightImg from "../public/images/about/profile-light.jpg";
+import profileDarkImg from "../public/images/about/profile-dark.jpg";
 import { isPdf, getFormatLabel, safeMediaUrl } from "../lib/media";
 import {
   playMetalClick,
@@ -2245,7 +2249,7 @@ export default function Portfolio({ initialContributions = null }) {
                     className="group/avatar relative z-10 h-24 w-24 cursor-pointer rounded-full outline-none min-[390px]:h-28 min-[390px]:w-28 sm:h-40 sm:w-40"
                   >
                     <div className="relative h-full w-full overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-950">
-                      {/* Light-Mode Avatar Stack (pre-decoded, fades out smoothly in dark mode) */}
+                      {/* Light-Mode Avatar Stack (content-hashed static imports — immune to stale 404 cache) */}
                       <div
                         className={`absolute inset-0 transition-opacity duration-300 ${
                           dark
@@ -2255,20 +2259,24 @@ export default function Portfolio({ initialContributions = null }) {
                         aria-hidden={dark}
                       >
                         <img
-                          src="/images/about/profile-mono-light.jpg"
-                          alt="Mao Seavik monochrome illustration"
+                          src={profileMonoLightImg.src}
+                          alt="Mao Seavik"
                           loading="eager"
-                          decoding="sync"
+                          onError={(e) => {
+                            if (e.currentTarget.src !== profileLightImg.src) {
+                              e.currentTarget.src = profileLightImg.src;
+                            }
+                          }}
                           className={`block h-full w-full rounded-full object-cover select-none transition-transform duration-500 ease-out will-change-transform ${
                             avatarRevealed ? "scale-[1.03]" : "scale-100 group-hover/avatar:scale-[1.03]"
                           }`}
                           draggable={false}
                         />
                         <img
-                          src="/images/about/profile-light.jpg"
-                          alt="Mao Seavik"
+                          src={profileLightImg.src}
+                          alt=""
+                          aria-hidden="true"
                           loading="eager"
-                          decoding="sync"
                           className={`pointer-events-none absolute inset-0 block h-full w-full rounded-full object-cover select-none transition-[opacity,transform] duration-500 ease-out will-change-transform ${
                             avatarRevealed
                               ? "opacity-100 scale-[1.03]"
@@ -2278,7 +2286,7 @@ export default function Portfolio({ initialContributions = null }) {
                         />
                       </div>
 
-                      {/* Dark-Mode Avatar Stack (pre-decoded, always visible in dark mode) */}
+                      {/* Dark-Mode Avatar Stack (content-hashed static imports — immune to stale 404 cache) */}
                       <div
                         className={`absolute inset-0 transition-opacity duration-300 ${
                           dark
@@ -2288,20 +2296,24 @@ export default function Portfolio({ initialContributions = null }) {
                         aria-hidden={!dark}
                       >
                         <img
-                          src="/images/about/profile-mono-dark.jpg"
-                          alt="Mao Seavik monochrome illustration"
+                          src={profileMonoDarkImg.src}
+                          alt="Mao Seavik"
                           loading="eager"
-                          decoding="sync"
+                          onError={(e) => {
+                            if (e.currentTarget.src !== profileDarkImg.src) {
+                              e.currentTarget.src = profileDarkImg.src;
+                            }
+                          }}
                           className={`block h-full w-full rounded-full object-cover select-none transition-transform duration-500 ease-out will-change-transform ${
                             avatarRevealed ? "scale-[1.03]" : "scale-100 group-hover/avatar:scale-[1.03]"
                           }`}
                           draggable={false}
                         />
                         <img
-                          src="/images/about/profile-dark.jpg"
-                          alt="Mao Seavik"
+                          src={profileDarkImg.src}
+                          alt=""
+                          aria-hidden="true"
                           loading="eager"
-                          decoding="sync"
                           className={`pointer-events-none absolute inset-0 block h-full w-full rounded-full object-cover select-none transition-[opacity,transform] duration-500 ease-out will-change-transform ${
                             avatarRevealed
                               ? "opacity-100 scale-[1.03]"
