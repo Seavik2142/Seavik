@@ -34,6 +34,7 @@ import {
   Send,
   Layers,
   Terminal,
+  RefreshCw,
 } from "lucide-react";
 import Link from "next/link";
 import { PROJECTS as ALL_PROJECTS } from "../lib/projects";
@@ -1321,8 +1322,8 @@ function GitHubContributionsPanel({ initialData }) {
       : {}
   );
 
-  const loadYearData = useCallback(async (yearKey) => {
-    if (cacheRef.current[yearKey]) {
+  const loadYearData = useCallback(async (yearKey, { force = false } = {}) => {
+    if (!force && cacheRef.current[yearKey]) {
       setActiveData(cacheRef.current[yearKey]);
       setHasError(false);
       setIsLoading(false);
@@ -1332,7 +1333,10 @@ function GitHubContributionsPanel({ initialData }) {
     setIsLoading(true);
     setHasError(false);
     try {
-      const res = await fetch(`/api/github-contributions?year=${encodeURIComponent(yearKey)}`);
+      const res = await fetch(
+        `/api/github-contributions?year=${encodeURIComponent(yearKey)}&t=${Date.now()}`,
+        { cache: "no-store" }
+      );
       if (!res.ok) throw new Error("Failed to fetch GitHub contributions");
       const json = await res.json();
       if (Array.isArray(json?.contributions) && json.contributions.length > 0) {
@@ -1427,30 +1431,50 @@ function GitHubContributionsPanel({ initialData }) {
             </a>
           </div>
 
-          <div
-            className="inline-flex items-center rounded-md border border-[var(--border)] bg-[var(--muted-bg)]/40 p-0.5 font-mono text-[10px]"
-            role="tablist"
-            aria-label="Select GitHub contribution range"
-          >
-            {yearOptions.map((opt) => {
-              const isSelected = selectedYear === opt.key;
-              return (
-                <button
-                  key={opt.key}
-                  type="button"
-                  role="tab"
-                  aria-selected={isSelected}
-                  onClick={() => handleSelectYear(opt.key)}
-                  className={`rounded px-2 py-0.5 transition-colors ${
-                    isSelected
-                      ? "bg-[var(--foreground)] text-[var(--background)] font-medium"
-                      : "text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
-                  }`}
-                >
-                  {opt.label}
-                </button>
-              );
-            })}
+          <div className="flex items-center gap-1.5">
+            <div
+              className="inline-flex items-center rounded-md border border-[var(--border)] bg-[var(--muted-bg)]/40 p-0.5 font-mono text-[10px]"
+              role="tablist"
+              aria-label="Select GitHub contribution range"
+            >
+              {yearOptions.map((opt) => {
+                const isSelected = selectedYear === opt.key;
+                return (
+                  <button
+                    key={opt.key}
+                    type="button"
+                    role="tab"
+                    aria-selected={isSelected}
+                    onClick={() => handleSelectYear(opt.key)}
+                    className={`rounded px-2 py-0.5 transition-colors ${
+                      isSelected
+                        ? "bg-[var(--foreground)] text-[var(--background)] font-medium"
+                        : "text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                );
+              })}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => {
+                playTickClick();
+                loadYearData(selectedYear, { force: true });
+              }}
+              disabled={isLoading}
+              title={
+                activeData?.authenticated
+                  ? "Live via GitHub GraphQL API — click to refresh"
+                  : "Live from GitHub — click to refresh"
+              }
+              aria-label="Refresh GitHub contributions"
+              className="inline-flex h-6 w-6 items-center justify-center rounded-md border border-[var(--border)] bg-[var(--muted-bg)]/40 text-[var(--muted-foreground)] transition-colors hover:border-[var(--foreground)]/30 hover:text-[var(--foreground)] disabled:opacity-50"
+            >
+              <RefreshCw className={`h-3 w-3 ${isLoading ? "animate-spin" : ""}`} />
+            </button>
           </div>
         </div>
 

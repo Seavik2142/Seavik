@@ -1,20 +1,11 @@
 import Portfolio from "../components/Portfolio";
-import { getAvailableGitHubYears, getGitHubContributions } from "../lib/github";
+import { getGitHubContributions } from "../lib/github";
 
-export const revalidate = 3600;
+// Always fetch live GitHub contribution data on every visit (no stale cache)
+export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const [contributionsData, availableYears] = await Promise.all([
-    getGitHubContributions("last"),
-    getAvailableGitHubYears(),
-  ]);
+  const contributionsData = await getGitHubContributions("last");
 
-  return (
-    <Portfolio
-      initialContributions={{
-        ...contributionsData,
-        availableYears,
-      }}
-    />
-  );
+  return <Portfolio initialContributions={contributionsData} />;
 }
