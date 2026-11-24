@@ -2042,6 +2042,7 @@ export default function Portfolio({ initialContributions = null }) {
   const [taglineIndex, setTaglineIndex] = useState(0);
   const [greeting, setGreeting] = useState("Hello");
   const [copiedEmail, setCopiedEmail] = useState(false);
+  const [avatarRevealed, setAvatarRevealed] = useState(false);
 
   // Collapsible states for Experience, Education, Projects, Recognition
   const [expandedExp, setExpandedExp] = useState(() => ({
@@ -2199,20 +2200,53 @@ export default function Portfolio({ initialContributions = null }) {
             <div className="flex flex-col sm:row-span-2 sm:row-start-1">
               <div className="screen-line-top mt-auto shrink-0 border-r border-[var(--line)] p-1.5 sm:p-0">
                 <div className="-mx-px my-0 flex outline-none">
-                  <div className="relative z-10 h-24 w-24 rounded-full min-[390px]:h-28 min-[390px]:w-28 sm:h-40 sm:w-40">
-                    <img
-                      src="/images/about/profile-light.jpg"
-                      alt="Mao Seavik"
-                      className="block h-full w-full rounded-full object-cover select-none dark:hidden"
-                      draggable={false}
+                  <div
+                    role="button"
+                    tabIndex={0}
+                    aria-label="Mao Seavik profile photo — hover or tap to reveal full color"
+                    onMouseLeave={() => setAvatarRevealed(false)}
+                    onClick={() => {
+                      playTickClick();
+                      setAvatarRevealed((prev) => !prev);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        playTickClick();
+                        setAvatarRevealed((prev) => !prev);
+                      }
+                    }}
+                    className="group/avatar relative z-10 h-24 w-24 cursor-pointer rounded-full outline-none min-[390px]:h-28 min-[390px]:w-28 sm:h-40 sm:w-40"
+                  >
+                    <div className="h-full w-full overflow-hidden rounded-full">
+                      <img
+                        src="/images/about/profile-light.jpg"
+                        alt="Mao Seavik"
+                        className={`block h-full w-full rounded-full object-cover select-none transition-[filter,transform,opacity] duration-500 ease-out will-change-transform dark:hidden ${
+                          avatarRevealed
+                            ? "grayscale-0 brightness-100 contrast-100 opacity-100 scale-[1.03]"
+                            : "grayscale brightness-95 contrast-[1.06] opacity-90 group-hover/avatar:grayscale-0 group-hover/avatar:brightness-100 group-hover/avatar:contrast-100 group-hover/avatar:opacity-100 group-hover/avatar:scale-[1.03] group-focus-visible/avatar:grayscale-0 group-focus-visible/avatar:brightness-100 group-focus-visible/avatar:contrast-100 group-focus-visible/avatar:opacity-100"
+                        }`}
+                        draggable={false}
+                      />
+                      <img
+                        src="/images/about/profile-dark.jpg"
+                        alt="Mao Seavik"
+                        className={`hidden h-full w-full rounded-full object-cover select-none transition-[filter,transform,opacity] duration-500 ease-out will-change-transform dark:block ${
+                          avatarRevealed
+                            ? "grayscale-0 brightness-100 contrast-100 opacity-100 scale-[1.03]"
+                            : "grayscale brightness-95 contrast-[1.06] opacity-90 group-hover/avatar:grayscale-0 group-hover/avatar:brightness-100 group-hover/avatar:contrast-100 group-hover/avatar:opacity-100 group-hover/avatar:scale-[1.03] group-focus-visible/avatar:grayscale-0 group-focus-visible/avatar:brightness-100 group-focus-visible/avatar:contrast-100 group-focus-visible/avatar:opacity-100"
+                        }`}
+                        draggable={false}
+                      />
+                    </div>
+                    <div
+                      className={`pointer-events-none absolute inset-0 rounded-full ring-1 ring-inset transition-all duration-500 ${
+                        avatarRevealed
+                          ? "ring-[var(--foreground)]/70 dark:ring-[var(--foreground)]/50"
+                          : "ring-[var(--foreground)] group-hover/avatar:ring-[var(--foreground)]/80 dark:ring-[var(--foreground)]/20 dark:group-hover/avatar:ring-[var(--foreground)]/45"
+                      }`}
                     />
-                    <img
-                      src="/images/about/profile-dark.jpg"
-                      alt="Mao Seavik"
-                      className="hidden h-full w-full rounded-full object-cover select-none dark:block"
-                      draggable={false}
-                    />
-                    <div className="pointer-events-none absolute inset-0 rounded-full ring-1 ring-inset ring-[var(--foreground)] dark:ring-[var(--foreground)]/20" />
                     <DiameterDimension diameter={160} />
                   </div>
                 </div>
