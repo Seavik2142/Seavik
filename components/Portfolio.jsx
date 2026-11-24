@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import {
   Github,
   Mail,
@@ -1216,72 +1216,171 @@ function CurrentLocalTimeItem({ timeZone = "Asia/Phnom_Penh" }) {
 }
 
 /* ============================================================================
-   GITHUB & ML CONTRIBUTIONS CALENDAR GRAPH (ChanhDai style)
+   REAL GITHUB CONTRIBUTIONS CALENDAR GRAPH (@Seavik2142 — ChanhDai CAD style)
    ============================================================================ */
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const CONTRIB_BLOCK_SIZE = 11;
+const CONTRIB_BLOCK_GAP = 3;
+const CONTRIB_COL_STEP = CONTRIB_BLOCK_SIZE + CONTRIB_BLOCK_GAP;
 
-function generateContributionData() {
-  const weeks = 52;
-  const daysPerWeek = 7;
-  const cells = [];
-  let total = 0;
-
-  // Deterministic realistic engineering contribution curve across 52 weeks
-  for (let w = 0; w < weeks; w++) {
-    const col = [];
-    for (let d = 0; d < daysPerWeek; d++) {
-      const seed = (w * 17 + d * 31 + w * d * 7) % 29;
-      let level = 0;
-      let count = 0;
-      if (w > 34) {
-        // Heavy recent ML fine-tuning & ChhlatAI / AgriSystem sprint
-        if (seed < 4) {
-          level = 0;
-          count = 0;
-        } else if (seed < 11) {
-          level = 1;
-          count = 2;
-        } else if (seed < 18) {
-          level = 2;
-          count = 5;
-        } else if (seed < 24) {
-          level = 3;
-          count = 9;
-        } else {
-          level = 4;
-          count = 14;
-        }
-      } else {
-        if (seed < 11) {
-          level = 0;
-          count = 0;
-        } else if (seed < 18) {
-          level = 1;
-          count = 1;
-        } else if (seed < 23) {
-          level = 2;
-          count = 3;
-        } else if (seed < 27) {
-          level = 3;
-          count = 6;
-        } else {
-          level = 4;
-          count = 11;
-        }
-      }
-      total += count;
-      col.push({ w, d, level, count });
-    }
-    cells.push(col);
-  }
-  return { cells, total };
+function parseIsoDateUTC(iso) {
+  const [y, m, d] = iso.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, d));
 }
 
-const CONTRIBUTION_DATA = generateContributionData();
+function formatIsoDateUTC(date) {
+  const y = date.getUTCFullYear();
+  const m = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const d = String(date.getUTCDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
 
-function GitHubContributionsPanel() {
+function formatContributionDate(iso) {
+  const dt = parseIsoDateUTC(iso);
+  return `${MONTHS[dt.getUTCMonth()] || ""} ${dt.getUTCDate()}, ${dt.getUTCFullYear()}`;
+}
+
+function buildContributionCalendar(contributions) {
+  if (!Array.isArray(contributions) || contributions.length === 0) {
+    return { weeks: [], monthLabels: [], total: 0 };
+  }
+
+  const sorted = [...contributions]
+    .filter((c) => c && typeof c.date === "string")
+    .sort((a, b) => a.date.localeCompare(b.date));
+
+  if (sorted.length === 0) {
+    return { weeks: [], monthLabels: [], total: 0 };
+  }
+
+  // Fill any missing dates cleanly in UTC so columns stay aligned to Sunday..Saturday
+  const byDate = new Map(sorted.map((item) => [item.date, item]));
+  const startDate = parseIsoDateUTC(sorted[0].date);
+  const endDate = parseIsoDateUTC(sorted[sorted.length - 1].date);
+
+  const normalized = [];
+  for (let ts = startDate.getTime(); ts <= endDate.getTime(); ts += 86400000) {
+    const iso = formatIsoDateUTC(new Date(ts));
+    normalized.push(byDate.get(iso) || { date: iso, count: 0, level: 0 });
+  }
+
+  const leadingPad = startDate.getUTCDay(); // 0 = Sun .. 6 = Sat
+  const padded = [...new Array(leadingPad).fill(null), ...normalized];
+  const weekCount = Math.ceil(padded.length / 7);
+  const weeks = [];
+
+  for (let w = 0; w < weekCount; w++) {
+    const col = padded.slice(w * 7, w * 7 + 7);
+    while (col.length < 7) col.push(null);
+    weeks.push(col);
+  }
+
+  // Place month labels above the exact week where each month begins (avoiding edge collisions)
+  const rawLabels = [];
+  weeks.forEach((week, weekIndex) => {
+    const firstValid = week.find(Boolean);
+    if (!firstValid) return;
+    const monthLabel = MONTHS[parseIsoDateUTC(firstValid.date).getUTCMonth()];
+    const prev = rawLabels[rawLabels.length - 1];
+    if (weekIndex === 0 || !prev || prev.label !== monthLabel) {
+      rawLabels.push({ weekIndex, label: monthLabel });
+    }
+  });
+
+  const minWeeks = 3;
+  const monthLabels = rawLabels.filter(({ weekIndex }, idx, arr) => {
+    if (idx === 0) {
+      return arr[1] ? arr[1].weekIndex - weekIndex >= minWeeks : true;
+    }
+    if (idx === arr.length - 1) {
+      return weeks.length - weekIndex >= minWeeks;
+    }
+    return true;
+  });
+
+  const total = normalized.reduce((sum, item) => sum + (Number(item.count) || 0), 0);
+  return { weeks, monthLabels, total };
+}
+
+function GitHubContributionsPanel({ initialData }) {
+  const [selectedYear, setSelectedYear] = useState(initialData?.year || "last");
+  const [activeData, setActiveData] = useState(() => initialData || null);
+  const [availableYears, setAvailableYears] = useState(() =>
+    Array.isArray(initialData?.availableYears) && initialData.availableYears.length > 0
+      ? initialData.availableYears
+      : [String(new Date().getUTCFullYear()), String(new Date().getUTCFullYear() - 1)]
+  );
+  const [isLoading, setIsLoading] = useState(() => !initialData?.contributions?.length);
+  const [hasError, setHasError] = useState(false);
   const [hoveredCell, setHoveredCell] = useState(null);
+  const [pinnedCell, setPinnedCell] = useState(null);
+  const cacheRef = useRef(
+    initialData?.contributions?.length
+      ? { [initialData.year || "last"]: initialData }
+      : {}
+  );
+
+  const loadYearData = useCallback(async (yearKey) => {
+    if (cacheRef.current[yearKey]) {
+      setActiveData(cacheRef.current[yearKey]);
+      setHasError(false);
+      setIsLoading(false);
+      return;
+    }
+
+    setIsLoading(true);
+    setHasError(false);
+    try {
+      const res = await fetch(`/api/github-contributions?year=${encodeURIComponent(yearKey)}`);
+      if (!res.ok) throw new Error("Failed to fetch GitHub contributions");
+      const json = await res.json();
+      if (Array.isArray(json?.contributions) && json.contributions.length > 0) {
+        cacheRef.current[yearKey] = json;
+        setActiveData(json);
+        if (Array.isArray(json.availableYears) && json.availableYears.length > 0) {
+          setAvailableYears(json.availableYears);
+        }
+      } else {
+        setHasError(true);
+      }
+    } catch {
+      setHasError(true);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  // If SSR had no data (e.g. transient network issue during static build), fetch live on mount
+  useEffect(() => {
+    if (!initialData?.contributions?.length) {
+      loadYearData("last");
+    }
+  }, [initialData, loadYearData]);
+
+  const handleSelectYear = (yearKey) => {
+    if (yearKey === selectedYear) return;
+    playTickClick();
+    setSelectedYear(yearKey);
+    setHoveredCell(null);
+    setPinnedCell(null);
+    loadYearData(yearKey);
+  };
+
+  const calendar = useMemo(
+    () => buildContributionCalendar(activeData?.contributions || []),
+    [activeData]
+  );
+
+  const displayTotal =
+    typeof activeData?.total === "number" && activeData.total > 0
+      ? activeData.total
+      : calendar.total;
+  const activeCell = hoveredCell || pinnedCell;
+  const gridWidth = Math.max(
+    calendar.weeks.length * CONTRIB_COL_STEP - CONTRIB_BLOCK_GAP,
+    660
+  );
 
   const getLevelClass = (level) => {
     switch (level) {
@@ -1298,60 +1397,184 @@ function GitHubContributionsPanel() {
     }
   };
 
+  const yearOptions = useMemo(() => {
+    const uniqueYears = availableYears.filter((y) => /^\d{4}$/.test(String(y))).slice(0, 3);
+    return [{ key: "last", label: "Last year" }, ...uniqueYears.map((y) => ({ key: String(y), label: String(y) }))];
+  }, [availableYears]);
+
   return (
     <Panel>
-      <h2 className="sr-only">GitHub & Hugging Face Contributions</h2>
-      <div className="px-3 py-3.5 sm:px-4 sm:py-4">
-        {/* Scrollable Month Header + 52-week Matrix kept in perfect alignment on mobile */}
-        <div className="overflow-x-auto pb-1.5 [-webkit-overflow-scrolling:touch]">
-          <div className="min-w-[660px]">
-            <div className="mb-1.5 flex justify-between px-1 font-mono text-[10px] text-[var(--muted-foreground)] select-none">
-              {MONTHS.map((m) => (
-                <span key={m}>{m}</span>
-              ))}
-            </div>
+      <div className="px-2.5 py-3.5 sm:px-3 sm:py-4">
+        {/* Top bar: Live GitHub label + Year switcher */}
+        <div className="mb-2.5 flex flex-wrap items-center justify-between gap-2 px-0.5">
+          <div className="flex items-center gap-2">
+            <span className="relative flex h-2 w-2 shrink-0" aria-hidden="true">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500/60 opacity-75" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+            </span>
+            <h2 className="font-mono text-xs font-medium text-[var(--foreground)]">
+              Contribution Activity
+            </h2>
+            <a
+              href="https://github.com/Seavik2142"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => playSoftClick()}
+              className="inline-flex items-center gap-1 rounded-md border border-[var(--border)] bg-[var(--muted-bg)]/50 px-1.5 py-0.5 font-mono text-[10px] text-[var(--muted-foreground)] transition-colors hover:border-[var(--foreground)]/30 hover:text-[var(--foreground)]"
+            >
+              <Github className="h-2.5 w-2.5" />
+              <span>@Seavik2142</span>
+            </a>
+          </div>
 
-            <div className="inline-flex min-w-full justify-between gap-[3px]">
-              {CONTRIBUTION_DATA.cells.map((week, wIdx) => (
-                <div key={wIdx} className="flex flex-col gap-[3px]">
-                  {week.map((cell, dIdx) => (
-                    <div
-                      key={dIdx}
-                      onMouseEnter={() => setHoveredCell(cell)}
-                      onMouseLeave={() => setHoveredCell(null)}
-                      onClick={() => setHoveredCell(cell)}
-                      className={`h-[11px] w-[11px] rounded-[2px] transition-transform hover:scale-125 ${getLevelClass(
-                        cell.level
-                      )}`}
-                      title={`${cell.count} contributions (Week ${cell.w + 1})`}
-                    />
-                  ))}
-                </div>
-              ))}
-            </div>
+          <div
+            className="inline-flex items-center rounded-md border border-[var(--border)] bg-[var(--muted-bg)]/40 p-0.5 font-mono text-[10px]"
+            role="tablist"
+            aria-label="Select GitHub contribution range"
+          >
+            {yearOptions.map((opt) => {
+              const isSelected = selectedYear === opt.key;
+              return (
+                <button
+                  key={opt.key}
+                  type="button"
+                  role="tab"
+                  aria-selected={isSelected}
+                  onClick={() => handleSelectYear(opt.key)}
+                  className={`rounded px-2 py-0.5 transition-colors ${
+                    isSelected
+                      ? "bg-[var(--foreground)] text-[var(--background)] font-medium"
+                      : "text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              );
+            })}
           </div>
         </div>
 
+        {/* Scrollable Month Header + Real GitHub 53-week Calendar Matrix */}
+        <div className="overflow-x-auto pb-1.5 [-webkit-overflow-scrolling:touch]">
+          {calendar.weeks.length > 0 ? (
+            <div
+              className={`transition-opacity duration-200 ${isLoading ? "opacity-50" : "opacity-100"}`}
+              style={{ width: `${gridWidth}px` }}
+            >
+              {/* Exact month labels aligned to each month's first week column */}
+              <div className="relative mb-1.5 h-3.5 font-mono text-[10px] leading-none text-[var(--muted-foreground)] select-none">
+                {calendar.monthLabels.map(({ weekIndex, label }) => (
+                  <span
+                    key={`${label}-${weekIndex}`}
+                    className="absolute top-0"
+                    style={{ left: `${weekIndex * CONTRIB_COL_STEP}px` }}
+                  >
+                    {label}
+                  </span>
+                ))}
+              </div>
+
+              <div className="flex gap-[3px]" role="grid" aria-label="GitHub contribution graph">
+                {calendar.weeks.map((week, wIdx) => (
+                  <div key={wIdx} className="flex flex-col gap-[3px]" role="row">
+                    {week.map((cell, dIdx) => {
+                      if (!cell) {
+                        return (
+                          <span
+                            key={dIdx}
+                            className="h-[11px] w-[11px] rounded-[2px] opacity-0"
+                            aria-hidden="true"
+                          />
+                        );
+                      }
+                      const labelText = `${
+                        cell.count === 0
+                          ? "No contributions"
+                          : `${cell.count} contribution${cell.count === 1 ? "" : "s"}`
+                      } on ${formatContributionDate(cell.date)}`;
+                      const isPinned = pinnedCell?.date === cell.date;
+
+                      return (
+                        <button
+                          key={cell.date}
+                          type="button"
+                          onMouseEnter={() => setHoveredCell(cell)}
+                          onMouseLeave={() => setHoveredCell(null)}
+                          onFocus={() => setHoveredCell(cell)}
+                          onBlur={() => setHoveredCell(null)}
+                          onClick={() => {
+                            playTickClick();
+                            setPinnedCell((prev) => (prev?.date === cell.date ? null : cell));
+                          }}
+                          className={`h-[11px] w-[11px] rounded-[2px] p-0 transition-transform hover:scale-125 focus:outline-none focus:ring-1 focus:ring-[var(--foreground)] ${getLevelClass(
+                            cell.level
+                          )} ${isPinned ? "scale-125 ring-1 ring-[var(--foreground)]" : ""}`}
+                          title={labelText}
+                          aria-label={labelText}
+                        />
+                      );
+                    })}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : isLoading ? (
+            <div className="flex h-[112px] min-w-[660px] items-center justify-center rounded-lg border border-dashed border-[var(--border)] font-mono text-xs text-[var(--muted-foreground)]">
+              Syncing live GitHub contributions for @Seavik2142…
+            </div>
+          ) : (
+            <div className="flex h-[112px] min-w-[660px] items-center justify-center gap-3 rounded-lg border border-dashed border-[var(--border)] font-mono text-xs text-[var(--muted-foreground)]">
+              <span>Unable to reach GitHub right now.</span>
+              <button
+                type="button"
+                onClick={() => {
+                  playTickClick();
+                  loadYearData(selectedYear);
+                }}
+                className="rounded border border-[var(--border)] px-2 py-0.5 text-[var(--foreground)] hover:bg-[var(--muted-bg)]"
+              >
+                Retry
+              </button>
+            </div>
+          )}
+        </div>
+
         {/* Footer */}
-        <div className="mt-2 flex flex-wrap items-center justify-between gap-2 font-mono text-[11px] text-[var(--muted-foreground)] sm:text-xs">
+        <div className="mt-2 flex flex-wrap items-center justify-between gap-2 px-0.5 font-mono text-[11px] text-[var(--muted-foreground)] sm:text-xs">
           <div>
-            {hoveredCell ? (
-              <span className="text-[var(--foreground)] font-medium">
-                {hoveredCell.count} contribution{hoveredCell.count === 1 ? "" : "s"} in Week {hoveredCell.w + 1}
+            {activeCell ? (
+              <span className="font-medium text-[var(--foreground)]">
+                {activeCell.count === 0
+                  ? "No contributions"
+                  : `${activeCell.count} contribution${activeCell.count === 1 ? "" : "s"}`}{" "}
+                on {formatContributionDate(activeCell.date)}
               </span>
-            ) : (
+            ) : hasError && calendar.weeks.length === 0 ? (
               <span>
-                <strong className="font-medium text-[var(--foreground)] tabular-nums">
-                  {CONTRIBUTION_DATA.total.toLocaleString()}
-                </strong>{" "}
-                contributions across GitHub &amp; Hugging Face. Source:{" "}
+                View full history on{" "}
                 <a
                   href="https://github.com/Seavik2142"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="link-underline text-[var(--foreground)]"
                 >
-                  @Seavik2142
+                  GitHub
+                </a>
+                .
+              </span>
+            ) : (
+              <span>
+                <strong className="font-medium text-[var(--foreground)] tabular-nums">
+                  {displayTotal.toLocaleString("en-US")}
+                </strong>{" "}
+                contributions {selectedYear === "last" ? "in the last year" : `in ${selectedYear}`} on{" "}
+                <a
+                  href="https://github.com/Seavik2142"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="link-underline text-[var(--foreground)]"
+                >
+                  GitHub
                 </a>
                 .
               </span>
@@ -1815,7 +2038,7 @@ const TECH_LOGO_MAP = {
    MAIN PORTFOLIO COMPONENT (ChanhDai CAD / Blueprint Design)
    ============================================================================ */
 
-export default function Portfolio() {
+export default function Portfolio({ initialContributions = null }) {
   const [taglineIndex, setTaglineIndex] = useState(0);
   const [greeting, setGreeting] = useState("Hello");
   const [copiedEmail, setCopiedEmail] = useState(false);
@@ -2230,9 +2453,9 @@ export default function Portfolio() {
           </Panel>
 
           {/* ================================================================
-              4. GITHUB & HUGGING FACE CONTRIBUTIONS GRAPH
+              4. REAL GITHUB CONTRIBUTIONS GRAPH (@Seavik2142)
              ================================================================ */}
-          <GitHubContributionsPanel />
+          <GitHubContributionsPanel initialData={initialContributions} />
 
           <Separator />
 
