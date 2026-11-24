@@ -41,6 +41,7 @@ import { PROJECTS as ALL_PROJECTS } from "../lib/projects";
 import { CERTIFICATES } from "../data/certificates";
 import Header from "./Header";
 import MediaModal from "./MediaModal";
+import { useTheme } from "./ThemeProvider";
 import { isPdf, getFormatLabel, safeMediaUrl } from "../lib/media";
 import {
   playMetalClick,
@@ -2063,6 +2064,7 @@ const TECH_LOGO_MAP = {
    ============================================================================ */
 
 export default function Portfolio({ initialContributions = null }) {
+  const { dark } = useTheme();
   const [taglineIndex, setTaglineIndex] = useState(0);
   const [greeting, setGreeting] = useState("Hello");
   const [copiedEmail, setCopiedEmail] = useState(false);
@@ -2242,52 +2244,78 @@ export default function Portfolio({ initialContributions = null }) {
                     }}
                     className="group/avatar relative z-10 h-24 w-24 cursor-pointer rounded-full outline-none min-[390px]:h-28 min-[390px]:w-28 sm:h-40 sm:w-40"
                   >
-                    <div className="relative h-full w-full overflow-hidden rounded-full">
-                      {/* Default Layer (Cursor Away): Monochrome Manga/Ink Illustrated Portrait */}
-                      <img
-                        src="/images/about/profile-mono-light.jpg"
-                        alt="Mao Seavik monochrome illustration"
-                        className={`block h-full w-full rounded-full object-cover select-none transition-transform duration-500 ease-out will-change-transform dark:hidden ${
-                          avatarRevealed ? "scale-[1.03]" : "scale-100 group-hover/avatar:scale-[1.03]"
+                    <div className="relative h-full w-full overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-950">
+                      {/* Light-Mode Avatar Stack (pre-decoded, fades out smoothly in dark mode) */}
+                      <div
+                        className={`absolute inset-0 transition-opacity duration-300 ${
+                          dark
+                            ? "pointer-events-none opacity-0"
+                            : "opacity-100 dark:pointer-events-none dark:opacity-0"
                         }`}
-                        draggable={false}
-                      />
-                      <img
-                        src="/images/about/profile-mono-dark.jpg"
-                        alt="Mao Seavik monochrome illustration"
-                        className={`hidden h-full w-full rounded-full object-cover select-none transition-transform duration-500 ease-out will-change-transform dark:block ${
-                          avatarRevealed ? "scale-[1.03]" : "scale-100 group-hover/avatar:scale-[1.03]"
-                        }`}
-                        draggable={false}
-                      />
+                        aria-hidden={dark}
+                      >
+                        <img
+                          src="/images/about/profile-mono-light.jpg"
+                          alt="Mao Seavik monochrome illustration"
+                          loading="eager"
+                          decoding="sync"
+                          className={`block h-full w-full rounded-full object-cover select-none transition-transform duration-500 ease-out will-change-transform ${
+                            avatarRevealed ? "scale-[1.03]" : "scale-100 group-hover/avatar:scale-[1.03]"
+                          }`}
+                          draggable={false}
+                        />
+                        <img
+                          src="/images/about/profile-light.jpg"
+                          alt="Mao Seavik"
+                          loading="eager"
+                          decoding="sync"
+                          className={`pointer-events-none absolute inset-0 block h-full w-full rounded-full object-cover select-none transition-[opacity,transform] duration-500 ease-out will-change-transform ${
+                            avatarRevealed
+                              ? "opacity-100 scale-[1.03]"
+                              : "opacity-0 scale-100 group-hover/avatar:opacity-100 group-hover/avatar:scale-[1.03] group-focus-visible/avatar:opacity-100"
+                          }`}
+                          draggable={false}
+                        />
+                      </div>
 
-                      {/* Hover / Tap Reveal Layer: Clear Real Full-Color Portrait */}
-                      <img
-                        src="/images/about/profile-light.jpg"
-                        alt="Mao Seavik"
-                        className={`pointer-events-none absolute inset-0 block h-full w-full rounded-full object-cover select-none transition-[opacity,transform] duration-500 ease-out will-change-transform dark:hidden ${
-                          avatarRevealed
-                            ? "opacity-100 scale-[1.03]"
-                            : "opacity-0 scale-100 group-hover/avatar:opacity-100 group-hover/avatar:scale-[1.03] group-focus-visible/avatar:opacity-100"
+                      {/* Dark-Mode Avatar Stack (pre-decoded, always visible in dark mode) */}
+                      <div
+                        className={`absolute inset-0 transition-opacity duration-300 ${
+                          dark
+                            ? "opacity-100"
+                            : "pointer-events-none opacity-0 dark:pointer-events-auto dark:opacity-100"
                         }`}
-                        draggable={false}
-                      />
-                      <img
-                        src="/images/about/profile-dark.jpg"
-                        alt="Mao Seavik"
-                        className={`pointer-events-none absolute inset-0 hidden h-full w-full rounded-full object-cover select-none transition-[opacity,transform] duration-500 ease-out will-change-transform dark:block ${
-                          avatarRevealed
-                            ? "opacity-100 scale-[1.03]"
-                            : "opacity-0 scale-100 group-hover/avatar:opacity-100 group-hover/avatar:scale-[1.03] group-focus-visible/avatar:opacity-100"
-                        }`}
-                        draggable={false}
-                      />
+                        aria-hidden={!dark}
+                      >
+                        <img
+                          src="/images/about/profile-mono-dark.jpg"
+                          alt="Mao Seavik monochrome illustration"
+                          loading="eager"
+                          decoding="sync"
+                          className={`block h-full w-full rounded-full object-cover select-none transition-transform duration-500 ease-out will-change-transform ${
+                            avatarRevealed ? "scale-[1.03]" : "scale-100 group-hover/avatar:scale-[1.03]"
+                          }`}
+                          draggable={false}
+                        />
+                        <img
+                          src="/images/about/profile-dark.jpg"
+                          alt="Mao Seavik"
+                          loading="eager"
+                          decoding="sync"
+                          className={`pointer-events-none absolute inset-0 block h-full w-full rounded-full object-cover select-none transition-[opacity,transform] duration-500 ease-out will-change-transform ${
+                            avatarRevealed
+                              ? "opacity-100 scale-[1.03]"
+                              : "opacity-0 scale-100 group-hover/avatar:opacity-100 group-hover/avatar:scale-[1.03] group-focus-visible/avatar:opacity-100"
+                          }`}
+                          draggable={false}
+                        />
+                      </div>
                     </div>
                     <div
                       className={`pointer-events-none absolute inset-0 rounded-full ring-1 ring-inset transition-all duration-500 ${
                         avatarRevealed
-                          ? "ring-[var(--foreground)]/70 dark:ring-[var(--foreground)]/50"
-                          : "ring-[var(--foreground)] group-hover/avatar:ring-[var(--foreground)]/80 dark:ring-[var(--foreground)]/20 dark:group-hover/avatar:ring-[var(--foreground)]/45"
+                          ? "ring-zinc-950/80 dark:ring-white/50"
+                          : "ring-zinc-950/85 group-hover/avatar:ring-zinc-950 dark:ring-white/20 dark:group-hover/avatar:ring-white/45"
                       }`}
                     />
                     <DiameterDimension diameter={160} />
