@@ -2218,24 +2218,43 @@ export default function Portfolio({ initialContributions = null }) {
                     }}
                     className="group/avatar relative z-10 h-24 w-24 cursor-pointer rounded-full outline-none min-[390px]:h-28 min-[390px]:w-28 sm:h-40 sm:w-40"
                   >
-                    <div className="h-full w-full overflow-hidden rounded-full">
+                    <div className="relative h-full w-full overflow-hidden rounded-full">
+                      {/* Default Layer (Cursor Away): Monochrome Manga/Ink Illustrated Portrait */}
+                      <img
+                        src="/images/about/profile-mono-light.jpg"
+                        alt="Mao Seavik monochrome illustration"
+                        className={`block h-full w-full rounded-full object-cover select-none transition-transform duration-500 ease-out will-change-transform dark:hidden ${
+                          avatarRevealed ? "scale-[1.03]" : "scale-100 group-hover/avatar:scale-[1.03]"
+                        }`}
+                        draggable={false}
+                      />
+                      <img
+                        src="/images/about/profile-mono-dark.jpg"
+                        alt="Mao Seavik monochrome illustration"
+                        className={`hidden h-full w-full rounded-full object-cover select-none transition-transform duration-500 ease-out will-change-transform dark:block ${
+                          avatarRevealed ? "scale-[1.03]" : "scale-100 group-hover/avatar:scale-[1.03]"
+                        }`}
+                        draggable={false}
+                      />
+
+                      {/* Hover / Tap Reveal Layer: Clear Real Full-Color Portrait */}
                       <img
                         src="/images/about/profile-light.jpg"
                         alt="Mao Seavik"
-                        className={`block h-full w-full rounded-full object-cover select-none transition-[filter,transform,opacity] duration-500 ease-out will-change-transform dark:hidden ${
+                        className={`pointer-events-none absolute inset-0 block h-full w-full rounded-full object-cover select-none transition-[opacity,transform] duration-500 ease-out will-change-transform dark:hidden ${
                           avatarRevealed
-                            ? "grayscale-0 brightness-100 contrast-100 opacity-100 scale-[1.03]"
-                            : "grayscale brightness-95 contrast-[1.06] opacity-90 group-hover/avatar:grayscale-0 group-hover/avatar:brightness-100 group-hover/avatar:contrast-100 group-hover/avatar:opacity-100 group-hover/avatar:scale-[1.03] group-focus-visible/avatar:grayscale-0 group-focus-visible/avatar:brightness-100 group-focus-visible/avatar:contrast-100 group-focus-visible/avatar:opacity-100"
+                            ? "opacity-100 scale-[1.03]"
+                            : "opacity-0 scale-100 group-hover/avatar:opacity-100 group-hover/avatar:scale-[1.03] group-focus-visible/avatar:opacity-100"
                         }`}
                         draggable={false}
                       />
                       <img
                         src="/images/about/profile-dark.jpg"
                         alt="Mao Seavik"
-                        className={`hidden h-full w-full rounded-full object-cover select-none transition-[filter,transform,opacity] duration-500 ease-out will-change-transform dark:block ${
+                        className={`pointer-events-none absolute inset-0 hidden h-full w-full rounded-full object-cover select-none transition-[opacity,transform] duration-500 ease-out will-change-transform dark:block ${
                           avatarRevealed
-                            ? "grayscale-0 brightness-100 contrast-100 opacity-100 scale-[1.03]"
-                            : "grayscale brightness-95 contrast-[1.06] opacity-90 group-hover/avatar:grayscale-0 group-hover/avatar:brightness-100 group-hover/avatar:contrast-100 group-hover/avatar:opacity-100 group-hover/avatar:scale-[1.03] group-focus-visible/avatar:grayscale-0 group-focus-visible/avatar:brightness-100 group-focus-visible/avatar:contrast-100 group-focus-visible/avatar:opacity-100"
+                            ? "opacity-100 scale-[1.03]"
+                            : "opacity-0 scale-100 group-hover/avatar:opacity-100 group-hover/avatar:scale-[1.03] group-focus-visible/avatar:opacity-100"
                         }`}
                         draggable={false}
                       />
