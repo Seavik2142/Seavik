@@ -495,7 +495,7 @@ function PanelTitle({ id, children, sup, onCopy }) {
 function IconTile({ className = "", children }) {
   return (
     <div
-      className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-[var(--muted-foreground)]/15 bg-[var(--muted-bg)] text-[var(--muted-foreground)] ring-1 ring-[var(--border)]/60 ring-offset-1 ring-offset-[var(--background)] select-none [&_svg]:h-3.5 [&_svg]:w-3.5 [&_svg]:shrink-0 ${className}`}
+      className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-zinc-900/10 bg-[var(--muted-bg)] text-[var(--muted-foreground)] ring-1 ring-zinc-200/80 ring-offset-1 ring-offset-[var(--background)] select-none dark:border-white/10 dark:ring-zinc-800/80 [&_svg]:h-3.5 [&_svg]:w-3.5 [&_svg]:shrink-0 ${className}`}
     >
       {children}
     </div>
@@ -722,7 +722,7 @@ function TOCMinimap() {
               className={`h-0.5 rounded-full transition-all duration-200 ease-out ${
                 isActive
                   ? "w-6 bg-[var(--foreground)]"
-                  : "w-4 bg-[var(--muted-foreground)]/40"
+                  : "w-4 bg-zinc-400/50 dark:bg-zinc-600/60"
               }`}
               aria-hidden="true"
             />
@@ -732,7 +732,7 @@ function TOCMinimap() {
 
       {/* Expanded Hover Card */}
       {hovered && (
-        <div className="animate-cd-minimap absolute top-0 right-0 w-52 overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--background)]/95 p-2 shadow-xl backdrop-blur-md">
+        <div className="animate-cd-minimap absolute top-0 right-0 w-52 overflow-hidden rounded-xl border border-[var(--border)] bg-white/95 p-2 shadow-xl backdrop-blur-md dark:bg-zinc-950/95">
           <div className="px-3 py-1.5 font-mono text-[10px] font-medium tracking-wider text-[var(--muted-foreground)] uppercase">
             On this page
           </div>
@@ -747,7 +747,7 @@ function TOCMinimap() {
                     className={`w-full rounded-lg px-3 py-1.5 transition-colors duration-150 ${
                       isActive
                         ? "bg-[var(--muted-bg)] font-medium text-[var(--foreground)]"
-                        : "text-[var(--muted-foreground)] hover:bg-[var(--muted-bg)]/60 hover:text-[var(--foreground)]"
+                        : "text-[var(--muted-foreground)] hover:bg-zinc-100/80 hover:text-[var(--foreground)] dark:hover:bg-zinc-800/70"
                     }`}
                   >
                     {sec.title}
@@ -1429,7 +1429,7 @@ function GitHubContributionsPanel({ initialData }) {
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => playSoftClick()}
-              className="inline-flex items-center gap-1 rounded-md border border-[var(--border)] bg-[var(--muted-bg)]/50 px-1.5 py-0.5 font-mono text-[10px] text-[var(--muted-foreground)] transition-colors hover:border-[var(--foreground)]/30 hover:text-[var(--foreground)]"
+              className="inline-flex items-center gap-1 rounded-md border border-[var(--border)] bg-zinc-100/70 dark:bg-zinc-900/70 px-1.5 py-0.5 font-mono text-[10px] text-[var(--muted-foreground)] transition-colors hover:border-zinc-900/30 dark:hover:border-white/25 hover:text-[var(--foreground)]"
             >
               <Github className="h-2.5 w-2.5" />
               <span>@Seavik2142</span>
@@ -1438,7 +1438,7 @@ function GitHubContributionsPanel({ initialData }) {
 
           <div className="flex items-center gap-1.5">
             <div
-              className="inline-flex items-center rounded-md border border-[var(--border)] bg-[var(--muted-bg)]/40 p-0.5 font-mono text-[10px]"
+              className="inline-flex items-center rounded-md border border-[var(--border)] bg-zinc-100/60 dark:bg-zinc-900/60 p-0.5 font-mono text-[10px]"
               role="tablist"
               aria-label="Select GitHub contribution range"
             >
@@ -1476,7 +1476,7 @@ function GitHubContributionsPanel({ initialData }) {
                   : "Live from GitHub — click to refresh"
               }
               aria-label="Refresh GitHub contributions"
-              className="inline-flex h-6 w-6 items-center justify-center rounded-md border border-[var(--border)] bg-[var(--muted-bg)]/40 text-[var(--muted-foreground)] transition-colors hover:border-[var(--foreground)]/30 hover:text-[var(--foreground)] disabled:opacity-50"
+              className="inline-flex h-6 w-6 items-center justify-center rounded-md border border-[var(--border)] bg-zinc-100/60 dark:bg-zinc-900/60 text-[var(--muted-foreground)] transition-colors hover:border-zinc-900/30 dark:hover:border-white/25 hover:text-[var(--foreground)] disabled:opacity-50"
             >
               <RefreshCw className={`h-3 w-3 ${isLoading ? "animate-spin" : ""}`} />
             </button>
@@ -2351,7 +2351,7 @@ export default function Portfolio({ initialContributions = null }) {
                   <button
                     type="button"
                     onClick={openResumePdf}
-                    className="inline-flex items-center gap-1 rounded-full border border-[var(--border)] bg-zinc-50 px-2 py-0.5 font-mono text-[10px] text-[var(--foreground)] transition-all duration-150 hover:border-[var(--foreground)]/40 active:scale-95 sm:gap-1.5 sm:px-2.5 sm:text-[11px] dark:bg-zinc-900"
+                    className="inline-flex items-center gap-1 rounded-full border border-[var(--border)] bg-zinc-50 px-2 py-0.5 font-mono text-[10px] text-[var(--foreground)] transition-all duration-150 hover:border-zinc-900/40 dark:hover:border-white/35 active:scale-95 sm:gap-1.5 sm:px-2.5 sm:text-[11px] dark:bg-zinc-900"
                   >
                     <FileText className="h-3 w-3 text-[var(--muted-foreground)]" />
                     <span>Resume.pdf</span>
@@ -2497,7 +2497,7 @@ export default function Portfolio({ initialContributions = null }) {
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => playSoftClick()}
-                    className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-lg border border-[var(--border)] bg-zinc-50/70 px-3 font-mono text-xs text-[var(--foreground)] transition-all duration-150 hover:border-[var(--foreground)]/30 hover:bg-[var(--muted-bg)] active:scale-95 sm:h-8 sm:w-auto sm:justify-start dark:bg-zinc-900/70"
+                    className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-lg border border-[var(--border)] bg-zinc-50/70 px-3 font-mono text-xs text-[var(--foreground)] transition-all duration-150 hover:border-zinc-900/30 dark:hover:border-white/25 hover:bg-[var(--muted-bg)] active:scale-95 sm:h-8 sm:w-auto sm:justify-start dark:bg-zinc-900/70"
                   >
                     <Github className="h-3.5 w-3.5 shrink-0" />
                     <span>GitHub</span>
@@ -2510,7 +2510,7 @@ export default function Portfolio({ initialContributions = null }) {
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => playSoftClick()}
-                    className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-lg border border-[var(--border)] bg-zinc-50/70 px-3 font-mono text-xs text-[var(--foreground)] transition-all duration-150 hover:border-[var(--foreground)]/30 hover:bg-[var(--muted-bg)] active:scale-95 sm:h-8 sm:w-auto sm:justify-start dark:bg-zinc-900/70"
+                    className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-lg border border-[var(--border)] bg-zinc-50/70 px-3 font-mono text-xs text-[var(--foreground)] transition-all duration-150 hover:border-zinc-900/30 dark:hover:border-white/25 hover:bg-[var(--muted-bg)] active:scale-95 sm:h-8 sm:w-auto sm:justify-start dark:bg-zinc-900/70"
                   >
                     <img
                       src="/images/logos/huggingface.svg"
@@ -2527,7 +2527,7 @@ export default function Portfolio({ initialContributions = null }) {
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => playSoftClick()}
-                    className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-lg border border-[var(--border)] bg-zinc-50/70 px-3 font-mono text-xs text-[var(--foreground)] transition-all duration-150 hover:border-[var(--foreground)]/30 hover:bg-[var(--muted-bg)] active:scale-95 sm:h-8 sm:w-auto sm:justify-start dark:bg-zinc-900/70"
+                    className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-lg border border-[var(--border)] bg-zinc-50/70 px-3 font-mono text-xs text-[var(--foreground)] transition-all duration-150 hover:border-zinc-900/30 dark:hover:border-white/25 hover:bg-[var(--muted-bg)] active:scale-95 sm:h-8 sm:w-auto sm:justify-start dark:bg-zinc-900/70"
                   >
                     <Linkedin className="h-3.5 w-3.5 shrink-0" />
                     <span>LinkedIn</span>
@@ -2537,7 +2537,7 @@ export default function Portfolio({ initialContributions = null }) {
                   <a
                     href="mailto:MaoSeavik@gmail.com"
                     onClick={() => playSoftClick()}
-                    className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-lg border border-[var(--border)] bg-zinc-50/70 px-3 font-mono text-xs text-[var(--foreground)] transition-all duration-150 hover:border-[var(--foreground)]/30 hover:bg-[var(--muted-bg)] active:scale-95 sm:h-8 sm:w-auto sm:justify-start dark:bg-zinc-900/70"
+                    className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-lg border border-[var(--border)] bg-zinc-50/70 px-3 font-mono text-xs text-[var(--foreground)] transition-all duration-150 hover:border-zinc-900/30 dark:hover:border-white/25 hover:bg-[var(--muted-bg)] active:scale-95 sm:h-8 sm:w-auto sm:justify-start dark:bg-zinc-900/70"
                   >
                     <Mail className="h-3.5 w-3.5 shrink-0" />
                     <span>Email</span>
@@ -2591,17 +2591,17 @@ export default function Portfolio({ initialContributions = null }) {
               <p>
                 I’m a <strong className="font-medium">Machine Learning Engineer</strong> and Software Development student at{" "}
                 <strong className="font-medium">Norton University</strong> (SalaIT graduate) based in Phnom Penh, Cambodia. I specialize in building ML-powered expert systems, data science pipelines, and scalable backend services. As a developer and student team leader, I work across the full machine learning and data stack—including{" "}
-                <code className="rounded border border-[var(--border)] bg-[var(--muted-bg)]/60 px-1.5 py-0.5 font-mono text-xs">PyTorch</code>,{" "}
-                <code className="rounded border border-[var(--border)] bg-[var(--muted-bg)]/60 px-1.5 py-0.5 font-mono text-xs">TensorFlow</code>,{" "}
-                <code className="rounded border border-[var(--border)] bg-[var(--muted-bg)]/60 px-1.5 py-0.5 font-mono text-xs">Hugging Face</code>,{" "}
-                <code className="rounded border border-[var(--border)] bg-[var(--muted-bg)]/60 px-1.5 py-0.5 font-mono text-xs">LangChain</code>,{" "}
-                <code className="rounded border border-[var(--border)] bg-[var(--muted-bg)]/60 px-1.5 py-0.5 font-mono text-xs">Scikit-learn</code>,{" "}
-                <code className="rounded border border-[var(--border)] bg-[var(--muted-bg)]/60 px-1.5 py-0.5 font-mono text-xs">NumPy</code>,{" "}
-                <code className="rounded border border-[var(--border)] bg-[var(--muted-bg)]/60 px-1.5 py-0.5 font-mono text-xs">Pandas</code>,{" "}
-                <code className="rounded border border-[var(--border)] bg-[var(--muted-bg)]/60 px-1.5 py-0.5 font-mono text-xs">Matplotlib</code>,{" "}
-                <code className="rounded border border-[var(--border)] bg-[var(--muted-bg)]/60 px-1.5 py-0.5 font-mono text-xs">Jupyter</code>,{" "}
-                <code className="rounded border border-[var(--border)] bg-[var(--muted-bg)]/60 px-1.5 py-0.5 font-mono text-xs">Streamlit</code>, and{" "}
-                <code className="rounded border border-[var(--border)] bg-[var(--muted-bg)]/60 px-1.5 py-0.5 font-mono text-xs">FastAPI</code>—to design intelligent diagnostic engines, conversational LLM agents, and production web platforms.
+                <code className="rounded border border-[var(--border)] bg-zinc-100/80 dark:bg-zinc-900/80 px-1.5 py-0.5 font-mono text-xs">PyTorch</code>,{" "}
+                <code className="rounded border border-[var(--border)] bg-zinc-100/80 dark:bg-zinc-900/80 px-1.5 py-0.5 font-mono text-xs">TensorFlow</code>,{" "}
+                <code className="rounded border border-[var(--border)] bg-zinc-100/80 dark:bg-zinc-900/80 px-1.5 py-0.5 font-mono text-xs">Hugging Face</code>,{" "}
+                <code className="rounded border border-[var(--border)] bg-zinc-100/80 dark:bg-zinc-900/80 px-1.5 py-0.5 font-mono text-xs">LangChain</code>,{" "}
+                <code className="rounded border border-[var(--border)] bg-zinc-100/80 dark:bg-zinc-900/80 px-1.5 py-0.5 font-mono text-xs">Scikit-learn</code>,{" "}
+                <code className="rounded border border-[var(--border)] bg-zinc-100/80 dark:bg-zinc-900/80 px-1.5 py-0.5 font-mono text-xs">NumPy</code>,{" "}
+                <code className="rounded border border-[var(--border)] bg-zinc-100/80 dark:bg-zinc-900/80 px-1.5 py-0.5 font-mono text-xs">Pandas</code>,{" "}
+                <code className="rounded border border-[var(--border)] bg-zinc-100/80 dark:bg-zinc-900/80 px-1.5 py-0.5 font-mono text-xs">Matplotlib</code>,{" "}
+                <code className="rounded border border-[var(--border)] bg-zinc-100/80 dark:bg-zinc-900/80 px-1.5 py-0.5 font-mono text-xs">Jupyter</code>,{" "}
+                <code className="rounded border border-[var(--border)] bg-zinc-100/80 dark:bg-zinc-900/80 px-1.5 py-0.5 font-mono text-xs">Streamlit</code>, and{" "}
+                <code className="rounded border border-[var(--border)] bg-zinc-100/80 dark:bg-zinc-900/80 px-1.5 py-0.5 font-mono text-xs">FastAPI</code>—to design intelligent diagnostic engines, conversational LLM agents, and production web platforms.
               </p>
 
               {/* Currently Strip inside About */}
@@ -2681,9 +2681,9 @@ export default function Portfolio({ initialContributions = null }) {
                       onClick={() => playTickClick()}
                       onMouseEnter={() => playTickClick()}
                       title={company.detail}
-                      className="group/partner relative flex shrink-0 items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--background)]/90 px-3.5 py-2.5 text-left shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-[var(--foreground)]/40 hover:bg-[var(--muted-bg)]/70 active:scale-95"
+                      className="group/partner relative flex shrink-0 items-center gap-3 rounded-xl border border-[var(--border)] bg-white/90 dark:bg-zinc-950/90 px-3.5 py-2.5 text-left shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-zinc-900/40 dark:hover:border-white/35 hover:bg-zinc-100/80 dark:hover:bg-zinc-900/80 active:scale-95"
                     >
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-[var(--border)]/80 bg-white p-1 shadow-2xs transition-transform duration-300 ease-out group-hover/partner:scale-110 dark:bg-zinc-900">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-zinc-200/80 dark:border-zinc-800/80 bg-white p-1 shadow-2xs transition-transform duration-300 ease-out group-hover/partner:scale-110 dark:bg-zinc-900">
                         <img
                           src={company.logo}
                           alt={company.name}
@@ -2721,14 +2721,47 @@ export default function Portfolio({ initialContributions = null }) {
             <div className="stripe-divider" />
             <div className="screen-line-bottom h-px" />
 
-            {/* Numbers / Engineering Telemetry (ChanhDai dashed leader style) */}
+            {/* Numbers / Engineering Telemetry (Mobile 2-col CAD KPI Grid + Desktop Dashed Leader) */}
             <div className="flex items-center justify-center py-3">
-              <h3 className="text-center font-mono text-xs font-medium tracking-wider text-[var(--muted-foreground)] uppercase">
+              <h3 className="text-center font-mono text-[11px] font-medium tracking-wider text-[var(--muted-foreground)] uppercase sm:text-xs">
                 Engineering &amp; ML Telemetry
               </h3>
             </div>
             <div className="screen-line-bottom h-px" />
-            <dl className="grid gap-3.5 p-4 font-mono text-sm">
+
+            {/* Mobile KPI Card Grid (< sm): clean, zero awkward text wrap */}
+            <dl className="grid grid-cols-2 gap-px bg-[var(--line)] font-mono sm:hidden">
+              {[
+                { label: "Production & ML systems shipped", value: "12+" },
+                { label: "Fine-tuned LLMs on Hugging Face", value: "4" },
+                { label: "ZeroGPU cloud inference compute", value: "5.7 TFLOPS" },
+                { label: "Core ML, Data & Backend tools", value: "24" },
+                { label: "Verified academic & industry certificates", value: "3 PDFs", span: true },
+              ].map((stat) => (
+                <div
+                  key={stat.label}
+                  className={`bg-[var(--background)] px-3.5 py-3 ${
+                    stat.span
+                      ? "col-span-2 flex items-center justify-between gap-3"
+                      : "flex flex-col justify-between gap-1.5"
+                  }`}
+                >
+                  <dd className="text-base font-semibold leading-none tracking-tight text-[var(--foreground)] tabular-nums">
+                    {stat.value}
+                  </dd>
+                  <dt
+                    className={`text-[11px] leading-snug text-[var(--muted-foreground)] ${
+                      stat.span ? "order-first" : ""
+                    }`}
+                  >
+                    {stat.label}
+                  </dt>
+                </div>
+              ))}
+            </dl>
+
+            {/* Desktop Dashed-Leader Ledger (sm+) */}
+            <dl className="hidden gap-3.5 p-4 font-mono text-sm sm:grid">
               {[
                 { label: "Production & ML systems shipped", value: "12+" },
                 { label: "Published fine-tuned LLM models on Hugging Face", value: "4" },
@@ -2737,10 +2770,10 @@ export default function Portfolio({ initialContributions = null }) {
                 { label: "Verified academic & industry accreditations", value: "3 PDFs" },
               ].map((stat) => (
                 <div key={stat.label} className="flex items-baseline gap-2">
-                  <dt className="flex flex-1 items-baseline gap-2 text-xs sm:text-sm after:flex-1 after:translate-y-0.5 after:border-b after:border-dashed after:border-[var(--line)]">
+                  <dt className="flex flex-1 items-baseline gap-2 text-sm after:flex-1 after:translate-y-0.5 after:border-b after:border-dashed after:border-[var(--line)]">
                     {stat.label}
                   </dt>
-                  <dd className="text-xs font-semibold tabular-nums sm:text-sm">
+                  <dd className="text-sm font-semibold tabular-nums">
                     {stat.value}
                   </dd>
                 </div>
@@ -2771,16 +2804,16 @@ export default function Portfolio({ initialContributions = null }) {
               {STACK_CATEGORIES.map((group, idx) => (
                 <div
                   key={group.category}
-                  className="grid items-start gap-y-2.5 border-b border-[var(--line)] py-4 last:border-b-0 sm:grid-cols-[13rem_1fr]"
+                  className="grid items-start gap-y-2.5 border-b border-[var(--line)] py-3.5 last:border-b-0 sm:grid-cols-[13rem_1fr] sm:py-4"
                 >
-                  <div className="pl-4 text-sm font-medium">
+                  <div className="px-3 text-sm font-medium sm:pl-4 sm:pr-0">
                     <span className="mr-2 font-mono text-xs text-[var(--muted-foreground)] select-none">
                       {String(idx + 1).padStart(2, "0")}
                     </span>
                     {group.category}
                   </div>
 
-                  <ul className="flex flex-wrap gap-1.5 px-4">
+                  <ul className="flex flex-wrap gap-1.5 px-3 sm:px-4">
                     {group.items.map((item) => (
                       <li key={item.title} className="flex">
                         <a
@@ -2788,7 +2821,7 @@ export default function Portfolio({ initialContributions = null }) {
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={() => playTickClick()}
-                          className="inline-flex h-6 items-center justify-center gap-1.5 rounded-full border border-[var(--border)] bg-zinc-50/80 px-2.5 font-mono text-xs text-[var(--foreground)] transition-all duration-150 hover:-translate-y-px hover:border-[var(--foreground)]/40 hover:bg-[var(--muted-bg)] active:scale-95 dark:bg-zinc-900/80"
+                          className="inline-flex h-7 items-center justify-center gap-1.5 rounded-full border border-[var(--border)] bg-zinc-50/80 px-2.5 font-mono text-[11px] text-[var(--foreground)] transition-all duration-150 hover:-translate-y-px hover:border-zinc-900/35 hover:bg-[var(--muted-bg)] active:scale-95 sm:h-6 sm:text-xs dark:bg-zinc-900/80 dark:hover:border-white/30"
                         >
                           <img
                             src={item.logo}
@@ -2858,7 +2891,7 @@ export default function Portfolio({ initialContributions = null }) {
               </span>
             </PanelHeader>
 
-            <div className="px-4">
+            <div className="px-3 sm:px-4">
               {visibleExperiences.map((exp) => {
                 const isOpen = !!expandedExp[exp.id];
                 const isOngoing = !exp.period.end;
@@ -2955,7 +2988,7 @@ export default function Portfolio({ initialContributions = null }) {
 
                       <CollapsibleDrawer isOpen={isOpen}>
                         <div className="space-y-3 pt-3 pl-5 sm:pl-9">
-                          <p className="text-sm leading-relaxed text-[var(--foreground)]/90">
+                          <p className="text-sm leading-relaxed text-zinc-900/90 dark:text-zinc-100/90">
                             {exp.desc}
                           </p>
 
@@ -3127,8 +3160,8 @@ export default function Portfolio({ initialContributions = null }) {
                     </button>
 
                     <CollapsibleDrawer isOpen={isOpen}>
-                      <div className="space-y-3 pt-3 pl-9">
-                        <p className="text-sm leading-relaxed text-[var(--foreground)]/90">
+                      <div className="space-y-3 pt-3 pl-4 sm:pl-9">
+                        <p className="text-sm leading-relaxed text-zinc-900/90 dark:text-zinc-100/90">
                           {edu.description}
                         </p>
 
@@ -3345,7 +3378,7 @@ export default function Portfolio({ initialContributions = null }) {
                           </button>
 
                           <div className="flex flex-col justify-between space-y-3">
-                            <p className="text-sm leading-relaxed text-[var(--foreground)]/90">
+                            <p className="text-sm leading-relaxed text-zinc-900/90 dark:text-zinc-100/90">
                               {project.desc}
                             </p>
 
@@ -3531,7 +3564,7 @@ export default function Portfolio({ initialContributions = null }) {
                         </button>
 
                         <div className="flex flex-col justify-between space-y-3">
-                          <p className="text-sm leading-relaxed text-[var(--foreground)]/90">
+                          <p className="text-sm leading-relaxed text-zinc-900/90 dark:text-zinc-100/90">
                             {cert.desc}
                           </p>
                           <div className="flex flex-wrap items-center gap-2">
@@ -3624,7 +3657,7 @@ export default function Portfolio({ initialContributions = null }) {
                 <a
                   href="mailto:MaoSeavik@gmail.com"
                   onClick={() => playSoftClick()}
-                  className="flex min-w-0 items-center justify-between gap-2 rounded-lg border border-[var(--line)] bg-zinc-50/50 p-3 transition-colors hover:border-[var(--foreground)]/30 dark:bg-zinc-900/40"
+                  className="flex min-w-0 items-center justify-between gap-2 rounded-lg border border-[var(--line)] bg-zinc-50/50 p-3 transition-colors hover:border-zinc-900/30 dark:hover:border-white/25 dark:bg-zinc-900/40"
                 >
                   <div className="flex min-w-0 items-center gap-3">
                     <IconTile>
@@ -3647,7 +3680,7 @@ export default function Portfolio({ initialContributions = null }) {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => playSoftClick()}
-                  className="flex min-w-0 items-center justify-between gap-2 rounded-lg border border-[var(--line)] bg-zinc-50/50 p-3 transition-colors hover:border-[var(--foreground)]/30 dark:bg-zinc-900/40"
+                  className="flex min-w-0 items-center justify-between gap-2 rounded-lg border border-[var(--line)] bg-zinc-50/50 p-3 transition-colors hover:border-zinc-900/30 dark:hover:border-white/25 dark:bg-zinc-900/40"
                 >
                   <div className="flex min-w-0 items-center gap-3">
                     <IconTile>
@@ -3670,7 +3703,7 @@ export default function Portfolio({ initialContributions = null }) {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => playSoftClick()}
-                  className="flex min-w-0 items-center justify-between gap-2 rounded-lg border border-[var(--line)] bg-zinc-50/50 p-3 transition-colors hover:border-[var(--foreground)]/30 dark:bg-zinc-900/40"
+                  className="flex min-w-0 items-center justify-between gap-2 rounded-lg border border-[var(--line)] bg-zinc-50/50 p-3 transition-colors hover:border-zinc-900/30 dark:hover:border-white/25 dark:bg-zinc-900/40"
                 >
                   <div className="flex min-w-0 items-center gap-3">
                     <IconTile>
@@ -3693,7 +3726,7 @@ export default function Portfolio({ initialContributions = null }) {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => playSoftClick()}
-                  className="flex min-w-0 items-center justify-between gap-2 rounded-lg border border-[var(--line)] bg-zinc-50/50 p-3 transition-colors hover:border-[var(--foreground)]/30 dark:bg-zinc-900/40"
+                  className="flex min-w-0 items-center justify-between gap-2 rounded-lg border border-[var(--line)] bg-zinc-50/50 p-3 transition-colors hover:border-zinc-900/30 dark:hover:border-white/25 dark:bg-zinc-900/40"
                 >
                   <div className="flex min-w-0 items-center gap-3">
                     <IconTile>
@@ -3853,7 +3886,7 @@ export default function Portfolio({ initialContributions = null }) {
                 <dt className="text-[10px] font-medium tracking-wider text-[var(--muted-foreground)] uppercase">
                   ML &amp; Data Science Stack
                 </dt>
-                <dd className="text-xs leading-relaxed text-[var(--foreground)]/90">
+                <dd className="text-xs leading-relaxed text-zinc-900/90 dark:text-zinc-100/90">
                   PyTorch · TensorFlow · Hugging Face · LangChain · Scikit-learn · NumPy · Pandas · Matplotlib · Jupyter · Streamlit · FastAPI
                 </dd>
               </div>

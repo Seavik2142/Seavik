@@ -124,7 +124,7 @@ function AnimatedChevronsUpDown({ isOpen }) {
 function TechTag({ tech }) {
   const logo = TECH_LOGOS[tech];
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-zinc-50 px-2 py-0.5 font-mono text-xs text-[var(--muted-foreground)] transition-colors hover:border-[var(--foreground)]/30 hover:text-[var(--foreground)] dark:bg-zinc-900">
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-zinc-50 px-2 py-0.5 font-mono text-xs text-[var(--muted-foreground)] transition-colors hover:border-zinc-900/30 dark:hover:border-white/25 hover:text-[var(--foreground)] dark:bg-zinc-900">
       {logo && (
         <img
           src={logo}
@@ -305,7 +305,7 @@ export default function TechnicalArchive({ projects = [] }) {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Filter by project, PyTorch, FastAPI, Hugging Face…"
-                className="h-8 w-full rounded-lg border border-[var(--border)] bg-zinc-50/70 pr-3 pl-8 font-mono text-xs text-[var(--foreground)] placeholder-[var(--muted-foreground)] outline-none transition-colors focus:border-[var(--foreground)]/50 dark:bg-zinc-900/70"
+                className="h-8 w-full rounded-lg border border-[var(--border)] bg-zinc-50/70 pr-3 pl-8 font-mono text-xs text-[var(--foreground)] placeholder-[var(--muted-foreground)] outline-none transition-colors focus:border-zinc-900/50 dark:focus:border-white/40 dark:bg-zinc-900/70"
               />
             </div>
 
@@ -352,7 +352,7 @@ export default function TechnicalArchive({ projects = [] }) {
                   className="border-b border-[var(--line)] last:border-b-0"
                 >
                   <div className="relative flex items-center transition-colors hover:bg-[var(--accent-muted)]">
-                    <div className="mx-2.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-[var(--muted-foreground)]/15 bg-[var(--muted-bg)] font-mono text-[10px] font-semibold text-[var(--muted-foreground)] ring-1 ring-[var(--border)]/60 ring-offset-1 ring-offset-[var(--background)] select-none sm:mx-4">
+                    <div className="mx-2.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-zinc-900/10 bg-[var(--muted-bg)] font-mono text-[10px] font-semibold text-[var(--muted-foreground)] ring-1 ring-zinc-200/80 ring-offset-1 ring-offset-[var(--background)] select-none sm:mx-4 dark:border-white/10 dark:ring-zinc-800/80">
                       {project.num}
                     </div>
 
@@ -440,7 +440,7 @@ export default function TechnicalArchive({ projects = [] }) {
                           </button>
 
                           <div className="flex flex-col justify-between space-y-3">
-                            <p className="text-sm leading-relaxed text-[var(--foreground)]/90">
+                            <p className="text-sm leading-relaxed text-zinc-900/90 dark:text-zinc-100/90">
                               {project.desc}
                             </p>
 

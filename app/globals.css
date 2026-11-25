@@ -54,10 +54,12 @@ html {
   scroll-behavior: smooth;
   background-color: var(--background);
   color-scheme: light;
+  -webkit-tap-highlight-color: transparent;
 }
 
 html.dark {
   color-scheme: dark;
+  background-color: var(--background);
 }
 
 body {

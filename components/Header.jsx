@@ -440,10 +440,10 @@ export default function Header({
   return (
     <>
       {/* ====================================================================
-          CHANHDAI STICKY TOP HEADER (Minimalist 60px CAD Frame)
+          CHANHDAI STICKY TOP HEADER (Minimalist CAD Frame + Mobile Safe Area)
          ==================================================================== */}
-      <header className="sticky top-0 z-50 h-[60px] max-w-[100vw] overflow-x-clip bg-[var(--background)]/95 px-2 pt-1 backdrop-blur-md">
-        <div className="screen-line-top screen-line-bottom mx-auto flex h-full items-center gap-2 border-x border-[var(--line)] pr-2 pl-4 after:z-10 sm:gap-4 md:max-w-3xl">
+      <header className="sticky top-0 z-50 h-14 max-w-[100vw] overflow-x-clip bg-white/90 px-2 pt-1 backdrop-blur-md sm:h-[60px] dark:bg-zinc-950/90">
+        <div className="screen-line-top screen-line-bottom mx-auto flex h-full items-center gap-2 border-x border-[var(--line)] pr-2 pl-3.5 after:z-10 sm:gap-4 sm:pl-4 md:max-w-3xl">
           {/* Left: Clean Pixel-Grid Geometric Mark */}
           <Link
             href="/"
@@ -451,7 +451,7 @@ export default function Header({
             onClick={() => playMetalClick()}
             className="flex items-center text-[var(--foreground)] transition-all duration-200 hover:opacity-80 active:scale-95"
           >
-            <SeavikMark className="h-6 w-auto shrink-0" />
+            <SeavikMark className="h-5 w-auto shrink-0 sm:h-6" />
           </Link>
 
           <div className="flex-1" />
@@ -523,7 +523,7 @@ export default function Header({
               rel="noopener noreferrer"
               onClick={() => playSoftClick()}
               title="GitHub (@Seavik2142)"
-              className="inline-flex h-7 items-center gap-1.5 rounded-md px-1.5 text-[var(--foreground)] transition-all duration-150 hover:bg-[var(--muted-bg)] active:scale-95"
+              className="inline-flex h-8 items-center gap-1.5 rounded-md px-2 text-[var(--foreground)] transition-all duration-150 hover:bg-[var(--muted-bg)] active:scale-95 sm:h-7 sm:px-1.5"
             >
               <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
                 <path
@@ -536,7 +536,7 @@ export default function Header({
               </span>
             </a>
 
-            <div className="mx-2 h-5 w-px bg-[var(--border)]" />
+            <div className="mx-1.5 h-5 w-px bg-[var(--border)] sm:mx-2" />
 
             <ThemeToggle />
           </div>
@@ -544,107 +544,184 @@ export default function Header({
       </header>
 
       {/* ====================================================================
-          CHANHDAI FLOATING MOBILE BOTTOM DOCK (SiteBottomNav — sm:hidden)
+          MOBILE NAVIGATION SHEET + FLOATING BOTTOM DOCK (sm:hidden)
          ==================================================================== */}
-      <div
-        ref={mobileMenuRef}
-        className="fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-1/2 z-50 flex w-fit -translate-x-1/2 items-center rounded-xl bg-[var(--background)]/95 py-1.5 pr-2 pl-3.5 shadow-lg ring-1 ring-[var(--foreground)]/10 backdrop-blur-md sm:hidden dark:ring-[var(--foreground)]/20"
-      >
-        {/* Mobile Popover Menu */}
+      <div ref={mobileMenuRef} className="sm:hidden">
+        {/* Subtle Glass Dim Backdrop when menu sheet is open */}
         {mobileMenuOpen && (
-          <div className="animate-cd-popover absolute bottom-full left-1/2 mb-2.5 w-52 -translate-x-1/2 rounded-xl border border-[var(--border)] bg-[var(--background)] p-1.5 shadow-xl">
-            <div className="flex flex-col gap-0.5">
-              {NAV_ITEMS.map((item) => {
-                const isActive = activeSection === item.id;
-                return (
-                  <a
-                    key={item.id}
-                    href={item.href}
-                    onClick={(e) => handleNavClick(e, item.id)}
-                    className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                      isActive
-                        ? "bg-[var(--muted-bg)] text-[var(--foreground)]"
-                        : "text-[var(--muted-foreground)] hover:bg-[var(--muted-bg)] hover:text-[var(--foreground)]"
+          <div
+            aria-hidden="true"
+            onClick={() => {
+              playTickClick();
+              setMobileMenuOpen(false);
+            }}
+            className="fixed inset-0 z-40 bg-black/50 backdrop-blur-[2px] transition-opacity"
+          />
+        )}
+
+        {/* Centered Responsive Mobile Sheet (never clipped off-screen!) */}
+        {mobileMenuOpen && (
+          <div className="fixed inset-x-3.5 bottom-[calc(4.75rem+env(safe-area-inset-bottom))] z-50 mx-auto max-w-[360px]">
+            <div className="animate-cd-popover overflow-hidden rounded-2xl border border-zinc-200 bg-white/95 shadow-2xl backdrop-blur-xl dark:border-zinc-800 dark:bg-zinc-950/95">
+              {/* Sheet Header */}
+              <div className="flex items-center justify-between border-b border-[var(--line)] px-4 py-2.5">
+                <span className="font-mono text-[10px] font-medium tracking-wider text-[var(--muted-foreground)] uppercase">
+                  Navigation
+                </span>
+                <SeavikMark className="h-3.5 w-auto text-[var(--muted-foreground)]" />
+              </div>
+
+              {/* 2-Column Thumb-Friendly Navigation Grid */}
+              <div className="grid grid-cols-2 gap-1.5 p-2.5">
+                {NAV_ITEMS.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = activeSection === item.id;
+                  return (
+                    <a
+                      key={item.id}
+                      href={item.href}
+                      onClick={(e) => handleNavClick(e, item.id)}
+                      className={`flex min-h-[42px] items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-medium transition-colors active:scale-[0.98] ${
+                        isActive
+                          ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-950"
+                          : "border border-transparent bg-zinc-100/70 text-[var(--foreground)] hover:bg-zinc-200/70 dark:bg-zinc-900/80 dark:hover:bg-zinc-800"
+                      }`}
+                    >
+                      <Icon
+                        className={`h-3.5 w-3.5 shrink-0 ${
+                          isActive
+                            ? "text-white dark:text-zinc-950"
+                            : "text-[var(--muted-foreground)]"
+                        }`}
+                      />
+                      <span className="truncate">{item.label}</span>
+                    </a>
+                  );
+                })}
+
+                <Link
+                  href="/work"
+                  onClick={() => {
+                    playSoftClick();
+                    setMobileMenuOpen(false);
+                  }}
+                  className="flex min-h-[42px] items-center gap-2.5 rounded-xl bg-zinc-100/70 px-3 py-2 text-sm font-medium text-[var(--foreground)] transition-colors hover:bg-zinc-200/70 active:scale-[0.98] dark:bg-zinc-900/80 dark:hover:bg-zinc-800"
+                >
+                  <GraduationCap className="h-3.5 w-3.5 shrink-0 text-[var(--muted-foreground)]" />
+                  <span className="truncate">Archive</span>
+                </Link>
+
+                <a
+                  href="/#contact"
+                  onClick={(e) => handleNavClick(e, "contact")}
+                  className={`flex min-h-[42px] items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-medium transition-colors active:scale-[0.98] ${
+                    activeSection === "contact"
+                      ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-950"
+                      : "bg-zinc-100/70 text-[var(--foreground)] hover:bg-zinc-200/70 dark:bg-zinc-900/80 dark:hover:bg-zinc-800"
+                  }`}
+                >
+                  <Mail
+                    className={`h-3.5 w-3.5 shrink-0 ${
+                      activeSection === "contact"
+                        ? "text-white dark:text-zinc-950"
+                        : "text-[var(--muted-foreground)]"
                     }`}
-                  >
-                    {item.label}
-                  </a>
-                );
-              })}
-              <Link
-                href="/work"
-                onClick={() => {
-                  playSoftClick();
-                  setMobileMenuOpen(false);
-                }}
-                className="rounded-lg px-3 py-2 text-sm font-medium text-[var(--muted-foreground)] hover:bg-[var(--muted-bg)] hover:text-[var(--foreground)]"
-              >
-                Archive
-              </Link>
-              <a
-                href="/#contact"
-                onClick={(e) => handleNavClick(e, "contact")}
-                className="rounded-lg px-3 py-2 text-sm font-medium text-[var(--muted-foreground)] hover:bg-[var(--muted-bg)] hover:text-[var(--foreground)]"
-              >
-                Contact
-              </a>
-              <div className="my-1 h-px bg-[var(--line)]" />
-              <button
-                type="button"
-                onClick={() => {
-                  playSoftClick();
-                  setMobileMenuOpen(false);
-                  if (onOpenResume) {
-                    onOpenResume();
-                  } else {
-                    window.open("/resume/Mao Seavik_Resume.pdf", "_blank", "noopener,noreferrer");
-                  }
-                }}
-                className="flex items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium text-[var(--foreground)] hover:bg-[var(--muted-bg)]"
-              >
-                <FileText className="h-3.5 w-3.5 text-[var(--muted-foreground)]" />
-                <span>Resume.pdf</span>
-              </button>
+                  />
+                  <span className="truncate">Contact</span>
+                </a>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    playSoftClick();
+                    setMobileMenuOpen(false);
+                    if (onOpenResume) {
+                      onOpenResume();
+                    } else {
+                      window.open("/resume/Mao Seavik_Resume.pdf", "_blank", "noopener,noreferrer");
+                    }
+                  }}
+                  className="flex min-h-[42px] items-center gap-2.5 rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-2 text-left text-sm font-medium text-[var(--foreground)] transition-colors hover:bg-zinc-100 active:scale-[0.98] dark:border-zinc-800 dark:bg-zinc-900 dark:hover:bg-zinc-800"
+                >
+                  <FileText className="h-3.5 w-3.5 shrink-0 text-[var(--muted-foreground)]" />
+                  <span className="truncate">Resume</span>
+                </button>
+              </div>
+
+              {/* Sheet Quick Controls Footer (Sound + Theme) */}
+              <div className="flex items-center justify-between gap-2 border-t border-[var(--line)] bg-zinc-50/80 px-3 py-2 dark:bg-zinc-900/60">
+                <button
+                  type="button"
+                  onClick={toggleSoundPref}
+                  className="inline-flex h-8 flex-1 items-center justify-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--background)] px-2.5 font-mono text-[11px] font-medium text-[var(--foreground)] transition-colors active:scale-95"
+                >
+                  {soundOn ? (
+                    <Volume2 className="h-3.5 w-3.5 text-emerald-500" />
+                  ) : (
+                    <VolumeX className="h-3.5 w-3.5 text-[var(--muted-foreground)]" />
+                  )}
+                  <span>{soundOn ? "Sound On" : "Sound Off"}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    playSoftClick();
+                    toggleTheme(e);
+                  }}
+                  className="inline-flex h-8 flex-1 items-center justify-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--background)] px-2.5 font-mono text-[11px] font-medium text-[var(--foreground)] transition-colors active:scale-95"
+                >
+                  {theme === "dark" ? (
+                    <Sun className="h-3.5 w-3.5 text-amber-400" />
+                  ) : (
+                    <Moon className="h-3.5 w-3.5 text-zinc-700" />
+                  )}
+                  <span>{theme === "dark" ? "Light Mode" : "Dark Mode"}</span>
+                </button>
+              </div>
             </div>
           </div>
         )}
 
-        <button
-          type="button"
-          onClick={() => {
-            playMiniMapOpen();
-            setMobileMenuOpen(false);
-            setCmdOpen(true);
-          }}
-          className="inline-flex min-w-20 items-center gap-2 py-1 text-sm font-medium text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
-        >
-          <Search className="h-4 w-4" />
-          <span>Search…</span>
-        </button>
+        {/* Compact Frosted Bottom Dock Pill (true monochrome border, no default blue ring) */}
+        <div className="fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-1/2 z-50 flex w-fit -translate-x-1/2 items-center rounded-2xl border border-zinc-200/90 bg-white/95 py-1.5 pr-1.5 pl-3.5 shadow-[0_10px_30px_-8px_rgba(0,0,0,0.22)] backdrop-blur-xl dark:border-zinc-800 dark:bg-zinc-950/95 dark:shadow-[0_12px_36px_-8px_rgba(0,0,0,0.75)]">
+          <button
+            type="button"
+            onClick={() => {
+              playMiniMapOpen();
+              setMobileMenuOpen(false);
+              setCmdOpen(true);
+            }}
+            className="inline-flex h-9 min-w-[104px] items-center gap-2 text-sm font-medium text-[var(--muted-foreground)] transition-colors hover:text-[var(--foreground)] active:scale-95 focus:outline-none"
+          >
+            <Search className="h-4 w-4 shrink-0" />
+            <span>Search…</span>
+          </button>
 
-        <div className="mr-1.5 ml-2.5 h-5 w-px bg-[var(--border)]" />
+          <div className="mr-1.5 ml-2 h-5 w-px bg-[var(--border)]" />
 
-        <button
-          type="button"
-          onClick={() => {
-            playSoftClick();
-            setMobileMenuOpen((v) => !v);
-          }}
-          aria-label="Toggle Menu"
-          aria-expanded={mobileMenuOpen}
-          className="relative flex h-8 w-8 flex-col items-center justify-center gap-1 rounded-lg hover:bg-[var(--muted-bg)]"
-        >
-          <span
-            className={`flex h-0.5 w-4 rounded-[1px] bg-[var(--foreground)] transition-transform ${
-              mobileMenuOpen ? "translate-y-[3px] rotate-45" : ""
-            }`}
-          />
-          <span
-            className={`flex h-0.5 w-4 rounded-[1px] bg-[var(--foreground)] transition-transform ${
-              mobileMenuOpen ? "-translate-y-[3px] -rotate-45" : ""
-            }`}
-          />
-        </button>
+          <button
+            type="button"
+            onClick={() => {
+              playSoftClick();
+              setMobileMenuOpen((v) => !v);
+            }}
+            aria-label="Toggle Menu"
+            aria-expanded={mobileMenuOpen}
+            className="relative flex h-9 w-9 flex-col items-center justify-center gap-1.5 rounded-xl transition-colors hover:bg-[var(--muted-bg)] active:scale-95 focus:outline-none"
+          >
+            <span
+              className={`block h-0.5 w-4 rounded-full bg-[var(--foreground)] transition-transform duration-200 ${
+                mobileMenuOpen ? "translate-y-[4px] rotate-45" : ""
+              }`}
+            />
+            <span
+              className={`block h-0.5 w-4 rounded-full bg-[var(--foreground)] transition-transform duration-200 ${
+                mobileMenuOpen ? "-translate-y-[4px] -rotate-45" : ""
+              }`}
+            />
+          </button>
+        </div>
       </div>
 
       {/* ====================================================================
@@ -652,17 +729,17 @@ export default function Header({
          ==================================================================== */}
       {cmdOpen && (
         <div
-          className="fixed inset-0 z-[100] flex items-start justify-center bg-black/50 px-3 pt-16 backdrop-blur-xs sm:pt-24"
+          className="fixed inset-0 z-[100] flex items-start justify-center bg-black/55 px-3 pt-12 backdrop-blur-[2px] sm:pt-24"
           onClick={() => {
             playTickClick();
             setCmdOpen(false);
           }}
         >
           <div
-            className="animate-cd-popover w-full max-w-lg overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] shadow-2xl"
+            className="animate-cd-popover w-full max-w-lg overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center gap-2.5 border-b border-[var(--line)] px-3.5 py-2.5">
+            <div className="flex items-center gap-2.5 border-b border-[var(--line)] px-3.5 py-3 sm:py-2.5">
               <Search className="h-4 w-4 shrink-0 text-[var(--muted-foreground)]" />
               <input
                 ref={cmdInputRef}
@@ -670,7 +747,7 @@ export default function Header({
                 value={cmdQuery}
                 onChange={(e) => setCmdQuery(e.target.value)}
                 placeholder="Type a command or search…"
-                className="w-full bg-transparent text-sm text-[var(--foreground)] placeholder-[var(--muted-foreground)] outline-none"
+                className="w-full bg-transparent text-base text-[var(--foreground)] placeholder-[var(--muted-foreground)] outline-none sm:text-sm"
               />
               <button
                 type="button"
@@ -684,7 +761,7 @@ export default function Header({
               </button>
             </div>
 
-            <div className="max-h-80 overflow-y-auto p-2">
+            <div className="max-h-[58dvh] overflow-y-auto p-2 sm:max-h-80">
               {commandGroups.length === 0 ? (
                 <div className="py-8 text-center text-sm text-[var(--muted-foreground)]">
                   No results found.
@@ -706,7 +783,7 @@ export default function Header({
                               playSoftClick();
                               item.onSelect(e);
                             }}
-                            className="flex w-full items-center justify-between gap-2 rounded-lg px-2.5 py-2 text-left text-xs transition-colors hover:bg-[var(--muted-bg)]"
+                            className="flex min-h-[40px] w-full items-center justify-between gap-2 rounded-lg px-2.5 py-2 text-left text-xs transition-colors hover:bg-[var(--muted-bg)] sm:min-h-0"
                           >
                             <div className="flex min-w-0 items-center gap-2.5">
                               <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-[var(--border)] bg-[var(--muted-bg)] text-[var(--muted-foreground)]">
@@ -748,7 +825,7 @@ export default function Header({
             window.scrollTo({ top: 0, behavior: "smooth" });
           }}
           aria-label="Scroll to top"
-          className="fixed right-3 bottom-[calc(4.25rem+env(safe-area-inset-bottom))] z-40 flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--background)]/95 text-[var(--foreground)] shadow-md backdrop-blur-sm transition-transform hover:-translate-y-0.5 active:scale-95 sm:right-4 sm:bottom-4"
+          className="fixed right-3 bottom-[calc(4.75rem+env(safe-area-inset-bottom))] z-40 flex h-9 w-9 items-center justify-center rounded-xl border border-zinc-200 bg-white/95 text-[var(--foreground)] shadow-md backdrop-blur-md transition-transform hover:-translate-y-0.5 active:scale-95 sm:right-4 sm:bottom-4 dark:border-zinc-800 dark:bg-zinc-950/95"
         >
           <ArrowUp className="h-4 w-4" />
         </button>

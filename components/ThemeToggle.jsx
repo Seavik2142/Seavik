@@ -35,7 +35,7 @@ export default function ThemeToggle({ className = "", style }) {
     <button
       ref={btnRef}
       type="button"
-      className={`inline-flex h-7 w-7 items-center justify-center rounded-md text-[var(--foreground)]/80 transition-colors hover:bg-[var(--muted-bg)] hover:text-[var(--foreground)] ${className}`}
+      className={`inline-flex h-8 w-8 items-center justify-center rounded-md text-zinc-700 transition-colors hover:bg-[var(--muted-bg)] hover:text-[var(--foreground)] sm:h-7 sm:w-7 dark:text-zinc-300 ${className}`}
       onClick={handleToggle}
       aria-label="Toggle mode (D)"
       title="Toggle theme (D)"

@@ -50,7 +50,7 @@ export default function DigitalGallery({ projects = [] }) {
           <div className="screen-line-bottom p-4">
             <div
               onClick={() => openMedia(hero)}
-              className="group/hero grid cursor-pointer gap-4 rounded-xl border border-[var(--border)] bg-zinc-50/40 p-3 transition-all duration-200 hover:border-[var(--foreground)]/40 hover:bg-[var(--muted-bg)]/50 sm:grid-cols-[1.25fr_1fr] sm:p-4 dark:bg-zinc-900/30"
+              className="group/hero grid cursor-pointer gap-4 rounded-xl border border-[var(--border)] bg-zinc-50/40 p-3 transition-all duration-200 hover:border-zinc-900/40 hover:bg-zinc-100/70 dark:hover:border-white/35 dark:hover:bg-zinc-900/70 sm:grid-cols-[1.25fr_1fr] sm:p-4 dark:bg-zinc-900/30"
             >
               <div className="relative aspect-[16/10] w-full overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--muted-bg)]">
                 <img

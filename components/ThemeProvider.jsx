@@ -10,6 +10,18 @@ export function ThemeProvider({ children }) {
   const [animating, setAnimating] = useState(false);
   const [clipStyle, setClipStyle] = useState({});
 
+  const syncThemeColorMeta = (isDark) => {
+    if (typeof document === "undefined") return;
+    const color = isDark ? "#09090b" : "#ffffff";
+    let meta = document.querySelector('meta[name="theme-color"]');
+    if (!meta) {
+      meta = document.createElement("meta");
+      meta.setAttribute("name", "theme-color");
+      document.head.appendChild(meta);
+    }
+    meta.setAttribute("content", color);
+  };
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       const stored = localStorage.getItem("theme");
@@ -18,12 +30,14 @@ export function ThemeProvider({ children }) {
         (!stored && matchMedia("(prefers-color-scheme: dark)").matches);
       setDark(isDark);
       document.documentElement.classList.toggle("dark", isDark);
+      syncThemeColorMeta(isDark);
     }
   }, []);
 
   const applyTheme = (next) => {
     setDark(next);
     document.documentElement.classList.toggle("dark", next);
+    syncThemeColorMeta(next);
     localStorage.setItem("theme", next ? "dark" : "light");
   };
 
