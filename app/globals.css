@@ -241,6 +241,122 @@ body {
   animation: cd-minimap-slide 200ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+/* Studio Sun <-> Crescent Moon Eclipse Theme Toggle Animations */
+@keyframes cd-theme-sun-enter {
+  0% {
+    opacity: 0.45;
+    transform: rotate(-75deg) scale(0.62);
+  }
+  65% {
+    opacity: 1;
+    transform: rotate(10deg) scale(1.08);
+  }
+  100% {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+}
+
+@keyframes cd-theme-rays-bloom {
+  0% {
+    opacity: 0;
+    transform: scale(0.45) rotate(-35deg);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1.12) rotate(6deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes cd-theme-moon-enter {
+  0% {
+    opacity: 0.45;
+    transform: rotate(50deg) scale(0.68);
+  }
+  65% {
+    opacity: 1;
+    transform: rotate(-8deg) scale(1.07);
+  }
+  100% {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+}
+
+@keyframes cd-theme-star-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0) rotate(-45deg);
+  }
+  65% {
+    opacity: 1;
+    transform: scale(1.25) rotate(8deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes cd-theme-star-twinkle {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.42;
+    transform: scale(0.72);
+  }
+}
+
+@keyframes cd-theme-ripple {
+  0% {
+    opacity: 0.55;
+    transform: scale(0.5);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.65);
+  }
+}
+
+.animate-theme-sun-enter {
+  animation: cd-theme-sun-enter 520ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.animate-theme-rays-bloom {
+  animation: cd-theme-rays-bloom 540ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.animate-theme-moon-enter {
+  animation: cd-theme-moon-enter 520ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.animate-theme-star-pop-1 {
+  animation: cd-theme-star-pop 420ms cubic-bezier(0.34, 1.56, 0.64, 1) 110ms both;
+}
+
+.animate-theme-star-pop-2 {
+  animation: cd-theme-star-pop 420ms cubic-bezier(0.34, 1.56, 0.64, 1) 190ms both;
+}
+
+.animate-theme-ripple {
+  animation: cd-theme-ripple 480ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.group\/theme:hover .theme-star-twinkle-1 {
+  animation: cd-theme-star-twinkle 1.4s ease-in-out infinite;
+}
+
+.group\/theme:hover .theme-star-twinkle-2 {
+  animation: cd-theme-star-twinkle 1.4s ease-in-out 0.35s infinite;
+}
+
 /* Infinite Smooth Scrolling Partner Logos Marquee */
 @keyframes cd-partners-marquee {
   0% {
